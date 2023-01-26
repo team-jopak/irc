@@ -6,24 +6,32 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <iostream>
+#include <list>
+#include <vector>
+#include <cstring>
+#include <fcntl.h> // send
+#include <netdb.h> // addrinfo
 
 class Server
 {
 private:
-    std::string host_;
-    std::string port_;
-    std::strong password;
-    int socket_;
-    std::vector<pollfd> pollFdVec_;
-    std::list<User *> users_;
-    std::list<Channel *> channels_;
+    std::string _host;
+    std::string _port;
+    std::string _password;
+    int _socket_fd;
+    std::vector<pollfd> _poll_fd_vec;
+    // std::list<User *> _users;
+    std::list<std::string *> _users;
+    // std::list<Channel *> _channels;
 
 public:
     Server(std::string host, std::string port, std::string password);
     ~Server();
 
-    void init();
-    void run();
+    void    server_run();
+    int     recv_message(int cur_fd);
+    int     accept_user();
+    void    init();
 
 };
 
