@@ -11,6 +11,7 @@
 #include <cstring>
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
+#include "Exceptions.hpp"
 
 class Server
 {
@@ -20,8 +21,8 @@ private:
     std::string _password;
     int _socket_fd;
     std::vector<pollfd> _poll_fd_vec;
-    // std::list<User *> _users;
-    std::list<std::string *> _users;
+    // std::list<Client *> _clients;
+    std::list<std::string *> _clients;
     // std::list<Channel *> _channels;
 
 public:
@@ -30,7 +31,7 @@ public:
 
     void    server_run();
     int     recv_message(int cur_fd);
-    int     accept_user();
+    int     accept_client();
     void    init();
 
 };

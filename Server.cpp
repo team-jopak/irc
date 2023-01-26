@@ -26,38 +26,33 @@ void Server::init()
     hints.ai_protocol = 0;
     if (getaddrinfo(_host.c_str(), _port.c_str(), &hints, &res) != 0)
     {
-        perror("getaddrinfo() failed");
-        exit(-1);
+        throw std::runtime_error("error: could not get address info");
     }
 
     if ((socket_fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
     {
-        perror("socket() failed");
-        exit(-1);
+        throw std::runtime_error("error: could not get socket_fd");
     }
 
     if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) == -1)
     {
-        perror("setsockopt() failed");
         freeaddrinfo(res);
         close(socket_fd);
-        exit(-1);
+        throw std::runtime_error("error: could not set socket options");
     }
 
     if (bind(socket_fd, res->ai_addr, res->ai_addrlen) != 0)
     {
-        perror("bind() failed");
         freeaddrinfo(res);
         close(socket_fd);
-        exit(-1);
+        throw std::runtime_error("error: could not bind");
     }
 
     if (listen(socket_fd, 32) == -1)
     {
-        perror("listen() failed");
         freeaddrinfo(res);
         close(socket_fd);
-        exit(-1);
+        throw std::runtime_error("error: could not listen");
     }
     _socket_fd = socket_fd;
 }
@@ -71,8 +66,7 @@ void Server::server_run()
     // 논블록킹으로 초기화
     if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1)
     {
-        perror("fcntl() failed");
-        exit(-1);
+        throw std::runtime_error("error: could not fcntl");
     }
     // poll 디스크립터 벡터에 저장
     _poll_fd_vec.push_back(tmp_poll_fd);
@@ -85,13 +79,13 @@ void Server::server_run()
         it_poll_fd = _poll_fd_vec.begin();
         if (poll(&(*it_poll_fd), _poll_fd_vec.size(), 5000) == -1)
         {
-            perror("poll() failed");
-            exit(-1);
+            throw std::runtime_error("error: could not poll");
         }
         // pollFd 에서 이벤트 발생 조회
         for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); it++)
         {
             cur_poll_fd = *it;
+            // 소켓 연결이 끊겼을 경우
             if (cur_poll_fd.revents == POLLHUP)
             {
                 std::cout << "pollhup" << std::endl << std::flush;
@@ -103,7 +97,7 @@ void Server::server_run()
                 // 클라이언트인 유저 추가
                 if (cur_poll_fd.fd == _socket_fd)
                 {
-                    accept_user();
+                    accept_client();
                 }
                 // 이벤트 발생한 유저 메시지 확인
                 else
@@ -153,29 +147,27 @@ int Server::recv_message(int cur_fd)
     return 0;
 }
 
-int Server::accept_user()
+int Server::accept_client()
 {
-    int         user_fd;
-    sockaddr_in user_addr;
+    int         client_fd;
+    sockaddr_in client_addr;
     socklen_t   s_size;
 
-    s_size = sizeof(user_addr);
-    if ((user_fd = accept(_socket_fd, (sockaddr *)&user_addr, &s_size)) == -1)
+    s_size = sizeof(client_addr);
+    if ((client_fd = accept(_socket_fd, (sockaddr *)&client_addr, &s_size)) == -1)
     {
-        perror("accept() failed");
-        exit(-1);
+        throw std::runtime_error("error: could not accept client");
     }
-    pollfd new_poll_fd_vec = {user_fd, POLLIN, 0};
+    pollfd new_poll_fd_vec = {client_fd, POLLIN, 0};
     _poll_fd_vec.push_back(new_poll_fd_vec);
-    if (fcntl(user_fd, F_SETFL, O_NONBLOCK) == -1)
+    if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
     {
-        perror("fcntl failed");
-        exit(-1);
+        throw std::runtime_error("error: could not fcntl");
     }
-    // User *new_user = new User(user_fd);
-    std::string * new_user = new std::string("new");
-    _users.push_back(new_user);
-    // std::cout << "New client: " << new_user->getSocket() << std::endl;
+    // User *new_client = new User(client_fd);
+    std::string * new_client = new std::string("new");
+    _clients.push_back(new_client);
+    // std::cout << "New client: " << new_client->getSocket() << std::endl;
     std::cout << "New client: " << std::endl;
-    return user_fd;
+    return client_fd;
 }

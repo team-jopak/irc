@@ -12,8 +12,15 @@
 int main(int argc, char **argv)
 {
 
-	Server server(HOST ,argv[1], argv[2]);
-	server.server_run();
-	
-  return (0);
+	try
+	{
+		Server server(HOST ,argv[1], argv[2]);
+		server.server_run();
+	}
+	catch (const std::Exception &e)
+	{
+		std::cout << e.what() << std::endl;
+		return (1);
+	}
+	return (0);
 }
