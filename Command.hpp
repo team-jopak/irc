@@ -29,7 +29,7 @@ public:
 
     // 명령어를 실행
     // Exception - 잘못된 권한
-    virtual void excute(Server server) = 0;
+    virtual void execute(Server server) = 0;
 
     // 명령어 인자 초기화
     virtual void init_cmd() = 0;

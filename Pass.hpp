@@ -21,7 +21,7 @@ public:
         std::cout << "\n";
     }
 
-    virtual void excute(Server server)
+    virtual void execute(Server server)
     {
         std::cout << "Execute PASS" << std::endl;
         init_cmd();
