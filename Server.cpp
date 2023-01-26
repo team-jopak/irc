@@ -1,106 +1,114 @@
 #include "Server.hpp"
 
 Server::Server(std::string host, std::string port, std::string password)
-    : host_(host), port_(port), password_(password)
+    : _host(host), _port(port), _password(password)
+{
+    init();
+}
+
+Server::~Server()
+{
+    std::cout << "종료" << std::endl;
+}
+
+void Server::init()
 {
     int on = 1;
-    struct addrinfo hints;
-    struct addrinfo *res;
-    struct addrinfo *resaux;
-    int socketFd;
+    addrinfo hints;
+    addrinfo *res;
+    addrinfo *tmp_res;
+    int socket_fd;
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_flags = AI_PASSIVE;
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = 0;
-    if (getaddrinfo(host_.c_str(), port_.c_str(), &hints, &res) != 0)
+    if (getaddrinfo(_host.c_str(), _port.c_str(), &hints, &res) != 0)
     {
-        perror("getaddrinfo() failed")
-        close(listen_sd);
+        perror("getaddrinfo() failed");
         exit(-1);
     }
 
-    if ((socketFd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
+    if ((socket_fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
     {
         perror("socket() failed");
         exit(-1);
     }
 
-    if (setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, (char *)*on, sizeof(on)) == -1)
+    if (setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) == -1)
     {
         perror("setsockopt() failed");
         freeaddrinfo(res);
-        close(socketFd);
+        close(socket_fd);
         exit(-1);
     }
 
-    if (bind(socketFd, res->ai_addr, res->ai_addrlen) != 0)
+    if (bind(socket_fd, res->ai_addr, res->ai_addrlen) != 0)
     {
         perror("bind() failed");
         freeaddrinfo(res);
-        close(socketFd);
+        close(socket_fd);
         exit(-1);
     }
 
-    if (listen(socketFd, MAX_CONNECTIONS) == -1)
+    if (listen(socket_fd, 32) == -1)
     {
         perror("listen() failed");
         freeaddrinfo(res);
-        close(socketFd);
+        close(socket_fd);
         exit(-1);
     }
-    socket_ = socketFd;
-    run();
+    _socket_fd = socket_fd;
 }
 
-Server::run()
+void Server::server_run()
 {
     // poll 초기화
-    pollfd fd = (socket_, POLLIN, 0);
-    pollfd curPollFd;
+    pollfd tmp_poll_fd = {_socket_fd, POLLIN, 0};
+    pollfd cur_poll_fd;
 
     // 논블록킹으로 초기화
-    if (fcntl(socket_, F_SETFL, O_NONBLOCK) == -1)
+    if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) == -1)
     {
         perror("fcntl() failed");
         exit(-1);
     }
     // poll 디스크립터 벡터에 저장
-    pollFdVec_.push_back(fd);
-    std::vector<pollfd>::iterator itFd;
-    std::cout << "Server: " << host_ << ":" << port_ << std::endl;
+    _poll_fd_vec.push_back(tmp_poll_fd);
+    std::vector<pollfd>::iterator it_poll_fd;
+    std::cout << "Server: " << _host << ":" << _port << std::endl;
 
     // 서버 실행
-    while (1)
+    while (42)
     {
-        itFd = pollFdVec.begin();
-        if (poll(&(*itFd), pollFdVec.size(), 5000) == -1)
+        it_poll_fd = _poll_fd_vec.begin();
+        if (poll(&(*it_poll_fd), _poll_fd_vec.size(), 5000) == -1)
         {
             perror("poll() failed");
             exit(-1);
         }
-
-        // fd 돌면서 이벤트가 POLLIN 이면 해당 명령 실행 
-        for (std::vector<pollFd>::iterator it = pollFdVec.begin(); it != pollFdVec.end(); it++)
+        // pollFd 에서 이벤트 발생 조회
+        for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); it++)
         {
-            curPollFd = *it;
-            if (curPollFd.revents == POLLHUP)
+            cur_poll_fd = *it;
+            if (cur_poll_fd.revents == POLLHUP)
             {
                 std::cout << "pollhup" << std::endl << std::flush;
                 break;
             }
-            else if ((curPollFd.revents & POLLIN) == POLLIN)
+            // tmp_poll_fd 돌면서 이벤트가 POLLIN 이면 해당 명령 실행 
+            else if ((cur_poll_fd.revents & POLLIN) == POLLIN)
             {
-                // 클라이언트 유저 추가
-                if (curPollFd.fd == socket_)
+                // 클라이언트인 유저 추가
+                if (cur_poll_fd.fd == _socket_fd)
                 {
-                    acceptUser();
+                    accept_user();
                 }
                 // 이벤트 발생한 유저 메시지 확인
                 else
                 {
-                    recvMessage(curPollFd.fd);
+                    recv_message(cur_poll_fd.fd);
                 }
                 break;
             }
@@ -108,60 +116,66 @@ Server::run()
     }
 }
 
-int Server::recvMessage(int fd)
+int Server::recv_message(int cur_fd)
 {
     char buf = '\n';
-    std::string tmpBuf;
-    int a = 0;
-    while (tmpBuf.find("\n"))
+    std::string tmp_buf;
+    int b = 0;
+    while (42) // tmp_buf.find("\n")
     {
         int nbytes;
-        nbytes = recv(fd, &buf, 1, 0);
+        nbytes = recv(cur_fd, &buf, 1, 0);
         if (nbytes < 0)
         {
             continue;
         }
         else
         {
-            tmpBuf += buf;
-            if (a > 500)
+            tmp_buf += buf;
+            if (b > 500)
             {
-                tmpBuf = "/QUIT you can't flood this server\r\n";
+                tmp_buf = "/QUIT you can't use this server\r\n";
             }
-            if (tmpBuf.find("\n") != std::string::npos)
+            if (tmp_buf.find("\n") != std::string::npos)
             {
+                // 간단한 메세지 보내는 예시(잘 동작하는지 확인용)
+                std::cout << tmp_buf << std::endl;
+                ssize_t rc;
+                rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
                 // command 시작
-                // Command cmd(tmpBuf, fd, *this) // buf, fd, server클래스 멤버들 
+                // cmd(tmp_buf, *this) // buf, Server 클래스를 매개변수로 보내기
                 break;
             }
         }
-        a++;
+        b++;
     }
-    tmpBuf.clear();
+    tmp_buf.clear();
     return 0;
 }
 
-int Server::acceptUser()
+int Server::accept_user()
 {
-    // int         client_d;
-    // sockaddr_in client_addr;
-    // socklen_t   s_size;
+    int         user_fd;
+    sockaddr_in user_addr;
+    socklen_t   s_size;
 
-    // s_size = sizeof(client_addr);
-    // if (client__d = accept(socket_, (sockaddr *)&client_addr, &s_size) == -1)
-    // {
-    //     perror("accept() failed");
-    //     exit(-1);
-    // }
-    // pollFdvec newPollFdVec = (client_d, POLLIN, 0);
-    // pollFdVec.push_back(newPollFdVec);
-    // if (fcntl(client_d, F_SETFL, O_NONBLOCK) == -1)
-    // {
-    //     perror("fcntl failed");
-    //     exit(-1);
-    // }
-    // User *newUser = new User(client_d);
-    // users_.push_back(newUser);
-    // std::cout << "New client: " << newUser->getSocket() << std::endl;
-    // return client_d;
+    s_size = sizeof(user_addr);
+    if ((user_fd = accept(_socket_fd, (sockaddr *)&user_addr, &s_size)) == -1)
+    {
+        perror("accept() failed");
+        exit(-1);
+    }
+    pollfd new_poll_fd_vec = {user_fd, POLLIN, 0};
+    _poll_fd_vec.push_back(new_poll_fd_vec);
+    if (fcntl(user_fd, F_SETFL, O_NONBLOCK) == -1)
+    {
+        perror("fcntl failed");
+        exit(-1);
+    }
+    // User *new_user = new User(user_fd);
+    std::string * new_user = new std::string("new");
+    _users.push_back(new_user);
+    // std::cout << "New client: " << new_user->getSocket() << std::endl;
+    std::cout << "New client: " << std::endl;
+    return user_fd;
 }
