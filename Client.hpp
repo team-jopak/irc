@@ -3,17 +3,19 @@
 
 #include <iostream>
 // #include <cctype>
-#include <iostream>
+#include "Channel.hpp"
 
+class Channel;
 
 class Client
 {
 private:
+    int         _client_fd;
     std::string _nickname;
     std::string _username;
     std::string _realname;
     bool _auth;
-
+    std::list<Channel *> _channels;
 
 public:
     Client(int client_fd);
@@ -28,5 +30,11 @@ public:
     void set_realname(std::string _username);
     bool is_auth();
     void auth();
+    void add_channel(Channel *channel);
+    void delete_channel(Channel *channel);
+    void message_client(std::string message);
+
 
 };
+
+#endif

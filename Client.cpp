@@ -85,7 +85,7 @@ void Client::message_client(std::string message)
 {
 	if (message.find("\r\n"))
 		message += "\r\n";
-	if (send(this->get_socket(), message.c_str(), strlen(message.c_str()), 0) == -1)
+	if (send(this->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
 		throw std::runtime_error("Could't send messageUser");
 }
 
