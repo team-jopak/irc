@@ -9,6 +9,9 @@
 #include <unistd.h>
 #include <memory.h>
 
+#include "Command.hpp"
+#include "Message.hpp"
+
 #define SERVER_PORT  12345
 
 #define TRUE             1
