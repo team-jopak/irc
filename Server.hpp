@@ -11,6 +11,13 @@
 #include <cstring>
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
+// #include "Exceptions.hpp"
+
+#include "Channel.hpp"
+#include "Client.hpp"
+
+class Client;
+class Channel;
 
 class Server
 {
@@ -20,9 +27,8 @@ private:
     std::string _password;
     int _socket_fd;
     std::vector<pollfd> _poll_fd_vec;
-    // std::list<User *> _users;
-    std::list<std::string *> _users;
-    // std::list<Channel *> _channels;
+    std::list<Client *> _clients;
+    std::list<Channel *> _channels;
 
 public:
     Server(std::string host, std::string port, std::string password);
@@ -30,7 +36,7 @@ public:
 
     void    server_run();
     int     recv_message(int cur_fd);
-    int     accept_user();
+    int     accept_client();
     void    init();
 
 };
