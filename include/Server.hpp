@@ -11,13 +11,9 @@
 #include <cstring>
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
-// #include "Exceptions.hpp"
 
 #include "Channel.hpp"
 #include "Client.hpp"
-
-class Client;
-class Channel;
 
 class Server
 {

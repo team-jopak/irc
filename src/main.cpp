@@ -1,5 +1,5 @@
-#include "Server.hpp"
-#include "Message.hpp"
+#include "../include/Server.hpp"
+#include "../include/Message.hpp"
 
 #define SERVER_PORT  12345
 #define HOST "127.0.0.1"
@@ -9,6 +9,7 @@
 
 int main(int argc, char **argv)
 {
+	(void)argc;
 
 	try
 	{

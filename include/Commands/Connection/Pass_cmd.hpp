@@ -33,17 +33,19 @@ public:
 
     virtual void parse_args(str_vec_iter begin, str_vec_iter end)
     {
-        _password = *begin;
+        std::cout << "args : ";
+
+        for (; begin != end; begin++)
+        {
+            std::cout << *begin << " ";
+        }
+        std::cout << "\n";
     }
 
     virtual void execute(Server server)
     {
-        if (server.get_password() == _password)
-        {
-            // ...
-        }
-
-        std::cout << "Execute PASS" << std::endl;
+        (void)server;
+        std::cout << "Execute NICK" << std::endl;
         init_cmd();
     }
 
