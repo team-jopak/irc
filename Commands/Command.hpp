@@ -5,8 +5,8 @@
 #include <vector>
 #include <iostream>
 
-#include "Server.hpp"
-#include "Exceptions.hpp"
+#include "../Server.hpp"
+#include "../Exceptions.hpp"
 
 class Command
 {
@@ -30,6 +30,9 @@ public:
     // 명령어를 실행
     // Exception - 잘못된 권한
     virtual void execute(Server server) = 0;
+
+    // 클라이언트에 응답 메시지를 보낸다.
+    // virtual void response() = 0;
 
     // 명령어 인자 초기화
     virtual void init_cmd() = 0;
