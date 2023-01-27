@@ -34,7 +34,7 @@ public:
         std::cout << "\n";
     }
 
-    virtual void execute(Server server)
+    virtual void execute(Server* server)
     {
         std::cout << "Execute JOIN" << std::endl;
         init_cmd();

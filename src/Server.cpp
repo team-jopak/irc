@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../include/Server.hpp"
 
 Server::Server(std::string host, std::string port, std::string password)
     : _host(host), _port(port), _password(password)
@@ -16,7 +16,7 @@ void Server::init()
     int on = 1;
     addrinfo hints;
     addrinfo *res;
-    addrinfo *tmp_res;
+    // addrinfo *tmp_res;
     int socket_fd;
 
     memset(&hints, 0, sizeof(hints));
@@ -138,7 +138,16 @@ int Server::recv_message(int cur_fd)
                 // rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
                 
                 // Message 시작
-                _message.parse_msg(tmp_buf);
+                try
+                {
+                    _cmd = _message.parse_msg(tmp_buf);
+                    _cmd->execute(this);
+                }
+                catch (const std::exception &e)
+                {
+                    // 에러처리
+                    std::cout << "message 에러 처리 해야함" << std::endl;
+                }
                 break;
             }
         }

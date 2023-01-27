@@ -7,8 +7,8 @@
 #include <sstream>
 #include <iostream>
 
-#include "Commands/Command.hpp"
-#include "Commands/Connection/Pass_cmd.hpp"
+#include "Commands/Cmd_includes.hpp"
+// #include "Server.hpp"
 
 class Message 
 {

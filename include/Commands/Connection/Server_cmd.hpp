@@ -47,8 +47,9 @@ public:
         std::cout << "\n";
     }
 
-    virtual void execute(Server server)
+    virtual void execute(Server* server)
     {
+        (void)server;
         std::cout << "Execute SERVER" << std::endl;
         init_cmd();
     }

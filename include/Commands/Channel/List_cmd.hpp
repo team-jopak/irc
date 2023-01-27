@@ -1,7 +1,7 @@
 #ifndef LIST_CMD_HPP
 # define LIST_CMD_HPP
 
-#include "Command.hpp"
+#include "../Command.hpp"
 
 /*
 
@@ -41,8 +41,9 @@ public:
         std::cout << "\n";
     }
 
-    virtual void execute(Server server)
+    virtual void execute(Server* server)
     {
+        (void)server;
         std::cout << "Execute LIST" << std::endl;
         init_cmd();
     }

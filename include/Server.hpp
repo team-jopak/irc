@@ -11,15 +11,13 @@
 #include <cstring>
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
-// #include "Exceptions.hpp"
 
 #include "Channel.hpp"
 #include "Client.hpp"
 #include "Message.hpp"
 
-class Client;
-class Channel;
-class Message;
+// class Message;
+// class Command;
 
 class Server
 {
@@ -32,6 +30,7 @@ private:
     std::list<Client *> _clients;
     std::list<Channel *> _channels;
     Message _message;
+    Command* _cmd;
 
 public:
     Server(std::string host, std::string port, std::string password);
@@ -45,5 +44,7 @@ public:
     std::string get_password();
 
 };
+
+// #include "Message.hpp"
 
 #endif
