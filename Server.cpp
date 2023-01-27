@@ -133,11 +133,12 @@ int Server::recv_message(int cur_fd)
             if (tmp_buf.find("\n") != std::string::npos)
             {
                 // 간단한 메세지 보내는 예시(잘 동작하는지 확인용)
-                std::cout << tmp_buf << std::endl;
-                ssize_t rc;
-                rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
-                // command 시작
-                // cmd(tmp_buf, *this) // buf, Server 클래스를 매개변수로 보내기
+                // std::cout << tmp_buf << std::endl;
+                // ssize_t rc;
+                // rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
+                
+                // Message 시작
+                _message.parse_msg(tmp_buf);
                 break;
             }
         }
@@ -175,4 +176,9 @@ int Server::accept_client()
     _clients.push_back(new_client);
     std::cout << "New client: " << new_client->get_socket_fd() << std::endl;
     return client_fd;
+}
+
+std::string Server::get_password()
+{
+    return _password;
 }

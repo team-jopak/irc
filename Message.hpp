@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "Commands/Command.hpp"
-#include "Commands/Pass.hpp"
+#include "Commands/Connection/Pass_cmd.hpp"
 
 class Message 
 {
@@ -22,7 +22,7 @@ public:
     
     Message()
     {
-        commands["PASS"] = new Pass();
+        commands["PASS"] = new Pass_cmd();
     }
 
     ~Message()

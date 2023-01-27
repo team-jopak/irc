@@ -15,20 +15,23 @@
 
 #include "Channel.hpp"
 #include "Client.hpp"
+#include "Message.hpp"
 
 class Client;
 class Channel;
+class Message;
 
 class Server
 {
 private:
+    int _socket_fd;
     std::string _host;
     std::string _port;
     std::string _password;
-    int _socket_fd;
     std::vector<pollfd> _poll_fd_vec;
     std::list<Client *> _clients;
     std::list<Channel *> _channels;
+    Message _message;
 
 public:
     Server(std::string host, std::string port, std::string password);
@@ -38,6 +41,8 @@ public:
     int     recv_message(int cur_fd);
     int     accept_client();
     void    init();
+    
+    std::string get_password();
 
 };
 
