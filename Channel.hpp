@@ -1,10 +1,9 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
-#include "Server.hpp"
 #include "Client.hpp"
+#include <list>
 
-class Server;
 class Client;
 
 class Channel

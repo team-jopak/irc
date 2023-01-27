@@ -153,21 +153,26 @@ int Server::accept_client()
     sockaddr_in client_addr;
     socklen_t   s_size;
 
+    // 클라이언트 fd 받기
     s_size = sizeof(client_addr);
     if ((client_fd = accept(_socket_fd, (sockaddr *)&client_addr, &s_size)) == -1)
     {
         throw std::runtime_error("error: could not accept client");
     }
+
+    // 새로운 클라이언트 fd, poll 벡터에 저장
     pollfd new_poll_fd_vec = {client_fd, POLLIN, 0};
     _poll_fd_vec.push_back(new_poll_fd_vec);
+    
+    // 논블록킹 모드
     if (fcntl(client_fd, F_SETFL, O_NONBLOCK) == -1)
     {
         throw std::runtime_error("error: could not fcntl");
     }
-    // User *new_client = new User(client_fd);
-    std::string * new_client = new std::string("new");
+
+    // 새로운 fd 받아 클라이언트 만들기
+    Client *new_client = new Client(client_fd);
     _clients.push_back(new_client);
-    // std::cout << "New client: " << new_client->getSocket() << std::endl;
-    std::cout << "New client: " << std::endl;
+    std::cout << "New client: " << new_client->get_socket_fd() << std::endl;
     return client_fd;
 }

@@ -55,8 +55,8 @@ Client *Channel::get_client_by_nickname(std::string name)
         {
             return *it;
         }
-        return NULL;
     }
+    return NULL;
 }
 
 void Channel::delete_client(Client *client)

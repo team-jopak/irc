@@ -2,20 +2,23 @@
 # define CLIENTS_HPP
 
 #include <iostream>
-// #include <cctype>
 #include "Channel.hpp"
+// #include <fcntl.h>
+#include <sys/socket.h>
+#include <list>
+
 
 class Channel;
 
 class Client
 {
 private:
-    int         _client_fd;
-    std::string _nickname;
-    std::string _username;
-    std::string _realname;
-    bool _auth;
-    std::list<Channel *> _channels;
+    int                     _client_fd;
+    std::string             _nickname;
+    std::string             _username;
+    std::string             _realname;
+    bool                    _auth;
+    std::list<Channel *>    _channels;
 
 public:
     Client(int client_fd);
