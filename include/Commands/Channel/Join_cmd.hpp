@@ -60,6 +60,7 @@ public:
 
     virtual void execute(Server server)
     {
+        (void)server;
         std::cout << "Execute JOIN" << std::endl;
         init_cmd();
     }

@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../include/Server.hpp"
 
 Server::Server(std::string host, std::string port, std::string password)
     : _host(host), _port(port), _password(password)
@@ -16,7 +16,7 @@ void Server::init()
     int on = 1;
     addrinfo hints;
     addrinfo *res;
-    addrinfo *tmp_res;
+    // addrinfo *tmp_res;
     int socket_fd;
 
     memset(&hints, 0, sizeof(hints));

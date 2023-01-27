@@ -45,6 +45,7 @@ public:
 
     virtual void execute(Server server)
     {
+        (void)server;
         std::cout << "Execute NICK" << std::endl;
         init_cmd();
     }
