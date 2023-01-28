@@ -1,0 +1,60 @@
+#ifndef PING_CMD_HPP
+# define PING_CMD_HPP
+
+#include "../Command.hpp"
+
+/*
+
+1. Command: PING
+2. Parameters: <server1> [<server2>]
+3. Replies
+    1. ERR_NOORIGIN
+    2. ERR_NOSUCHSERVER
+
+PING 는 연결의 다른 쪽 끝에 활성 클라이언트가 있는지 테스트 하는 데 사용함
+
+다른 활동이 감지되지 않으면 정기적으로 PING 메시지가를 전송
+
+연결이 설정된 시간 내에 PING 명령에 응답하지 못하면 해당 연결이 닫힘
+
+PING 메시지를 수신하는 모든 클라이언트는 가능한 한 빨리 <server1> 에 적절한 PONG 메시지를 사용하여 응답해야 함
+
+서버는 PING 명령에 응답하지 않아야 하지만 연결이 활성 상태임을 나타내기 위해 연결의 다른 쪽 끝의 PING 에 의존해야 함
+
+<server2> 매개 변수가 지정되면 PING 메시지가 <server2>로 전달 됨
+
+*/
+
+class Ping_cmd : public Command
+{
+public:
+    Ping_cmd() : Command("PING")
+    {
+    }
+
+    virtual void parse_args(str_vec_iter begin, str_vec_iter end)
+    {
+        std::cout << "args : ";
+
+        for (; begin != end; begin++)
+        {
+            std::cout << *begin << " ";
+        }
+        std::cout << "\n";
+    }
+
+    virtual void execute(Server* server)
+    {
+        (void)server;
+        std::cout << "Execute PING" << std::endl;
+        init_cmd();
+    }
+
+    virtual void init_cmd()
+    {
+        std::cout << "Init command" << std::endl;
+    }
+
+};
+
+#endif
