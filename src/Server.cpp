@@ -1,13 +1,14 @@
 #include "../include/Server.hpp"
 
 Server::Server(std::string host, std::string port, std::string password)
-    : _host(host), _port(port), _password(password)
+    : _host(host), _port(port), _password(password), _message(new Message())
 {
     init();
 }
 
 Server::~Server()
 {
+    delete _message;
     std::cout << "종료" << std::endl;
 }
 
@@ -140,7 +141,7 @@ int Server::recv_message(int cur_fd)
                 // Message 시작
                 try
                 {
-                    _cmd = _message.parse_msg(tmp_buf);
+                    _cmd = _message->parse_msg(tmp_buf);
                     _cmd->execute(this);
                 }
                 catch (const std::exception &e)
