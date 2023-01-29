@@ -13,8 +13,8 @@
 class Message 
 {
 public:
-    typedef std::vector<std::string>        str_vec;
-    typedef str_vec::iterator               str_vec_iter;
+    typedef std::list<std::string>          str_list;
+    typedef str_list::iterator              str_list_iter;
     typedef std::map<std::string, Command*> cmd_map;
     typedef cmd_map::iterator               cmd_map_iter;
 
@@ -37,22 +37,23 @@ public:
         // 개행 제거
         _remove_nl(msg);
 
-        str_vec         result = _split(msg, ' ');
-        str_vec_iter    iter = result.begin();
-        str_vec_iter    end = result.end();
+        str_list        splited = _split(msg, ' ');
+        std::string     prefix;
 
         Command*        cmd;
 
         // 첫번째 문자가 접두사인지 확인
-        if (_is_prefix(*iter))
+        if (_is_prefix(*(splited.begin())))
         {
+            prefix = *(splited.begin());
+            splited.pop_front();
+
             // 접두사 처리
-            std::cout << "prefix : " << (*iter) << std::endl;
-            ++iter;
+            std::cout << "prefix : " << prefix << std::endl;
         }
 
         // 명령어 확인
-        if (!_is_command(*iter))
+        if (!_is_command(*(splited.begin())))
         {
             // Exception - 잘못된 명령
             std::cout << "Wrong command" << std::endl;
@@ -60,11 +61,11 @@ public:
         }
 
         // 명령어 객체 지정
-        cmd = commands[*iter];
-        ++iter;
+        cmd = commands[*(splited.begin())];
+        splited.pop_front();
 
         // 명령어 객체에 인자 전달
-        (*cmd).parse_args(iter, end);
+        (*cmd).parse_args(splited);
 
         return (cmd);
     }
@@ -89,9 +90,9 @@ private:
             str.erase(end_iter);
     }
 
-    str_vec _split(std::string input, char delimiter) 
+    str_list _split(std::string input, char delimiter) 
     {
-        str_vec answer;
+        str_list answer;
         std::stringstream ss(input);
         std::string temp;
     
