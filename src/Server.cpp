@@ -142,7 +142,7 @@ int Server::recv_message(int cur_fd)
                 try
                 {
                     _cmd = _message->parse_msg(tmp_buf);
-                    _cmd->execute(this);
+                    _cmd->execute(this, find_client(cur_fd));
                 }
                 catch (const std::exception &e)
                 {
@@ -191,4 +191,17 @@ int Server::accept_client()
 std::string Server::get_password()
 {
     return _password;
+}
+
+Client* Server::find_client(int fd)
+{
+    std::list<Client *>::iterator iter = _clients.begin();
+    std::list<Client *>::iterator end = _clients.end();
+
+    for (; iter != end; iter++)
+    {
+        if ((*iter)->_client_fd == fd)
+            return *iter;
+    }
+    return NULL;
 }

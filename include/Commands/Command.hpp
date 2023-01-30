@@ -31,7 +31,7 @@ public:
 
     // 명령어를 실행
     // Exception - 잘못된 권한
-    virtual void execute(Server* server) = 0;
+    virtual void execute(Server* server, Client* client) = 0;
 
     // 클라이언트에 응답 메시지를 보낸다.
     // virtual void response() = 0;

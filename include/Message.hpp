@@ -2,13 +2,13 @@
 # define MESSAGE_HPP
 
 #include <string>
-#include <vector>
 #include <map>
 #include <sstream>
 #include <iostream>
+#include <list>
 
 #include "Commands/Cmd_includes.hpp"
-// #include "Server.hpp"
+
 
 class Message 
 {

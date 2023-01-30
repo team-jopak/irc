@@ -37,9 +37,10 @@ public:
         (void)args;
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
         server->get_password();
+        (void)client;
         std::cout << "Execute LIST" << std::endl;
         init_cmd();
     }

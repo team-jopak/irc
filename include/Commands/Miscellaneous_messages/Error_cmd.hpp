@@ -38,9 +38,10 @@ public:
         (void)args;
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
         (void)server;
+        (void)client;
         std::cout << "Execute ERROR" << std::endl;
         init_cmd();
     }

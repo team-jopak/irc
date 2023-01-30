@@ -13,7 +13,6 @@ class Channel;
 class Client
 {
 private:
-    int                     _client_fd;
     std::string             _nickname;
     std::string             _username;
     std::string             _realname;
@@ -21,6 +20,8 @@ private:
     std::list<Channel *>    _channels;
 
 public:
+    int                     _client_fd;
+    
     Client(int client_fd);
     ~Client();
     

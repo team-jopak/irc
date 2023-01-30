@@ -41,6 +41,7 @@ public:
     void    init();
     
     std::string get_password();
+    Client*     find_client(int fd);
 
 };
 

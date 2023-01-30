@@ -30,7 +30,7 @@ public:
         (void)args;
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
         std::cout << "Execute JOIN" << std::endl;
         init_cmd();
