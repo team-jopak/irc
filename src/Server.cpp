@@ -208,7 +208,7 @@ void Server::message_all(std::string message)
 	}
 }
 
-void Server::delete_cient(int socket_fd)
+void Server::delete_client(int socket_fd)
 {
 	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
     {
