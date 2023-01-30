@@ -1,13 +1,14 @@
 #include "../include/Server.hpp"
 
 Server::Server(std::string host, std::string port, std::string password)
-    : _host(host), _port(port), _password(password)
+    : _host(host), _port(port), _password(password), _message(new Message())
 {
     init();
 }
 
 Server::~Server()
 {
+    delete _message;
     std::cout << "종료" << std::endl;
 }
 
@@ -140,8 +141,8 @@ int Server::recv_message(int cur_fd)
                 // Message 시작
                 try
                 {
-                    _cmd = _message.parse_msg(tmp_buf);
-                    _cmd->execute(this);
+                    _cmd = _message->parse_msg(tmp_buf);
+                    _cmd->execute(this, get_client_by_socket_fd(cur_fd));
                 }
                 catch (const std::exception &e)
                 {
@@ -207,7 +208,7 @@ void Server::message_all(std::string message)
 	}
 }
 
-void delete_cient(int socket_fd)
+void Server::delete_cient(int socket_fd)
 {
 	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
     {
@@ -233,7 +234,7 @@ void delete_cient(int socket_fd)
 	}
 }
 
-Client Server::*get_client_by_socket_fd(int socket_fd)
+Client* Server::get_client_by_socket_fd(int socket_fd)
 {
     std::list<Client *>::iterator it = _clients.begin();
 	while (it != _clients.end())

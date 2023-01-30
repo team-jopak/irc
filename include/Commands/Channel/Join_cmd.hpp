@@ -47,20 +47,17 @@ public:
     {
     }
 
-    virtual void parse_args(str_vec_iter begin, str_vec_iter end)
+    virtual void parse_args(str_list args)
     {
         std::cout << "args : ";
 
-        for (; begin != end; begin++)
-        {
-            std::cout << *begin << " ";
-        }
-        std::cout << "\n";
+        (void)args;
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
         (void)server;
+        (void)client;
         std::cout << "Execute JOIN" << std::endl;
         init_cmd();
     }

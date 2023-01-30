@@ -30,7 +30,7 @@ receiver는 쉼표로 구분 된 닉네임이나 채널 이름
 
 해당 요구사항은 모든 사람들에게 메시지를 보내는 것을 방지하기 위함
 
-와일드 카드는 ?/*
+와일드 카드는 ?, /, *
 
 */
 
@@ -41,20 +41,17 @@ public:
     {
     }
 
-    virtual void parse_args(str_vec_iter begin, str_vec_iter end)
+    virtual void parse_args(str_list args)
     {
         std::cout << "args : ";
 
-        for (; begin != end; begin++)
-        {
-            std::cout << *begin << " ";
-        }
-        std::cout << "\n";
+        (void)args;
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
         (void)server;
+        (void)client;
         std::cout << "Execute PRIVMSG" << std::endl;
         init_cmd();
     }

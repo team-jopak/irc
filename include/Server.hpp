@@ -14,10 +14,9 @@
 
 #include "Channel.hpp"
 #include "Client.hpp"
-#include "Message.hpp"
 
-// class Message;
-// class Command;
+class Message;
+class Command;
 
 class Server
 {
@@ -29,7 +28,7 @@ private:
     std::vector<pollfd> _poll_fd_vec;
     std::list<Client *> _clients;
     std::list<Channel *> _channels;
-    Message _message;
+    Message* _message;
     Command* _cmd;
 
 public:
@@ -43,6 +42,7 @@ public:
 
     // 서버 관련 함수    
     std::string get_password();
+    Client*     find_client(int fd);
 
     // 클라이언트 관련 함수
     std::list<Client *> get_clients();
@@ -54,6 +54,6 @@ public:
 
 };
 
-// #include "Message.hpp"
+#include "Message.hpp"
 
 #endif
