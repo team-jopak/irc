@@ -28,11 +28,11 @@ public:
     std::string get_nickname();
     std::string get_username();
     std::string get_realname();
-    void set_nickname(std::string );
-    void set_username(std::string _username);
-    void set_realname(std::string _username);
+    void set_nickname(std::string nickname);
+    void set_username(std::string username);
+    void set_realname(std::string realname);
     bool is_auth();
-    void auth();
+    void get_auth();
     void add_channel(Channel *channel);
     void delete_channel(Channel *channel);
     void message_client(std::string message);

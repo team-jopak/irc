@@ -40,8 +40,17 @@ public:
     int     recv_message(int cur_fd);
     int     accept_client();
     void    init();
-    
+
+    // 서버 관련 함수    
     std::string get_password();
+
+    // 클라이언트 관련 함수
+    std::list<Client *> get_clients();
+    Client *get_client_by_socket_fd(int socket_fd);
+    void delete_cient(int socket_fd);
+
+
+    void message_all(std::string message);
 
 };
 

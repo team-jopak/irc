@@ -11,9 +11,9 @@ Client::~Client()
 {
 }
 
-void Client::set_nickname(std::string new_nick)
+void Client::set_nickname(std::string nickname)
 {
-	this->_nickname = new_nick;
+	this->_nickname = nickname;
 }
 
 int Client::get_socket_fd()
@@ -51,7 +51,7 @@ bool Client::is_auth()
 	return (this->_auth);
 }
 
-void Client::auth()
+void Client::get_auth()
 {
 	this->_auth = true;
 }

@@ -191,3 +191,58 @@ std::string Server::get_password()
 {
     return _password;
 }
+
+std::list<Client *> Server::get_clients()
+{
+    return _clients;
+}
+
+
+void Server::message_all(std::string message)
+{
+	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
+			throw std::runtime_error("Couldn't SEND message_all");
+	}
+}
+
+void delete_cient(int socket_fd)
+{
+	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
+    {
+		(*it)->delete_client(get_client_by_socket_fd(socket_fd));
+    }
+	for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); ++it)
+	{
+		if ((*it).fd == socket_fd)
+		{
+			close(socket_fd);
+			_poll_fd_vec.erase(it);
+			break;
+		}
+	}
+	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if ((*it)->get_socket_fd() == socket_fd)
+		{
+			delete *it;
+			_clients.erase(it);
+			break;
+		}
+	}
+}
+
+Client Server::*get_client_by_socket_fd(int socket_fd)
+{
+    std::list<Client *>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if ((*it)->get_socket_fd() == socket_fd)
+			return (*it);
+		it++;
+	}
+	return (NULL);
+}
+
+
