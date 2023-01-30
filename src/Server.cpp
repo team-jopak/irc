@@ -142,7 +142,7 @@ int Server::recv_message(int cur_fd)
                 try
                 {
                     _cmd = _message->parse_msg(tmp_buf);
-                    _cmd->execute(this, find_client(cur_fd));
+                    _cmd->execute(this, get_client_by_socket_fd(cur_fd));
                 }
                 catch (const std::exception &e)
                 {
@@ -193,15 +193,57 @@ std::string Server::get_password()
     return _password;
 }
 
-Client* Server::find_client(int fd)
+std::list<Client *> Server::get_clients()
 {
-    std::list<Client *>::iterator iter = _clients.begin();
-    std::list<Client *>::iterator end = _clients.end();
-
-    for (; iter != end; iter++)
-    {
-        if ((*iter)->_client_fd == fd)
-            return *iter;
-    }
-    return NULL;
+    return _clients;
 }
+
+
+void Server::message_all(std::string message)
+{
+	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
+			throw std::runtime_error("Couldn't SEND message_all");
+	}
+}
+
+void Server::delete_cient(int socket_fd)
+{
+	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
+    {
+		(*it)->delete_client(get_client_by_socket_fd(socket_fd));
+    }
+	for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); ++it)
+	{
+		if ((*it).fd == socket_fd)
+		{
+			close(socket_fd);
+			_poll_fd_vec.erase(it);
+			break;
+		}
+	}
+	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		if ((*it)->get_socket_fd() == socket_fd)
+		{
+			delete *it;
+			_clients.erase(it);
+			break;
+		}
+	}
+}
+
+Client* Server::get_client_by_socket_fd(int socket_fd)
+{
+    std::list<Client *>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if ((*it)->get_socket_fd() == socket_fd)
+			return (*it);
+		it++;
+	}
+	return (NULL);
+}
+
+
