@@ -58,6 +58,13 @@ public:
     {
         std::cout << "Execute USER" << std::endl;
 
+        // nickname 체크
+        if (client->get_nickname().empty())
+        {
+            return ;
+        }
+
+        // username이 있으면 중복 방지
         if (client->get_username().empty())
         {
             return ;
