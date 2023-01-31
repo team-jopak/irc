@@ -70,8 +70,8 @@ public:
     {
         std::cout << "Execute NICK" << std::endl;
 
-        // 권한 확인
-        if (client->is_auth() == true)
+        // 권한 확인(먼저 PASS에서 권한 획득 해야함)
+        if (client->is_auth() == false)
         {
             return ;
         }
