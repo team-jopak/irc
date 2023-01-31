@@ -61,7 +61,7 @@ public:
         if (_password == server->get_password())
         {
             // 해당 클라이언트에게 권한을 부여한다.
-            client->get_auth();
+            client->set_auth();
         }
 
         init_cmd();
