@@ -31,11 +31,7 @@ public:
         _password = "";
     }
 
-<<<<<<< HEAD
     // 그냥 벡터를 넘겨줘서 it랑 길이 등 다른 함수도 사용할 수 있는게 좋을 듯?
-=======
-
->>>>>>> feature/20/create_Pass_cmd_class
     virtual void parse_args(str_list args)
     {
         // 벡터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
@@ -47,20 +43,6 @@ public:
         str_list_iter it_args = args.begin();
         _password = *it_args;
 
-        (void)args;
-    }
-
-    virtual void execute(Server* server, Client* client)
-    {
-        (void)server;
-        (void)client;
-        std::cout << "Execute NICK" << std::endl;
-        std::cout << "\n";
-    }
-
-    // 해당 클라이언트 클래스도 넘어와야 할 듯
-    virtual void execute(Server* server, Client* client)
-    {
         std::cout << "\n";
     }
 

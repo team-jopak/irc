@@ -36,19 +36,6 @@ public:
         _message = "";
     }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    virtual void parse_args(str_vec_iter begin, str_vec_iter end)
-    {
-        std::cout << "args : ";
-
-        for (; begin != end; begin++)
-        {
-            std::cout << *begin << " ";
-=======
-=======
->>>>>>> Stashed changes
     virtual void parse_args(str_list args)
     {        
         str_list_iter it_args = args.begin();
@@ -57,19 +44,8 @@ public:
         {
             std::cout << *it_args << " ";
             _message += *it_args + " ";
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
         }
         std::cout << "\n";
-=======
-    virtual void parse_args(str_list args)
-    {
-        std::cout << "args : ";
-
-        (void)args;
->>>>>>> feature/20/create_Pass_cmd_class
     }
 
     virtual void execute(Server* server, Client* client)

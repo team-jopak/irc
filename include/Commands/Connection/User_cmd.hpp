@@ -42,19 +42,6 @@ public:
 
     virtual void parse_args(str_list args)
     {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        std::cout << "args : ";
-
-<<<<<<< HEAD
-        for (; begin != end; begin++)
-        {
-            std::cout << *begin << " ";
-        }
-        std::cout << "\n";
-=======
-=======
->>>>>>> Stashed changes
         if (args.size() != 4)
         {
             return ;
@@ -65,28 +52,10 @@ public:
         _hostname = *(++it_args);
         _servername = *(++it_args);
         _realname = *(++it_args);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
-        (void)args;
->>>>>>> feature/20/create_Pass_cmd_class
     }
 
     virtual void execute(Server* server, Client* client)
     {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        (void)server;
-<<<<<<< HEAD
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
-        (void)client;
->>>>>>> feature/20/create_Pass_cmd_class
         std::cout << "Execute USER" << std::endl;
 
         if (client->get_username().empty())
