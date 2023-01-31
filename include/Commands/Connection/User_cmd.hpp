@@ -40,12 +40,13 @@ public:
         _realname = "";
     }
 
-    virtual void parse_args(str_vec_iter begin, str_vec_iter end)
+    virtual void parse_args(str_list args)
     {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         std::cout << "args : ";
 
+<<<<<<< HEAD
         for (; begin != end; begin++)
         {
             std::cout << *begin << " ";
@@ -68,17 +69,24 @@ public:
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+        (void)args;
+>>>>>>> feature/20/create_Pass_cmd_class
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
         (void)server;
+<<<<<<< HEAD
 =======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+        (void)client;
+>>>>>>> feature/20/create_Pass_cmd_class
         std::cout << "Execute USER" << std::endl;
 
         if (client->get_username().empty())

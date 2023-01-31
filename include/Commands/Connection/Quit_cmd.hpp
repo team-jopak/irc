@@ -36,6 +36,7 @@ public:
         _message = "";
     }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     virtual void parse_args(str_vec_iter begin, str_vec_iter end)
@@ -62,11 +63,19 @@ public:
 >>>>>>> Stashed changes
         }
         std::cout << "\n";
+=======
+    virtual void parse_args(str_list args)
+    {
+        std::cout << "args : ";
+
+        (void)args;
+>>>>>>> feature/20/create_Pass_cmd_class
     }
 
-    virtual void execute(Server* server)
+    virtual void execute(Server* server, Client* client)
     {
         (void)server;
+        (void)client;
         std::cout << "Execute QUIT" << std::endl;
 
         server->message_all(":" + client->get_nickname() + " QUIT :" + _message);
