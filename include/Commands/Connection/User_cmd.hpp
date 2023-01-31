@@ -58,7 +58,14 @@ public:
     {
         std::cout << "Execute USER" << std::endl;
 
-        if (client->get_username().empty())
+        // nickname 체크
+        if (client->get_nickname().empty())
+        {
+            return ;
+        }
+
+        // username이 있으면 중복 방지
+        if (!(client->get_username().empty()))
         {
             return ;
         }
@@ -66,7 +73,7 @@ public:
         (void)server; // 서버 사용하지 않음
         client->set_username(_username);
         client->set_realname(_realname);
-        std::string message = "USER " + _username + " 0 * " + _realname;
+        std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
         send(client->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0);
         init_cmd();
     }

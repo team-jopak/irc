@@ -33,7 +33,7 @@ public:
     void set_username(std::string username);
     void set_realname(std::string realname);
     bool is_auth();
-    void get_auth();
+    void set_auth();
     void add_channel(Channel *channel);
     void delete_channel(Channel *channel);
     void message_client(std::string message);
