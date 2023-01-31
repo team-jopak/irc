@@ -1,7 +1,7 @@
 #include "../include/Channel.hpp"
 
-Channel::Channel(std::string name, std::string password)
-    : _name(name), _password(password), _topic(name)
+Channel::Channel(std::string name)
+    : _name(name), _topic(name)
 {    
 }
 
@@ -70,4 +70,9 @@ void Channel::delete_client(Client *client)
             return ;
         }
     }
+}
+
+void Channel::set_admin_client(Client* client)
+{
+    this->_admin = client;
 }

@@ -13,7 +13,6 @@
 #include <netdb.h> // addrinfo
 
 #include "Channel.hpp"
-#include "Client.hpp"
 
 class Message;
 class Command;
@@ -49,6 +48,10 @@ public:
     Client *get_client_by_socket_fd(int socket_fd);
     void delete_cient(int socket_fd);
 
+    // 채널 관련 함수
+	void					add_channel(std::string name, Client* client);
+    std::list<Channel *>	get_channel_list();
+    Channel*            	get_channel(std::string name);
 
     void message_all(std::string message);
 
