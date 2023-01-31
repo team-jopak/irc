@@ -22,7 +22,11 @@ public:
     
     Message()
     {
+        commands["NICK"] = new Nick_cmd();
+        commands["OPER"] = new Oper_cmd();
         commands["PASS"] = new Pass_cmd();
+        commands["QUIT"] = new Quit_cmd();
+        commands["USER"] = new User_cmd();
     }
 
     ~Message()

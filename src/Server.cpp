@@ -201,14 +201,18 @@ std::list<Client *> Server::get_clients()
 
 void Server::message_all(std::string message)
 {
+    if (message.find("\r\n"))
+		message += "\r\n";
+
 	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
+        std::cout << (*it)->get_socket_fd() << std::endl;
 		if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
 			throw std::runtime_error("Couldn't SEND message_all");
 	}
 }
 
-void Server::delete_cient(int socket_fd)
+void Server::delete_client(int socket_fd)
 {
 	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
     {
