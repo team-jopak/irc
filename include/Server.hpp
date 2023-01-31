@@ -12,11 +12,10 @@
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
 
-#include "Channel.hpp"
-#include "Client.hpp"
-
 class Message;
 class Command;
+class Client;
+class Channel;
 
 class Server
 {
@@ -54,6 +53,7 @@ public:
 
 };
 
+#include "Channel.hpp"
 #include "Message.hpp"
 
 #endif

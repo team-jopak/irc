@@ -9,7 +9,6 @@
 
 #include "Commands/Cmd_includes.hpp"
 
-
 class Message 
 {
 public:
