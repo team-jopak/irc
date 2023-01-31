@@ -28,13 +28,27 @@ private:
 public:
     Pass_cmd() : Command("PASS")
     {
+        _password = "";
     }
 
+<<<<<<< Updated upstream
 
     virtual void parse_args(str_vec_iter begin, str_vec_iter end)
+=======
+    // 그냥 벡터를 넘겨줘서 it랑 길이 등 다른 함수도 사용할 수 있는게 좋을 듯?
+    virtual void parse_args(str_list args)
+>>>>>>> Stashed changes
     {
-        std::cout << "args : ";
+        // 벡터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
+        if (args.size() != 1)
+        {
+            return ;
+        }
 
+        str_list_iter it_args = args.begin();
+        _password = *it_args;
+
+<<<<<<< Updated upstream
         for (; begin != end; begin++)
         {
             std::cout << *begin << " ";
@@ -46,11 +60,34 @@ public:
     {
         (void)server;
         std::cout << "Execute NICK" << std::endl;
+=======
+        std::cout << "\n";
+    }
+
+    // 해당 클라이언트 클래스도 넘어와야 할 듯
+    virtual void execute(Server* server, Client* client)
+    {
+        std::cout << "Execute PASS" << std::endl;
+
+        // 해당 클라이언트가 권한이 있다면 return
+        if (client->is_auth() == true)
+        {
+            return ;
+        }
+
+        // 서버클래스가 들어와 비밀번호를 확인해야 할 듯?
+        if (_password == server->get_password())
+        {
+            // 해당 클라이언트에게 권한을 부여한다.
+            client->get_auth();
+        }
+>>>>>>> Stashed changes
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        _password = "";
         std::cout << "Init command" << std::endl;
     }
 
