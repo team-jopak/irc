@@ -37,6 +37,7 @@ public:
     }
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     virtual void parse_args(str_vec_iter begin, str_vec_iter end)
     {
         std::cout << "args : ";
@@ -45,6 +46,8 @@ public:
         {
             std::cout << *begin << " ";
 =======
+=======
+>>>>>>> Stashed changes
     virtual void parse_args(str_list args)
     {        
         str_list_iter it_args = args.begin();
@@ -53,6 +56,9 @@ public:
         {
             std::cout << *it_args << " ";
             _message += *it_args + " ";
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         }
         std::cout << "\n";

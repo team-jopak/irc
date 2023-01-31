@@ -43,6 +43,7 @@ public:
     virtual void parse_args(str_vec_iter begin, str_vec_iter end)
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         std::cout << "args : ";
 
         for (; begin != end; begin++)
@@ -51,6 +52,8 @@ public:
         }
         std::cout << "\n";
 =======
+=======
+>>>>>>> Stashed changes
         if (args.size() != 4)
         {
             return ;
@@ -61,13 +64,19 @@ public:
         _hostname = *(++it_args);
         _servername = *(++it_args);
         _realname = *(++it_args);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 
     virtual void execute(Server* server)
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         (void)server;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         std::cout << "Execute USER" << std::endl;
