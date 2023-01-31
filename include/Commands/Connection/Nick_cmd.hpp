@@ -70,6 +70,12 @@ public:
     {
         std::cout << "Execute NICK" << std::endl;
 
+        // 권한 확인
+        if (client->is_auth() == true)
+        {
+            return ;
+        }
+
         std::list<Client *> clients = server->get_clients();
         std::list<Client *>::iterator it_clients = clients.begin();
 
