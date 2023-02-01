@@ -8,7 +8,7 @@
 #include <list>
 
 #include "Commands/Cmd_includes.hpp"
-
+#include "util_funcs.hpp"
 
 class Message 
 {
@@ -41,7 +41,7 @@ public:
         // 개행 제거
         _remove_nl(msg);
 
-        str_list        splited = _split(msg, ' ');
+        str_list        splited = split(msg, ' ');
         std::string     prefix;
 
         Command*        cmd;
@@ -92,19 +92,6 @@ private:
 
         if (end_char == '\n')
             str.erase(end_iter);
-    }
-
-    str_list _split(std::string input, char delimiter) 
-    {
-        str_list answer;
-        std::stringstream ss(input);
-        std::string temp;
-    
-        while (std::getline(ss, temp, delimiter)) {
-            answer.push_back(temp);
-        }
-    
-        return (answer);
     }
 };
 
