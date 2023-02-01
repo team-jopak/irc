@@ -216,7 +216,7 @@ void Server::delete_client(int socket_fd)
 {
 	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
-		(*it)->delete_client(get_client_by_socket_fd(socket_fd));
+		(*it)->leave_channel(get_client_by_socket_fd(socket_fd));
 	}
 	for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); ++it)
 	{
@@ -256,7 +256,7 @@ void Server::add_channel(std::string name, Client* client)
 {
 	Channel*	new_channel = new Channel(name);
 
-	new_channel->add_client(client);
+	new_channel->join_channel(client, "");
 	new_channel->set_admin_client(client);
 	this->_channels.push_back(new_channel);
 }

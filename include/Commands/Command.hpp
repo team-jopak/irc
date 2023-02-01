@@ -8,6 +8,7 @@
 #include "../Exceptions.hpp"
 
 class Server;
+class Client;
 
 class Command
 {
