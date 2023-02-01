@@ -95,7 +95,8 @@ public:
 			return ;
 		this->names = split(*iter, ',');
         iter++;
-		this->pass = split(*iter, ',');
+        if (iter != args.end())
+            this->pass = split(*iter, ',');
     }
 
     virtual void execute(Server* server, Client* client)

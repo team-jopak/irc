@@ -81,7 +81,32 @@ void Channel::delete_client(map_client map, Client *client)
 
 void    Channel::join_channel(Client* client, std::string pass)
 {
-    (void)pass;
+    switch (_mode)
+    {
+    case SCRET:
+        if (!check_password(pass))
+        {
+            // 비밀 번호 틀림
+            return ;
+        }
+
+    case INVIT:
+        if (!check_invitation(client))
+        {
+            // 초대 받지 않음
+            return ;
+        }
+    default:;
+    }
+
+    if (check_ban_list(client) && !check_invitation(client))
+    {
+        // banned이고, 초대받지 않음
+        return ;
+    }
+
+    delete_client(_invited, client);
+    add_client(_clients, client);
     client->add_channel(this);
 }
 
