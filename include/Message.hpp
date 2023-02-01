@@ -8,8 +8,7 @@
 #include <list>
 
 #include "Commands/Cmd_includes.hpp"
-#include "functions.hpp"
-
+#include "util_funcs.hpp"
 
 class Message 
 {
@@ -23,7 +22,11 @@ public:
     
     Message()
     {
+        commands["NICK"] = new Nick_cmd();
+        commands["OPER"] = new Oper_cmd();
         commands["PASS"] = new Pass_cmd();
+        commands["QUIT"] = new Quit_cmd();
+        commands["USER"] = new User_cmd();
     }
 
     ~Message()
@@ -38,7 +41,7 @@ public:
         // 개행 제거
         _remove_nl(msg);
 
-        str_list        splited = ft_split(msg, ' ');
+        str_list        splited = split(msg, ' ');
         std::string     prefix;
 
         Command*        cmd;

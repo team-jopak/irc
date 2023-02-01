@@ -1,6 +1,6 @@
 .SUFFIXES:	.cpp .o
 
-SRCS_N		= main Client Channel Server
+SRCS_N		= main Client Channel Server util_funcs
 
 SRCS_F		= $(addsuffix .cpp, $(SRCS_N))
 
@@ -13,7 +13,7 @@ INC			= -I./include
 NAME		= ircserv
 
 CC			= c++
-CFLAGS		= -Wextra -Wall -Werror -std=c++98
+CFLAGS		= -Wextra -Wall -Werror -std=c++98 -g
 
 .cpp.o:		$(OBJS)
 			${CC} $(CFLAGS) -c $< -o $(<:.cpp=.o)

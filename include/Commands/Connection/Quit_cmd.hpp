@@ -27,16 +27,25 @@
 
 class Quit_cmd : public Command
 {
+private:
+    std::string _message;
+
 public:
     Quit_cmd() : Command("QUIT")
     {
+        _message = "";
     }
 
     virtual void parse_args(str_list args)
-    {
-        std::cout << "args : ";
-
-        (void)args;
+    {        
+        str_list_iter it_args = args.begin();
+        str_list_iter it_args_end = args.end();
+        for (; it_args != it_args_end; it_args++)
+        {
+            std::cout << *it_args << " ";
+            _message += *it_args + " ";
+        }
+        std::cout << "\n";
     }
 
     virtual void execute(Server* server, Client* client)
@@ -44,11 +53,16 @@ public:
         (void)server;
         (void)client;
         std::cout << "Execute QUIT" << std::endl;
+
+        server->message_all(":" + client->get_nickname() + " QUIT :" + _message);
+        server->delete_client(client->get_socket_fd());
+
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        _message = "";
         std::cout << "Init command" << std::endl;
     }
 
