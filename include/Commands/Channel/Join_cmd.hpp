@@ -2,6 +2,7 @@
 # define JOIN_CMD_HPP
 
 #include "../Command.hpp"
+#include "../../util_funcs.hpp"
 
 /*
 
@@ -38,10 +39,48 @@
 
 JOIN이 성공하면 사용자에게 채널의 주제(RPL_TOPIC)와 채널에 있는 사용자 목록(RPL_NAMREPLY)이 전송되며 여기에는 User join이 포함
 
+   Examples:
+
+   JOIN #foobar                    ; join channel #foobar.
+
+   JOIN &foo fubar                 ; join channel &foo using key "fubar".
+
+   JOIN #foo,&bar fubar            ; join channel #foo using key "fubar"
+                                   and &bar using no key.
+
+   JOIN #foo,#bar fubar,foobar     ; join channel #foo using key "fubar".
+                                   and channel #bar using key "foobar".
+
+   JOIN #foo,#bar                  ; join channels #foo and #bar.
+
+   :WiZ JOIN #Twilight_zone        ; JOIN message from WiZ
+
+
+- 채널은 이름을 사용하여 참조할 수 있다.
+    - 길이는 최대 200자이다.
+    - ‘&’ 또는 ‘#’으로 시작된다.
+    - 공백, ^G, 콤마를 포함할 수 없다.
+    - ‘&’ 문자가 선행되면 존재하는 서버의 클라이언트만 가입할 수 있다.
+
+- 채널에 참여시 클라이언트가 채널에 참여할 수 있는지 확인한다.
+	- 사설, 비밀, 초대, 회의
+	- 채널의 현재 모드에 따라 확인하는 것이 다르다.
+    - 초대 채널방 : 초대장 확인
+	- 비밀 채널방 : 올바른 키 입력 확인
+
+    - ban 목록 확인 (만약에 초대되었다면 참석 가능하다)
+
+- 없는 채널인 경우, 새로운 채널이 생성된다.
+    - 채널장은 채널을 생성한 클라이언트
+
 */
 
 class Join_cmd : public Command
 {
+private:
+    str_list	names;
+	str_list	pass;
+
 public:
     Join_cmd() : Command("JOIN")
     {
@@ -49,16 +88,37 @@ public:
 
     virtual void parse_args(str_list args)
     {
-        std::cout << "args : ";
+        str_list_iter   iter = args.begin();
 
-        (void)args;
+		// 461: Not enough parameters
+        if (args.size() == 0)
+			return ;
+		this->names = split(*iter, ',');
+        iter++;
+		this->pass = split(*iter, ',');
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
-        std::cout << "Execute JOIN" << std::endl;
+		str_list_iter 	name_iter = this->names.begin();
+		str_list_iter 	name_end = this->names.end();
+		str_list_iter 	pass_iter = this->pass.begin();
+		str_list_iter 	pass_end = this->pass.end();
+		Channel*		tar_channel;
+
+		for (; name_iter != name_end; name_iter++)
+		{
+			// 채널 이름 유효성 검사
+			if (!check_name_validation(*name_iter))
+				return ;
+
+			// 채널 확인 후, 참여 또는 생성
+			tar_channel = server->get_channel(*name_iter);
+			if (tar_channel)
+                tar_channel->join_channel(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
+			else
+				server->add_channel(*name_iter, client);
+		}
         init_cmd();
     }
 
@@ -67,6 +127,20 @@ public:
         std::cout << "Init command" << std::endl;
     }
 
+private:
+	// 채널 이름 유효성 검사
+	// - 최대 길이는 200자
+    // - ‘&’ 또는 ‘#’으로 시작된다.
+    // - 공백, ^G, 콤마를 포함할 수 없다.
+	bool	check_name_validation(std::string name)
+	{
+		if ((name.size() <= 200) && (name[0] == '#') && (name.find(7) == std::string::npos))
+		{
+			// 476: Not enough parameters
+			return true;
+		}
+		return false;
+	}
 };
 
 #endif
