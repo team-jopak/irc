@@ -193,6 +193,11 @@ std::string Server::get_password()
     return _password;
 }
 
+std::string Server::get_host()
+{
+    return _host;
+}
+
 std::list<Client *> Server::get_clients()
 {
     return _clients;

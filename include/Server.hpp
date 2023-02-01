@@ -42,6 +42,7 @@ public:
 
     // 서버 관련 함수    
     std::string get_password();
+    std::string get_host();
     Client*     find_client(int fd);
 
     // 클라이언트 관련 함수
