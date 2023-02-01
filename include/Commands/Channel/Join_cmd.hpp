@@ -2,7 +2,7 @@
 # define JOIN_CMD_HPP
 
 #include "../Command.hpp"
-#include "../../functions.hpp"
+#include "../../util_funcs.hpp"
 
 /*
 
@@ -93,9 +93,9 @@ public:
 		// 461: Not enough parameters
         if (args.size() == 0)
 			return ;
-		this->names = ft_split(*iter, ',');
+		this->names = split(*iter, ',');
         iter++;
-		this->pass = ft_split(*iter, ',');
+		this->pass = split(*iter, ',');
     }
 
     virtual void execute(Server* server, Client* client)
@@ -106,7 +106,7 @@ public:
 		str_list_iter 	pass_end = this->pass.end();
 		Channel*		tar_channel;
 
-		for (; name_iter!=name_end; name_iter++)
+		for (; name_iter != name_end; name_iter++)
 		{
 			// 채널 이름 유효성 검사
 			if (!check_name_validation(*name_iter))
@@ -115,12 +115,7 @@ public:
 			// 채널 확인 후, 참여 또는 생성
 			tar_channel = server->get_channel(*name_iter);
 			if (tar_channel)
-			{
-				if (pass_iter != pass_end)
-					tar_channel->join_channel(client, *pass_iter++);
-				else
-					tar_channel->join_channel(client);
-			}
+                tar_channel->join_channel(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
 			else
 				server->add_channel(*name_iter, client);
 		}
@@ -133,7 +128,6 @@ public:
     }
 
 private:
-
 	// 채널 이름 유효성 검사
 	// - 최대 길이는 200자
     // - ‘&’ 또는 ‘#’으로 시작된다.
