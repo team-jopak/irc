@@ -27,6 +27,7 @@ public:
         commands["PASS"] = new Pass_cmd();
         commands["QUIT"] = new Quit_cmd();
         commands["USER"] = new User_cmd();
+        commands["JOIN"] = new Join_cmd();
     }
 
     ~Message()
@@ -55,6 +56,7 @@ public:
             // 접두사 처리
             std::cout << "prefix : " << prefix << std::endl;
         }
+
 
         // 명령어 확인
         if (!_is_command(*(splited.begin())))
