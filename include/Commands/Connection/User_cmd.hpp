@@ -25,28 +25,65 @@
 
 class User_cmd : public Command
 {
+private:
+    std::string _username;
+    std::string _hostname;
+    std::string _servername;
+    std::string _realname;
+
 public:
     User_cmd() : Command("USER")
     {
+        _username = "";
+        _hostname = "";
+        _servername = "";
+        _realname = "";
     }
 
     virtual void parse_args(str_list args)
     {
-        std::cout << "args : ";
-
-        (void)args;
+        if (args.size() != 4)
+        {
+            return ;
+        }
+        
+        str_list_iter it_args = args.begin();
+        _username = *(it_args);
+        _hostname = *(++it_args);
+        _servername = *(++it_args);
+        _realname = *(++it_args);
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
         std::cout << "Execute USER" << std::endl;
+
+        // nickname 체크
+        if (client->get_nickname().empty())
+        {
+            return ;
+        }
+
+        // username이 있으면 중복 방지
+        if (!(client->get_username().empty()))
+        {
+            return ;
+        }
+
+        (void)server; // 서버 사용하지 않음
+        client->set_username(_username);
+        client->set_realname(_realname);
+        std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
+        send(client->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0);
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        _username = "";
+        _hostname = "";
+        _servername = "";
+        _realname = "";
         std::cout << "Init command" << std::endl;
     }
 

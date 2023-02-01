@@ -1,5 +1,4 @@
 #include "../include/Server.hpp"
-#include "../include/Message.hpp"
 
 #define SERVER_PORT  12345
 #define HOST "127.0.0.1"

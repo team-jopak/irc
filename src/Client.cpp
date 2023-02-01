@@ -51,7 +51,7 @@ bool Client::is_auth()
 	return (this->_auth);
 }
 
-void Client::get_auth()
+void Client::set_auth()
 {
 	this->_auth = true;
 }
