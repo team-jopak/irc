@@ -250,4 +250,16 @@ Client* Server::get_client_by_socket_fd(int socket_fd)
 	return (NULL);
 }
 
+Client *Server::get_client_by_nickname(std::string name)
+{
+    for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+    {
+        if (name == (*it)->get_nickname())
+        {
+            return *it;
+        }
+    }
+    return NULL;
+}
+
 

@@ -47,6 +47,7 @@ public:
     // 클라이언트 관련 함수
     std::list<Client *> get_clients();
     Client *get_client_by_socket_fd(int socket_fd);
+    Client *get_client_by_nickname(std::string name);
     void delete_client(int socket_fd);
 
 

@@ -17,6 +17,7 @@ private:
     std::string             _username;
     std::string             _realname;
     bool                    _auth;
+    bool                    _oper;
     std::list<Channel *>    _channels;
 
 public:
@@ -34,6 +35,8 @@ public:
     void set_realname(std::string realname);
     bool is_auth();
     void set_auth();
+    bool is_oper();
+    void set_oper();
     void add_channel(Channel *channel);
     void delete_channel(Channel *channel);
     void message_client(std::string message);

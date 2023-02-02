@@ -56,6 +56,16 @@ void Client::set_auth()
 	this->_auth = true;
 }
 
+bool Client::is_oper()
+{
+	return (this->_oper);
+}
+
+void Client::set_oper()
+{
+	this->_oper = true;
+}
+
 void Client::add_channel(Channel *channel)
 {
 	std::list<Channel *>::iterator it;
