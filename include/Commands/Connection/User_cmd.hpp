@@ -51,7 +51,7 @@ public:
         _username = *(it_args);
         _hostname = *(++it_args);
         _servername = *(++it_args);
-        _realname = *(++it_args);
+        _realname = (*(++it_args)).substr(1);
     }
 
     virtual void execute(Server* server, Client* client)
