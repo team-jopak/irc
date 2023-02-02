@@ -11,11 +11,6 @@ Client::~Client()
 {
 }
 
-void Client::set_nickname(std::string nickname)
-{
-	this->_nickname = nickname;
-}
-
 int Client::get_socket_fd()
 {
 	return (this->_client_fd);
@@ -26,9 +21,9 @@ std::string Client::get_nickname()
 	return (this->_nickname);
 }
 
-void Client::set_username(std::string username)
+void Client::set_nickname(std::string nickname)
 {
-	_username = username;
+	this->_nickname = nickname;
 }
 
 std::string Client::get_username()
@@ -36,15 +31,41 @@ std::string Client::get_username()
 	return (this->_username);
 }
 
-void Client::set_realname(std::string realname)
+void Client::set_username(std::string username)
 {
-	_realname = realname;
+	_username = username;
+}
+
+std::string Client::get_hostname()
+{
+	return (this->_hostname);
+}
+
+void Client::set_hostname(std::string hostname)
+{
+	_hostname = hostname;
+}
+
+std::string Client::get_servername()
+{
+	return (this->_servername);
+}
+
+void Client::set_servername(std::string servername)
+{
+	_servername = servername;
 }
 
 std::string Client::get_realname()
 {
 	return (this->_realname);
 }
+
+void Client::set_realname(std::string realname)
+{
+	_realname = realname;
+}
+
 
 bool Client::is_auth()
 {

@@ -52,13 +52,14 @@ public:
     {
         std::cout << "Execute OPER" << std::endl;
 
-        Client *u = server->get_client_by_nickname(_nickname);
-        if (!u)
+        (void)client;
+        Client *c = server->get_client_by_nickname(_nickname);
+        if (!c)
             return ;
-        if (u->is_oper())
+        if (c->is_oper())
             return ;
         if (_password == OPER)
-            u->set_oper();
+            c->set_oper();
         else
             return ;
         // server.messageAllBut(":127.0.0.1 001 all :" + _options[0] + " became an operator!", u->getSocket());

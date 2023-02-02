@@ -70,8 +70,10 @@ public:
             return ;
         }
 
-        (void)server; // 서버 사용하지 않음
+        (void)server;
         client->set_username(_username);
+        client->set_hostname(_hostname);
+        client->set_servername(_servername);
         client->set_realname(_realname);
         std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
         send(client->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0);
