@@ -75,8 +75,10 @@ public:
         client->set_hostname(_hostname);
         client->set_servername(_servername);
         client->set_realname(_realname);
-        std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
-        send(client->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0);
+        
+        // 서버 끼리 주고 받은 메시지만 보내면 되는 상황?
+        // std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
+        // send(client->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0);
         init_cmd();
     }
 
