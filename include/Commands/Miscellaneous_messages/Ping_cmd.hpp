@@ -27,6 +27,9 @@ PING 메시지를 수신하는 모든 클라이언트는 가능한 한 빨리 <s
 
 class Ping_cmd : public Command
 {
+private:
+    std::string _server;
+
 public:
     Ping_cmd() : Command("PING")
     {
@@ -34,21 +37,32 @@ public:
 
     virtual void parse_args(str_list args)
     {
-        std::cout << "args : ";
-
-        (void)args;
+        //std::cout << "args : ";
+        //(void)args;
+        if (args.size() != 1)
+        {
+            return ;
+        }
+        str_list_iter it = args.begin();
+        _server = (*it);
     }
 
+    // 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
+        //(void)server;
+        //(void)client;
         std::cout << "Execute PING" << std::endl;
+        if (_server == server->get_host())
+            client->message_client(":" + server->get_host() + " PONG " + server->get_host() + " :" + _server);
+        else
+            ; // error msg
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        _server = "";
         std::cout << "Init command" << std::endl;
     }
 

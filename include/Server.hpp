@@ -12,11 +12,10 @@
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
 
-#include "Channel.hpp"
-#include "Client.hpp"
-
 class Message;
 class Command;
+class Client;
+class Channel;
 
 class Server
 {
@@ -42,6 +41,7 @@ public:
 
     // 서버 관련 함수    
     std::string get_password();
+    std::string get_host();
     Client*     find_client(int fd);
 
     // 클라이언트 관련 함수
@@ -50,11 +50,16 @@ public:
     Client *get_client_by_nickname(std::string name);
     void delete_client(int socket_fd);
 
+    // 채널 관련 함수
+	void					add_channel(std::string name, Client* client);
+    std::list<Channel *>	get_channel_list();
+    Channel*            	get_channel(std::string name);
 
     void message_all(std::string message);
 
 };
 
+#include "Channel.hpp"
 #include "Message.hpp"
 
 #endif

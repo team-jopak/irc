@@ -75,7 +75,6 @@ void Client::add_channel(Channel *channel)
 			return;
 	}
 	_channels.push_back(channel);
-	channel->add_client(this);
 }
 
 void Client::delete_channel(Channel *channel)

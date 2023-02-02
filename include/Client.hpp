@@ -1,12 +1,11 @@
 #ifndef CLIENTS_HPP
 # define CLIENTS_HPP
 
-#include <iostream>
-#include "Channel.hpp"
 // #include <fcntl.h>
 #include <sys/socket.h>
+#include <iostream>
 #include <list>
-
+#include "Channel.hpp"
 
 class Channel;
 
