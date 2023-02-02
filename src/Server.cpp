@@ -139,16 +139,8 @@ int Server::recv_message(int cur_fd)
 				// rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
 				
 				// Message 시작
-				try
-				{
-					_cmd = _message->parse_msg(tmp_buf);
-					_cmd->execute(this, get_client_by_socket_fd(cur_fd));
-				}
-				catch (const std::exception &e)
-				{
-					// 에러처리
-					std::cout << "message 에러 처리 해야함" << std::endl;
-				}
+				_cmd = _message->parse_msg(tmp_buf);
+				_cmd->execute(this, get_client_by_socket_fd(cur_fd));
 				break;
 			}
 		}

@@ -38,6 +38,15 @@ public:
 
     // 명령어 인자 초기화
     virtual void init_cmd() = 0;
+
+    void serverResponse(std::string message, int client_fd)
+    {
+        std::string res;
+
+        res += message + "\r\n";
+        if (send(client_fd, res.c_str(), strlen(res.c_str()), 0) == -1)
+            throw std::runtime_error("Couldn't SEND socket");
+    }
 };
 
 #endif

@@ -31,16 +31,19 @@ public:
         _password = "";
     }
 
-    // 그냥 벡터를 넘겨줘서 it랑 길이 등 다른 함수도 사용할 수 있는게 좋을 듯?
+    // 클라이언트 넘겨서 어떤 클라이언트에 에러 메시지를 보내줘야 하는지 알아야 한다. 
     virtual void parse_args(str_list args)
     {
+        str_list_iter it_args = args.begin();
+    
         // 벡터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
         if (args.size() != 1)
         {
-            return ;
+            // 클라이언트로 메세지 보내야 한다.
+            return serverResponse((*it_args), 4);
+            // return ;
         }
 
-        str_list_iter it_args = args.begin();
         _password = *it_args;
 
         std::cout << "\n";
@@ -54,6 +57,7 @@ public:
         // 해당 클라이언트가 권한이 있다면 return
         if (client->is_auth() == true)
         {
+            // throw err_462() ;
             return ;
         }
 
