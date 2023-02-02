@@ -99,6 +99,8 @@ public:
             if (((*it_rec).find('?') != std::string::npos) || (*it_rec).find('*') != std::string::npos)
                 _wildcard = true;
         }
+        if (_wildcard && !check_wildcard_validity())
+            return ;   // wildcard 예외 메시지
     }
 
     virtual void execute(Server* server, Client* client)
@@ -111,6 +113,9 @@ public:
 
     virtual void init_cmd()
     {
+        _message = "";
+        _wildcard = false;
+        _receiver.clear();
         std::cout << "Init command" << std::endl;
     }
 
