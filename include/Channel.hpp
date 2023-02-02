@@ -12,6 +12,34 @@ enum ch_mode
 	MODER	// 회의
 };
 
+struct channel_flag
+{
+    bool o;
+    bool p;
+    bool s;
+    bool i;
+    bool t;
+    bool n;
+    bool b;
+    bool v;
+};
+
+struct user_flag
+{
+    bool i;
+    bool w;
+    bool s;
+    bool o;
+};
+
+struct Mode_flag
+{
+    channel_flag    ch;
+    user_flag       usr;
+
+	std::string ftos();
+};
+
 class Client;
 
 class Channel
@@ -24,9 +52,10 @@ private:
 	std::string	_name;
 	std::string	_topic;
 	std::string	_password;
-	ch_mode		_mode;
 
-	Client*     _admin;
+	Mode_flag	_mode;
+
+	map_client	_op;
 	map_client	_clients;
 	map_client	_invited;
 	map_client	_banned;
@@ -51,7 +80,8 @@ private:
 public:
 	void		join_channel(Client* client, std::string pass);
 	void		leave_channel(Client* client);
-	void		set_admin_client(Client* client);
+	void		set_op_client(Client* client);
+	bool		check_op_client(Client* client);
 	void		message_channel(std::string message);
 };
 
