@@ -115,7 +115,12 @@ void    Channel::leave_channel(Client* client)
     delete_client(_clients, client);
 }
 
-void Channel::set_admin_client(Client* client)
+void Channel::set_op_client(Client* client)
 {
-    this->_admin = client;
+    add_client(_op, client);
+}
+
+bool Channel::check_op_client(Client* client)
+{
+    return (get_client(_op, client->get_nickname()) != NULL);
 }
