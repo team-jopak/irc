@@ -41,8 +41,19 @@ private:
     std::string _message;
     bool _wildcard;
 
-    bool    check_wildcard_validity()
+    bool is_wildcard_exist(std::string str)
     {
+        if (str.find('?') != std::string::npos)
+            return true;
+        if (str.find('*') != std::string::npos)
+            return true;
+        return false;
+    }
+
+    bool check_wildcard_validity()
+    {
+        bool ret = true;
+
         for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
             if (*(*it).begin() == '#' || *(*it).begin() == '?')
@@ -50,15 +61,20 @@ private:
                 if ((*it).find_last_of('.') != std::string::npos)
                 {
                     // check wildcard exist
+                    size_t pos = (*it).find_last_of('.');
+                    std::string substr = (*it).substr(pos + 1);
+                    ret &= !is_wildcard_exist(substr);
                 }
                 else
-                    return false;
+                    ret &= false;
             }
             else
             {
                 // if wildcard exist false;
+                ret &= !is_wildcard_exist(*it);
             }
         }
+        return (ret);
     }
 public:
     Privmsg_cmd() : Command("PRIVMSG")
