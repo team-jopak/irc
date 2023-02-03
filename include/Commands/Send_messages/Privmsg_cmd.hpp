@@ -105,9 +105,25 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
         std::cout << "Execute PRIVMSG" << std::endl;
+        if (_wildcard && 0) // 1 << client.is_oper()
+            return ;  // no permission err msg
+        
+        for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
+        {
+            if (*(*it).begin() == '#' || *(*it).begin() == '?')
+            {
+                ; //server or host
+            }
+            else
+            {
+                Client *dest = server->get_client_by_nickname(*it);
+                if (!dest)
+                    return ; // no such client
+                std::string prefix = ":" + dest->get_nickname() + "@" + server->get_host();
+                dest->message_client(prefix + " PRIVMSG " + (*it) + "_message");
+            }
+        }
         init_cmd();
     }
 
