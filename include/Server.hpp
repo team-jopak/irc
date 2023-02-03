@@ -45,9 +45,10 @@ public:
     Client*     find_client(int fd);
 
     // 클라이언트 관련 함수
-    std::list<Client *> get_clients();
-    Client *get_client_by_socket_fd(int socket_fd);
-    void delete_client(int socket_fd);
+    std::list<Client *>     get_clients();
+    Client*                 get_client_by_socket_fd(int socket_fd);
+    Client*                 get_client_by_nickname(std::string nickname);
+    void                    delete_client(int socket_fd);
 
     // 채널 관련 함수
 	void					add_channel(std::string name, Client* client);
