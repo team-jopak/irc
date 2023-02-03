@@ -255,6 +255,18 @@ Client* Server::get_client_by_socket_fd(int socket_fd)
 	return (NULL);
 }
 
+Client* Server::get_client_by_nickname(std::string nickname)
+{
+	std::list<Client *>::iterator it = _clients.begin();
+	while ((it != _clients.end()))
+	{
+		if ((*it)->get_nickname() == nickname)
+			return (*it);
+		it++;
+	}
+	return (NULL);
+}
+
 
 /** 채널 관련 함수 **/
 void Server::add_channel(std::string name, Client* client)
