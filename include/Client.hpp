@@ -17,6 +17,7 @@ private:
     std::string             _realname;
     bool                    _auth;
     std::list<Channel *>    _channels;
+    std::map<char, bool>    _mode;
 
 public:
     int                     _client_fd;
@@ -37,7 +38,7 @@ public:
     void delete_channel(Channel *channel);
     void message_client(std::string message);
 
-
+    void set_flag(char c, bool is_on);
 };
 
 #endif

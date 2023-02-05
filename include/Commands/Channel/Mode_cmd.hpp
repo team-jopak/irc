@@ -78,9 +78,11 @@ class Mode_cmd : public Command
 {
 private:
     typedef std::pair<char, bool>   pair_flag;
+    typedef std::vector<pair_flag>  vec_flag;
+    typedef vec_flag::iterator      vec_flag_iter;
 
     std::string             name;
-    std::vector<pair_flag>  flags;
+    vec_flag                flags;
     std::queue<std::string> cmd_args;
 
 public:
@@ -112,7 +114,7 @@ public:
                 is_on = true;
             else if (flag_str[i] == '-')
                 is_on = false;
-            else if (_is_option(flag_str[i]))
+            else
                 _insert_flag(flag_str[i], is_on);
         }
         iter++;
@@ -139,22 +141,10 @@ public:
     }
 
 private:
-    bool _is_option(char c)
-    {
-        char op[9] = {'o', 'p', 's', 'i', 't', 'n', 'b', 'v', 'w'};
-
-        for (int i=0; i<9; i++)
-        {
-            if (op[i] == c)
-                return (true);
-        }
-        return (false);
-    }
-
     void _insert_flag(char c, bool is_on)
     {
-        std::vector<pair_flag>::iterator iter = this->flags.begin();
-        std::vector<pair_flag>::iterator end = this->flags.end();
+        vec_flag_iter iter = this->flags.begin();
+        vec_flag_iter end = this->flags.end();
 
         for (; iter != end; iter++)
         {
@@ -167,29 +157,54 @@ private:
 
         this->flags.push_back(pair_flag(c, is_on));
     }
+
+    void _mode_usr(Server* server, Client* client)
+    {
+        Client*         cli = server->get_client_by_nickname(name);
+        vec_flag_iter   iter = this->flags.begin();
+        vec_flag_iter   end = this->flags.end();
+        char            flag;
+        bool            is_on;
+
+        if (cli == NULL)
+        {
+            // 401 :No such nick/channel
+            return ;
+        }
+
+        for (; iter != end; iter++)
+        {
+            flag = iter->first;
+            is_on = iter->second;
+
+            if (flag == 'i' || flag == 's' || flag == 'w' || flag == 'o')
+                cli->set_flag(flag, is_on);
+            else
+            {
+                // 없는 옵션 플래그 예외 처리
+            }
+        }
+    }
     
     void _mode_ch(Server* server, Client* client)
     {
-        // channel인 경우
-        Channel*    ch = server->get_channel(name);
+        Channel*        ch = server->get_channel(name);
+        vec_flag_iter   iter = this->flags.begin();
+        vec_flag_iter   end = this->flags.end();
+        char            flag;
+        bool            is_on;
+
         if (ch == NULL)
         {
             // 403 :No such channel
             return ;
         }
 
-        // channel인 경우에 op 확인
         if (!ch->op->exist(client))
         {
             // 482 :You must have channel op access or above to set channel mode p
             return ;
         }
-
-        std::vector<pair_flag>::iterator iter = flags.begin();
-        std::vector<pair_flag>::iterator end = flags.end();
-
-        char flag;
-        bool is_on;
 
         for (; iter != end; iter++)
         {
@@ -199,9 +214,9 @@ private:
             if (flag == 'o')
                 _mode_ch_o(ch, client, is_on);
             else if (flag == 'l')
-                _mode_ch_l(ch, stoi(get_arg()));
+                _mode_ch_l(ch, _stoi(_get_arg()));
             else if (flag == 'b')
-                _mode_ch_b(ch, get_arg());
+                _mode_ch_b(ch, _get_arg());
             else if (flag == 'v')
                 _mode_ch_v(ch, client, is_on);
             else if (flag == 'k')
@@ -215,14 +230,14 @@ private:
         }
     }
 
-    std::string get_arg()
+    std::string _get_arg()
     {
         std::string arg = this->cmd_args.front();
         this->cmd_args.pop();
         return (arg);
     }
 
-    int stoi(std::string str)
+    int _stoi(std::string str)
     {
         int result = 0;
         std::stringstream ssInt(str);
@@ -233,6 +248,7 @@ private:
         return result;
     }
 
+    // 채널 운영자 설정
     void _mode_ch_o(Channel* ch, Client* client, bool is_on)
     {
         if (is_on)
@@ -241,6 +257,7 @@ private:
             ch->op->del(client);
     }
 
+    // 채널 limit 설정
     void _mode_ch_l(Channel* ch, int limit)
     {
         if (limit == -1)
@@ -272,23 +289,6 @@ private:
         ch->set_flag('k', is_on);
         ch->set_key(key);
     }
-
-    void _mode_usr(Server* server, Client* client)
-    {
-        // user인 경우
-        Client*     cli = server->get_client_by_nickname(name);
-        if (cli == NULL)
-        {
-            // 401 :No such nick/channel
-            return ;
-        }
-
-        (void)client;
-
-        // 기존의 옵션을 변경
-        // 만약에 인자가 필요한 옵션이라면 cmd_args를 확인
-    }
-
 };
 
 #endif
