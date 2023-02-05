@@ -18,6 +18,7 @@ private:
     std::string     _nickname;
     std::string     _username;
     std::string     _realname;
+    std::string     _hostname;
     bool            _auth;
     list_channel    _channels;
     map_flag        _mode;
@@ -32,6 +33,8 @@ public:
     std::string get_nickname();
     std::string get_username();
     std::string get_realname();
+    std::string get_hostname();
+    std::string get_message_prefix();
     void set_nickname(std::string nickname);
     void set_username(std::string username);
     void set_realname(std::string realname);
