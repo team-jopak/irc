@@ -9,6 +9,11 @@ Client::Client(int client_fd)
 
 Client::~Client()
 {
+	this->_mode.clear();
+	this->_mode['i'] = false;
+	this->_mode['o'] = false;
+	this->_mode['s'] = false;
+	this->_mode['w'] = false;
 }
 
 void Client::set_nickname(std::string nickname)
@@ -86,5 +91,11 @@ void Client::message_client(std::string message)
 		message += "\r\n";
 	if (send(this->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
 		throw std::runtime_error("Could't send messageUser");
+}
+
+void Client::set_flag(char c, bool is_on)
+{
+	if (this->_mode.find(c) != this->_mode.end())
+		this->_mode[c] = is_on;
 }
 

@@ -116,7 +116,7 @@ public:
 			// 채널 확인 후, 참여 또는 생성
 			tar_channel = server->get_channel(*name_iter);
 			if (tar_channel)
-                tar_channel->join_channel(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
+                tar_channel->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
 			else
 				server->add_channel(*name_iter, client);
 		}
