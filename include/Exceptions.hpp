@@ -1,7 +1,8 @@
-#ifndef EXCEPTION_HPP
-# define EXCEPTION_HPP
+#ifndef EXCEPTIONS_HPP
+# define EXCEPTIONS_HPP
 
 #include <exception>
+#include <iostream>
 
 class Bad_auth: public std::exception
 {
@@ -22,7 +23,7 @@ public:
 };
 
 // ERR_NOSUCHNICK
-std::string err_401(std::string nickname) { return (nickname + " :No such nick/channel"); }
+// std::string err_401(std::string nickname) { return (nickname + " :No such nick/channel"); }
 // ERR_NOSUCHSERVER
 // std::string err_402(std::string server_name) { return (server_name + " :No such server"); }
 // // ERR_NOSUCHCHANNEL
@@ -58,7 +59,7 @@ std::string err_401(std::string nickname) { return (nickname + " :No such nick/c
 // // ERR_NOTREGISTERED
 // std::string err_451() { return (":You have not registered"); }
 // // ERR_NEEDMOREPARAMS
-// std::string err_461(std::string command) { return (command + " :Not enough parameters"); }
+inline std::string err_461(std::string command) { return (command + " :Not enough parameters"); }
 // // ERR_PASSWDMISMATCH
 // std::string err_464() { return (":Password incorrect"); }
 // // ERR_KEYSET
@@ -85,5 +86,6 @@ std::string err_401(std::string nickname) { return (nickname + " :No such nick/c
 // std::string err_501() { return (":Unknown Mode flag"); }
 // // ERR_USERSDONTMATCH
 // std::string err_502() { return (":Cant change mode for other users"); }
+
 
 #endif
