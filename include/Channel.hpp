@@ -10,6 +10,7 @@ class Ch_client;
 class Channel
 {
 private:
+	typedef std::list<std::string>			list_str;
 	typedef std::list<Client *>				list_client;
 	typedef std::map<std::string, Client *>	map_client;
 	typedef map_client::iterator			map_client_iter;
@@ -20,7 +21,7 @@ private:
 	std::string	_key;
 	map_flag	_mode;
 	int			_limit;
-	std::list<std::string> _masks;
+	list_str	_masks;
 
 public:
 	Channel(std::string name);

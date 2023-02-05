@@ -12,15 +12,18 @@ class Channel;
 class Client
 {
 private:
-    std::string             _nickname;
-    std::string             _username;
-    std::string             _realname;
-    bool                    _auth;
-    std::list<Channel *>    _channels;
-    std::map<char, bool>    _mode;
+    typedef std::map<char, bool>    map_flag;
+    typedef std::list<Channel *>	list_channel;
+
+    std::string     _nickname;
+    std::string     _username;
+    std::string     _realname;
+    bool            _auth;
+    list_channel    _channels;
+    map_flag        _mode;
 
 public:
-    int                     _client_fd;
+    int             _client_fd;
     
     Client(int client_fd);
     ~Client();
