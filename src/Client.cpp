@@ -51,6 +51,17 @@ std::string Client::get_realname()
 	return (this->_realname);
 }
 
+std::string Client::get_message_prefix()
+{
+	std::string prefix;
+	prefix += _nickname;
+	prefix += "!";
+	prefix += _username;
+	prefix += "@";
+	prefix += _hostname;
+	return (prefix);
+}
+
 bool Client::is_auth()
 {
 	return (this->_auth);
