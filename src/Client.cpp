@@ -2,7 +2,13 @@
 
 Client::Client(int client_fd)
 {
+	struct sockaddr_in clientaddr;
+	socklen_t client_len;
+	
+	client_len = sizeof(clientaddr);
 	this->_client_fd = client_fd;
+	getsockname(client_sockfd, (struct sockaddr *)&clientaddr, &client_len);
+	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
 	this->_auth = false;
 };
@@ -49,6 +55,11 @@ void Client::set_realname(std::string realname)
 std::string Client::get_realname()
 {
 	return (this->_realname);
+}
+
+std::string Client::get_hostname()
+{
+	return (this->_hostname);
 }
 
 std::string Client::get_message_prefix()
