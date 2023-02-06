@@ -73,6 +73,8 @@ public:
                 ss << " ";
         }
         topic = ss.str();
+        if (topic[0] == ':')
+            topic = topic.substr(1);
     }
 
     virtual void execute(Server* server, Client* client)
