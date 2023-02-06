@@ -101,7 +101,14 @@ public:
         
         for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
-            if (*(*it).begin() == '#' || *(*it).begin() == '?')
+            if (*(*it).begin() == '#')
+            {
+                Channel *dest = server->get_channel(*it);
+                if (!dest)
+                    return ; // err_msg;
+                dest->message_channel_with_prefix(" NOTICE " + (*it) + _message);
+            } 
+            else if (*(*it).begin() == '?')
             {
                 ; //server or host
             }
