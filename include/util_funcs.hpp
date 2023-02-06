@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 
-std::list<std::string> split(std::string input, char delimiter); 
+std::list<std::string>  split(std::string input, char delimiter); 
+int                     stoi(std::string str);
 
 #endif

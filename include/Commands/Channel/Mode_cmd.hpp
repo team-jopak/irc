@@ -214,7 +214,7 @@ private:
             if (flag == 'o')
                 _mode_ch_o(ch, client, is_on);
             else if (flag == 'l')
-                _mode_ch_l(ch, _stoi(_get_arg()));
+                _mode_ch_l(ch, stoi(_get_arg()));
             else if (flag == 'b')
                 _mode_ch_b(ch, _get_arg());
             else if (flag == 'v')
@@ -235,17 +235,6 @@ private:
         std::string arg = this->cmd_args.front();
         this->cmd_args.pop();
         return (arg);
-    }
-
-    int _stoi(std::string str)
-    {
-        int result = 0;
-        std::stringstream ssInt(str);
-        ssInt >> result;
-
-        if (!ssInt.fail())
-            return (-1);
-        return result;
     }
 
     // 채널 운영자 설정
