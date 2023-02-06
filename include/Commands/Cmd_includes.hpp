@@ -25,7 +25,7 @@
 #include "Miscellaneous_messages/Pong_cmd.hpp"
 
 // Send_message
-#include "Send_messages/Notic_cmd.hpp"
+#include "Send_messages/Notice_cmd.hpp"
 #include "Send_messages/Privmsg_cmd.hpp"
 
 // User_based_queries
