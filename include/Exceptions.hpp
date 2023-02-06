@@ -16,8 +16,6 @@ public:
     const char* what() const throw() { return ("잘못된 매개변수"); }
 };
 
-
-
 // ERR_NOSUCHNICK
 class Err_401: public std::exception
 {

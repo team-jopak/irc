@@ -146,7 +146,7 @@ int Server::recv_message(int cur_fd)
 				}
 				catch (const std::exception& e)
 				{
-					serverResponse(e.what(), 4);
+					serverResponse(e.what(), cur_fd);
 				}
 				
 				break;
