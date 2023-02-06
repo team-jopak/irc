@@ -36,12 +36,11 @@ public:
     {
         str_list_iter it_args = args.begin();
     
-        // 벡터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
+        // 파라미터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
         if (args.size() != 1)
         {
             // 클라이언트로 메세지 보내야 한다.
-            return serverResponse((*it_args), 4);
-            // return ;
+            return serverResponse(err_461("PASS"), 4);
         }
 
         _password = *it_args;
@@ -57,8 +56,7 @@ public:
         // 해당 클라이언트가 권한이 있다면 return
         if (client->is_auth() == true)
         {
-            // throw err_462() ;
-            return ;
+            return err_462() ;
         }
 
         // 서버클래스가 들어와 비밀번호를 확인해야 할 듯?

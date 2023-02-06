@@ -160,6 +160,8 @@ private:
 
     void _mode_usr(Server* server, Client* client)
     {
+        (void)client;
+
         Client*         cli = server->get_client_by_nickname(name);
         vec_flag_iter   iter = this->flags.begin();
         vec_flag_iter   end = this->flags.end();

@@ -40,7 +40,7 @@ public:
 	void		set_limit(int limit);
 	void		set_key(std::string key);
 	void		set_flag(char c, bool is_on);
-	bool		add_mask(std::string mask);
+	void		add_mask(std::string mask);
 
 	bool		check_key(std::string key);
 	
