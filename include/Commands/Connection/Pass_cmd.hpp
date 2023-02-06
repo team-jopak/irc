@@ -40,7 +40,8 @@ public:
         if (args.size() != 1)
         {
             // 클라이언트로 메세지 보내야 한다.
-            return serverResponse(err_461("PASS"), 4);
+            // return serverResponse(err_461("PASS"), 4);
+            throw Err_461("PASS");
         }
 
         _password = *it_args;
@@ -56,7 +57,7 @@ public:
         // 해당 클라이언트가 권한이 있다면 return
         if (client->is_auth() == true)
         {
-            return err_462() ;
+            throw Err_462() ;
         }
 
         // 서버클래스가 들어와 비밀번호를 확인해야 할 듯?

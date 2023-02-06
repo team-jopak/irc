@@ -139,8 +139,16 @@ int Server::recv_message(int cur_fd)
 				// rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
 				
 				// Message 시작
-				_cmd = _message->parse_msg(tmp_buf);
-				_cmd->execute(this, get_client_by_socket_fd(cur_fd));
+				try
+				{
+					_cmd = _message->parse_msg(tmp_buf);
+					_cmd->execute(this, get_client_by_socket_fd(cur_fd));
+				}
+				catch (const std::exception& e)
+				{
+					serverResponse(e.what(), 4);
+				}
+				
 				break;
 			}
 		}
@@ -287,4 +295,13 @@ Channel* Server::get_channel(std::string name)
 	}
 
 	return NULL;
+}
+
+void Server::serverResponse(std::string message, int client_fd)
+{
+	std::string res;
+
+	res += message + "\r\n";
+	if (send(client_fd, res.c_str(), strlen(res.c_str()), 0) == -1)
+		throw std::runtime_error("Couldn't SEND socket");
 }

@@ -16,85 +16,436 @@ public:
     const char* what() const throw() { return ("잘못된 매개변수"); }
 };
 
-// class Wrong_command: public std::exception
-// {
-// private:
-//     std::string _p;
-// 
-// public:
-//     Wrong_command(std::string p)
-//     {
-//         _p = p;
-//     }
-//     const char* what() const throw() { return ("잘못된 명령어"); }
-// };
+
 
 // ERR_NOSUCHNICK
-inline std::string err_401(std::string nickname) { return (nickname + " :No such nick/channel"); }
+class Err_401: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_401(std::string nickname) : _message(nickname + " :No such nick/channel") {}
+    ~Err_401() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOSUCHSERVER
-inline std::string err_402(std::string server_name) { return (server_name + " :No such server"); }
+class Err_402: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_402(std::string servername) : _message(servername + " :No such server") {}
+    ~Err_402() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOSUCHCHANNEL
-inline std::string err_403(std::string channel_name) { return (channel_name + " :No such channel"); }
+class Err_403: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_403(std::string channelname) : _message(channelname + " :No such channel") {}
+    ~Err_403() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_CANNOTSENDTOCHAN
-inline std::string err_404(std::string channel_name) { return (channel_name + " :Cannot send to channel"); }
+class Err_404: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_404(std::string channelname) : _message(channelname + " :Cannot send to channel") {}
+    ~Err_404() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_TOOMANYCHANNELS
-inline std::string err_405(std::string channel_name) { return (channel_name + " :You have joined too many channels"); }
+class Err_405: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_405(std::string channelname) : _message(channelname + " :You have joined too many channels") {}
+    ~Err_405() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_WASNOSUCHNICK
-inline std::string err_406(std::string nickname) { return (nickname + " :There was no sush nickname"); }
+class Err_406: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_406(std::string nickname) : _message(nickname + " :There was no sush nickname") {}
+    ~Err_406() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_TOOMANYTARGETS
-inline std::string err_407(std::string target) { return (target + " :Duplicate recipients. No message delivered"); }
+class Err_407: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_407(std::string target) : _message(target + " :Duplicate recipients. No message delivered") {}
+    ~Err_407() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOORIGIN
-inline std::string err_409() { return (":No origin specified"); }
+class Err_409: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_409() : _message(":No origin specified") {}
+    ~Err_409() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NORECIPIENT
-inline std::string err_411(std::string command) { return (":No recipient given (" + command + ")"); }
+class Err_411: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_411(std::string command) : _message(":No recipient given (" + command + ")") {}
+    ~Err_411() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOTEXTTOSEND
-inline std::string err_412() { return (":No text to send"); }
+class Err_412: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_412() : _message(":No text to send") {}
+    ~Err_412() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOTOPLEVEL
-inline std::string err_413(std::string mask) { return (mask + " :No toplevel domain specified"); }
+class Err_413: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_413(std::string mask) : _message(mask + " :No toplevel domain specified") {}
+    ~Err_413() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NONICKNAMEGIVEN
-inline std::string err_431() { return (":No nickname given"); }
+class Err_431: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_431() : _message(":No nickname given") {}
+    ~Err_431() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_ERRONEUSNICKNAME
-inline std::string err_432(std::string nick) { return (nick + " :Erroneus nickname"); }
+class Err_432: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_432(std::string nick) : _message(nick + " :Erroneus nickname") {}
+    ~Err_432() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NICKNAMEINUSE
-inline std::string err_433(std::string nick) { return (nick + " :Nickname is already in use"); }
+class Err_433: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_433(std::string nick) : _message(nick + " :Nickname is already in use") {}
+    ~Err_433() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NICKCOLLISION
-inline std::string err_436(std::string nick) { return (nick + " :Nickname collision KILL"); }
+class Err_436: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_436(std::string nick) : _message(nick + " :Nickname collision KILL") {}
+    ~Err_436() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOTONCHANNEL
-inline std::string err_442(std::string channel) { return (channel + " :You're not on that channel"); }
+class Err_442: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_442(std::string channel) : _message(channel + " :You're not on that channel") {}
+    ~Err_442() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_USERSDISABLED
-inline std::string err_446() { return (":User has been disabled"); }
+class Err_446: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_446() : _message(":User has been disabled") {}
+    ~Err_446() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOTREGISTERED
-inline std::string err_451() { return (":You have not registered"); }
+class Err_451: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_451() : _message(":You have not registered") {}
+    ~Err_451() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NEEDMOREPARAMS
-inline std::string err_461(std::string command) { return (command + " :Not enough parameters"); }
+class Err_461: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_461(std::string m) : _message(m + " :Not enough parameters") {}
+    ~Err_461() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_ALREADYREGISTRED
-inline std::string err_462() { return (":You may not reregister"); }
+class Err_462: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_462() : _message(":You may not reregister") {}
+    ~Err_462() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_PASSWDMISMATCH
-inline std::string err_464() { return (":Password incorrect"); }
+class Err_464: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_464() : _message(":Password incorrect") {}
+    ~Err_464() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_KEYSET
-inline std::string err_467(std::string command) { return (command + " :Channel key already set"); }
+class Err_467: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_467(std::string command) : _message(command + " :Channel key already set") {}
+    ~Err_467() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // // ERR_CHANNELISFULL
-inline std::string err_471(std::string channel) { return (channel + " :Cannot join channel (+l)"); }
+class Err_471: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_471(std::string channel) : _message(channel + " :Cannot join channel (+l)") {}
+    ~Err_471() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_UNKNOWNMODE
-inline std::string err_472(std::string c) { return (c + " :is unknown mode char to me"); }
+class Err_472: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_472(std::string c) : _message(c + " :is unknown mode char to me") {}
+    ~Err_472() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_INVITEONLYCHAN
-inline std::string err_473(std::string channel) { return (channel + " :Cannot join channel (+i)"); }
+class Err_473: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_473(std::string channel) : _message(channel + " :Cannot join channel (+i)") {}
+    ~Err_473() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_BANNEDFROMCHAN
-inline std::string err_474(std::string channel) { return (channel + " :Cannot join channel (+b)"); }
+class Err_474: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_474(std::string channel) : _message(channel + " :Cannot join channel (+b)") {}
+    ~Err_474() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_BADCHANNELKEY
-inline std::string err_475(std::string channel) { return (channel + " :Cannot join channel (+k)"); }
+class Err_475: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_475(std::string channel) : _message(channel + " :Cannot join channel (+k)") {}
+    ~Err_475() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOPRIVILEGES
-inline std::string err_481() { return (":Permission Denied- You're not an IRC operator"); }
+class Err_481: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_481() : _message(":Permission Denied- You're not an IRC operator") {}
+    ~Err_481() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_CHANOPRIVSNEEDED
-inline std::string err_482(std::string channel) { return (channel + " :You're not channel operator"); }
+class Err_482: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_482(std::string channel) : _message(channel + " :You're not channel operator") {}
+    ~Err_482() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_CANTKILLSERVER
-inline std::string err_483() { return (":You cant kill a server!"); }
+class Err_483: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_483() : _message(":You cant kill a server!") {}
+    ~Err_483() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NOOPERHOST
-inline std::string err_491() { return (":No O-lines for your host"); }
+class Err_491: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_491() : _message(":No O-lines for your host") {}
+    ~Err_491() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_UMODEUNKNOWNFLAG
-inline std::string err_501() { return (":Unknown Mode flag"); }
+class Err_501: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_501() : _message(":Unknown Mode flag") {}
+    ~Err_501() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_USERSDONTMATCH
-inline std::string err_502() { return (":Cant change mode for other users"); }
+class Err_502: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_502() : _message(":Cant change mode for other users") {}
+    ~Err_502() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
 
 
 #endif
