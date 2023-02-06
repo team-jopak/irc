@@ -48,9 +48,37 @@ std::string Channel::get_name()
     return _name;
 }
 
+std::string Channel::get_topic()
+{
+    return _topic;
+}
+
 std::string Channel::get_key()
 {
     return _key;
+}
+
+std::string Channel::get_flag_str(Client* client)
+{
+    map_flag::iterator  iter = _mode.begin();
+    map_flag::iterator  end = _mode.end();
+    std::string         result = "[+";
+
+    for (; iter != end; iter++)
+    {
+        if (iter->second)
+            result.push_back(iter->first);
+    }
+    if (this->_key.size() > 0)
+    {
+        result.push_back(' ');
+        if (this->clients->exist(client))
+            result.append(_key);
+        else
+            result.append("<key>");
+    }
+    result.push_back(']');
+    return (result);
 }
 
 bool Channel::check_key(std::string key)
@@ -58,9 +86,23 @@ bool Channel::check_key(std::string key)
     return (key == this->_key);
 }
 
+bool Channel::check_flag(char c)
+{
+    std::map<char, bool>::iterator iter = this->_mode.find(c);
+
+    if (iter != this->_mode.end())
+        return (iter->second);
+    return false;
+}
+
 void Channel::set_limit(int limit)
 {
     this->_limit = limit;
+}
+
+void Channel::set_topic(std::string topic)
+{
+    this->_topic = topic;
 }
 
 void Channel::set_key(std::string key)

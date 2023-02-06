@@ -34,15 +34,19 @@ public:
 	Ch_client*	voice;
 	
 	std::string	get_name();
+	std::string get_topic();
 	std::string	get_key();
 	list_client	get_clients();
-
+	std::string	get_flag_str(Client* client);
+	
 	void		set_limit(int limit);
+	void 		set_topic(std::string topic);
 	void		set_key(std::string key);
 	void		set_flag(char c, bool is_on);
 	bool		add_mask(std::string mask);
 
 	bool		check_key(std::string key);
+	bool		check_flag(char c);
 	
 	void		init_flags();
 	void		join(Client* client, std::string pass);
