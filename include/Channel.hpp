@@ -53,6 +53,7 @@ public:
 	void		leave(Client* client);
 
 	void		message_channel(std::string message);
+	void 		message_channel_with_prefix(std::string message);
 };
 
 #include "Ch_client.hpp"
