@@ -44,7 +44,7 @@ public:
     {
         if (args.size() != 4)
         {
-            return ;
+            throw Err_461("USER");
         }
         
         str_list_iter it_args = args.begin();
@@ -61,13 +61,13 @@ public:
         // nickname 체크
         if (client->get_nickname().empty())
         {
-            return ;
+            throw Err_431();
         }
 
         // username이 있으면 중복 방지
         if (!(client->get_username().empty()))
         {
-            return ;
+            throw Err_462();
         }
 
         (void)server;
@@ -76,9 +76,9 @@ public:
         client->set_servername(_servername);
         client->set_realname(_realname);
         
-        // 서버 끼리 주고 받은 메시지만 보내면 되는 상황?
-        // std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
-        // send(client->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0);
+        // 서버와 클라이언트가 주고 받은 메시지만 보내면 되는 상황?
+        std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
+        client->message_client(message.c_str());
         init_cmd();
     }
 

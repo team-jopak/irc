@@ -56,7 +56,10 @@ public:
     Channel*            	get_channel(std::string name);
 
     void message_all(std::string message);
+    void message_all(std::string message);
 
+    // 에러 관련 함수
+    void serverResponse(std::string message, int client_fd);
 };
 
 #include "Channel.hpp"

@@ -37,7 +37,7 @@ public:
         // 벡터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
         if (args.size() != 1)
         {
-            return ;
+            throw Err_461("PASS");
         }
 
         str_list_iter it_args = args.begin();

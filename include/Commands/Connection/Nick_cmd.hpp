@@ -46,26 +46,27 @@ public:
         // 닉네임 하나만 받는다.
         if (args.size() != 1)
         {
-            return ;
+            throw Err_461("NICK");
         }
         
         str_list_iter it_args = args.begin();
-        // 최소, 최대 닉 길이?
+        // 최소, 최대 닉 길이? 따로 에러메시지가 없어 고민.
         if ((*it_args).size() < 3 || (*it_args).size() > 9)
         {
-            return ;
+            throw Err_432(*it_args);
         }
 
         // 닉네임에 허용되는 단어들
 
         if (check_char(*it_args) == false)
         {
-            return ;
+            // ERR_ERRONEUSNICKNAME
+            throw Err_432(*it_args);
         }
         _nickname = *it_args;
     }
 
-    // 서버에 클라이언츠들 받아오는 함수 있어서 매개변수로 넘기지 않아도 될 거 같은데?
+    // 서버에 클라이언트를 받아오는 함수 있어서 매개변수로 넘기지 않아도 될 거 같은데?
     virtual void execute(Server* server, Client* client)
     {
         std::cout << "Execute NICK" << std::endl;
@@ -73,7 +74,7 @@ public:
         // 권한 확인(먼저 PASS에서 권한 획득 해야함)
         if (client->is_auth() == false)
         {
-            return ;
+            throw Err_464();
         }
 
         std::list<Client *> clients = server->get_clients();
@@ -84,7 +85,7 @@ public:
         {
             if ((*it_clients)->get_nickname() == _nickname)
             {
-                return ;
+                throw Err_433(_nickname);
             }
         }
         if (client->get_nickname() != "")

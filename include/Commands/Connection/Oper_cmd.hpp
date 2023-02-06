@@ -40,7 +40,7 @@ public:
         // 매개변수 개수 확인
         if (args.size() != 2)
         {
-            return ;
+            throw Err_461("OPER");
         }
 
         str_list_iter it_args = args.begin();
@@ -55,14 +55,15 @@ public:
         (void)client;
         Client *c = server->get_client_by_nickname(_nickname);
         if (!c)
-            return ;
+            throw Err_431();
         if (c->is_oper())
-            return ;
+            throw Err_462();
         if (_password == OPER)
             c->set_oper();
         else
-            return ;
-        // server.messageAllBut(":127.0.0.1 001 all :" + _options[0] + " became an operator!", u->getSocket());
+            throw Err_464();
+        std::string message = ":127.0.0.1 001 all :" + _options[0] + " became an operator!";
+        client.message_client(message.c_str());
 
         init_cmd();
     }
