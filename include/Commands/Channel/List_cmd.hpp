@@ -1,10 +1,7 @@
 #ifndef LIST_CMD_HPP
 # define LIST_CMD_HPP
 
-#include <algorithm>
-#include <sstream>
 #include "../Command.hpp"
-#include "../../util_funcs.hpp"
 
 /*
 

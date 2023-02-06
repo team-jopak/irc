@@ -4,8 +4,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <algorithm>
+#include <sstream>
 
 #include "../Exceptions.hpp"
+#include "../util_funcs.hpp"
 
 class Server;
 class Client;

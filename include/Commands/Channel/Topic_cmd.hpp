@@ -1,6 +1,7 @@
 #ifndef TOPIC_CMD_HPP
 # define TOPIC_CMD_HPP
 
+#include <time.h>
 #include "../Command.hpp"
 
 /*
@@ -20,10 +21,39 @@
 
 <topic> 매개변수가 있는 경우 채널 모드에서 이 작업을 허용하면 해당 채널의 주제가 변경됨
 
+
+- topic 변경
+127.000.000.001.50886-127.000.000.001.06667: TOPIC #a :asdfawefawef
+
+127.000.000.001.06667-127.000.000.001.50886: :cpak!root@127.0.0.1 TOPIC #a :asdfawefawef
+
+
+- 권한없는 topic 변경
+127.000.000.001.54664-127.000.000.001.06667: TOPIC #a :aaaaa
+
+127.000.000.001.06667-127.000.000.001.54664: :irc.local 442 cpak_ #a :You're not on that channel!
+
+
+- topic 확인
+127.000.000.001.54664-127.000.000.001.06667: TOPIC #a
+
+127.000.000.001.06667-127.000.000.001.54664: :irc.local 332 cpak_ #a :asdfawefawef
+:irc.local 333 cpak_ #a cpak!root@127.0.0.1 :1675661369
+
+- ':' 문자 뒤에 있는 문자열이 모두 토픽으로 정해진다.
+- ':' 문자가 없어도 두번째 인자부터 모두 토픽으로 여긴다.
+
+- 변경 응답 : 호스트 / 332 / 닉네임 / 서버이름 / 토픽
+- 호스트 / 333 / 닉네임 / 서버이름 / 클라이언트 이름 / 시간
+
 */
 
 class Topic_cmd : public Command
 {
+private:
+    std::string ch_name;
+    std::string topic;
+
 public:
     Topic_cmd() : Command("TOPIC")
     {
@@ -31,16 +61,51 @@ public:
 
     virtual void parse_args(str_list args)
     {
-        std::cout << "args : ";
+        str_list_iter       iter = args.begin();
+        str_list_iter       end = args.end();
+        std::stringstream   ss;
 
-        (void)args;
+        ch_name = *iter++;
+        while (iter != end)
+        {
+            ss << *iter;
+            if (++iter != end)
+                ss << " ";
+        }
+        topic = ss.str();
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
-        std::cout << "Execute TOPIC" << std::endl;
+        std::string         prefix = server->get_host();
+        std::string         nickname = client->get_nickname();
+        std::stringstream   ss;
+
+        if (topic.size() == 0)
+        {
+            ss << ":" << prefix << " 332 " << nickname << " " << this->ch_name << this->topic;
+            ss << ":" << prefix << " 333 " << nickname << " " << this->ch_name << client->get_message_prefix() << ":" << clock();
+        }
+        else
+        {
+            Channel* ch = server->get_channel(this->ch_name);
+
+            if (ch->check_flag('t'))
+            {
+                if (ch->op->exist(client))
+                    ch->set_topic(this->topic);
+                else
+                {
+                    // 442 cpak_ #a :You're not on that channel!
+                    return ;
+                }
+            }
+            else
+                ch->set_topic(this->topic);
+            ss << client->get_message_prefix() << " TOPIC " << ch->get_name() << " :" << this->topic;
+            ch->message_channel(ss.str());
+        }
+
         init_cmd();
     }
 

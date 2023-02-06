@@ -214,7 +214,7 @@ private:
             if (flag == 'o')
                 _mode_ch_o(ch, client, is_on);
             else if (flag == 'l')
-                _mode_ch_l(ch, stoi(_get_arg()));
+                _mode_ch_l(ch, ft::stoi(_get_arg()));
             else if (flag == 'b')
                 _mode_ch_b(ch, _get_arg());
             else if (flag == 'v')

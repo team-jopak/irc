@@ -42,7 +42,7 @@ public:
         // 개행 제거
         _remove_nl(msg);
 
-        str_list        splited = split(msg, ' ');
+        str_list        splited = ft::split(msg, ' ');
         std::string     prefix;
 
         Command*        cmd;
