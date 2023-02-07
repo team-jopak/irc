@@ -5,12 +5,13 @@
 
 class Ch_client
 {
-public:
+private:
 	typedef std::map<std::string, Client *>	map_client;
 	typedef map_client::iterator			map_client_iter;
 
 	map_client	clients;
 
+public:
 	map_client_iter	begin();
 	map_client_iter	end();
 	Client* 		get(std::string nickname);
@@ -18,6 +19,7 @@ public:
 	void 			set(Client* client);
 	void 			del(Client* client);
 	bool 			exist(Client* client);
+	int				size();
 };
 
 #endif

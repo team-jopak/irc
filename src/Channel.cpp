@@ -72,7 +72,7 @@ std::string Channel::get_flag_str(Client* client)
     if (this->_key.size() > 0)
     {
         result.push_back(' ');
-        if (this->clients->exist(client))
+        if (this->joined->exist(client))
             result.append(_key);
         else
             result.append("<key>");

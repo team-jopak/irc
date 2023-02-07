@@ -25,10 +25,11 @@ private:
 
 public:
 	Channel(std::string name);
+	Channel(const Channel &origin);
 	~Channel();
 
 	Ch_client*	op;
-	Ch_client*	clients;
+	Ch_client*	joined;
 	Ch_client*	invited;
 	Ch_client*	banned;
 	Ch_client*	voice;

@@ -43,3 +43,8 @@ bool Ch_client::exist(Client* client)
 {
 	return (get(client->get_nickname()) != NULL);
 }
+
+int Ch_client::size()
+{
+	return (clients.size());
+}

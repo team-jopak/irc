@@ -13,8 +13,8 @@
 class Message 
 {
 public:
-    typedef std::list<std::string>          str_list;
-    typedef str_list::iterator              str_list_iter;
+    typedef std::list<std::string>          list_str;
+    typedef list_str::iterator              list_str_iter;
     typedef std::map<std::string, Command*> cmd_map;
     typedef cmd_map::iterator               cmd_map_iter;
 
@@ -42,7 +42,7 @@ public:
         // 개행 제거
         _remove_nl(msg);
 
-        str_list        splited = ft::split(msg, ' ');
+        list_str        splited = ft::split(msg, ' ');
         std::string     prefix;
 
         Command*        cmd;

@@ -54,7 +54,7 @@ private:
     {
         bool ret = true;
 
-        for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
+        for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
             if (*(*it).begin() == '#' || *(*it).begin() == '?')
             {
@@ -83,18 +83,18 @@ public:
         _wildcard = false;
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
-        str_list_iter   it = args.begin();
+        list_str_iter   it = args.begin();
         // args 수가 모자란 경우
         if (args.size() < 2)
         {
             return ;
         }
-        _receiver = split((*it), ',');
+        _receiver = ft::split((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
-        for (str_list_iter it_rec; it_rec != _receiver.end(); it_rec++)
+        for (list_str_iter it_rec; it_rec != _receiver.end(); it_rec++)
         {
             if (((*it_rec).find('?') != std::string::npos) || (*it_rec).find('*') != std::string::npos)
                 _wildcard = true;
@@ -105,11 +105,12 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
+        (void)client;
         std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard && 0) // 1 << client.is_oper()
             return ;  // no permission err msg
         
-        for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
+        for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
             if (*(*it).begin() == '#' || *(*it).begin() == '?')
             {

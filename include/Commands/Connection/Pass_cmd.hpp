@@ -32,7 +32,7 @@ public:
     }
 
     // 그냥 벡터를 넘겨줘서 it랑 길이 등 다른 함수도 사용할 수 있는게 좋을 듯?
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         // 벡터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
         if (args.size() != 1)
@@ -40,7 +40,7 @@ public:
             return ;
         }
 
-        str_list_iter it_args = args.begin();
+        list_str_iter it_args = args.begin();
         _password = *it_args;
 
         std::cout << "\n";

@@ -13,6 +13,18 @@ Client::Client(int client_fd)
 	this->_auth = false;
 };
 
+Client::Client(const Client &origin)
+{
+	this->_nickname = origin._nickname;
+	this->_username = origin._username;
+	this->_realname = origin._realname;
+	this->_hostname = origin._hostname;
+	this->_auth = origin._auth;
+	this->_channels = origin._channels;
+	this->_mode = origin._mode;
+	this->_client_fd = origin._client_fd;
+}
+
 Client::~Client()
 {
 	this->_mode.clear();

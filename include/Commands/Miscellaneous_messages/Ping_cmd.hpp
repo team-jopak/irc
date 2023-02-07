@@ -35,7 +35,7 @@ public:
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         //std::cout << "args : ";
         //(void)args;
@@ -43,7 +43,7 @@ public:
         {
             return ;
         }
-        str_list_iter it = args.begin();
+        list_str_iter it = args.begin();
         _server = (*it);
     }
 

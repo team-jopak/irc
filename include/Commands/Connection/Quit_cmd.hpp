@@ -36,10 +36,10 @@ public:
         _message = "";
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {        
-        str_list_iter it_args = args.begin();
-        str_list_iter it_args_end = args.end();
+        list_str_iter it_args = args.begin();
+        list_str_iter it_args_end = args.end();
         for (; it_args != it_args_end; it_args++)
         {
             std::cout << *it_args << " ";
