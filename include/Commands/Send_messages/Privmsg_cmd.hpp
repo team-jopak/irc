@@ -105,8 +105,6 @@ public:
 
     virtual void execute(Server* server, Client*)
     {
-        (void)client;
-
         std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard && 0) // 1 << client.is_oper()
             return ;  // no permission err msg

@@ -72,9 +72,9 @@ std::string Client::get_realname()
 	return (this->_realname);
 }
 
-std::string Client::get_hostname()
+void Client::set_realname(std::string realname)
 {
-	return (this->_hostname);
+	_realname = realname;
 }
 
 std::string Client::get_message_prefix()

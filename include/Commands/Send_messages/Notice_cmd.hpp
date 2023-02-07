@@ -81,7 +81,7 @@ public:
         {
             return ;
         }
-        _receiver = split((*it), ',');
+        _receiver = ft::split((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
         for (str_list_iter it_rec; it_rec != _receiver.end(); it_rec++)
@@ -93,7 +93,7 @@ public:
             return ;
     }
 
-    virtual void execute(Server* server, Client* client)
+    virtual void execute(Server* server, Client*)
     {
         std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard && 0) // 1 << client.is_oper()
