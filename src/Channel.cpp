@@ -2,22 +2,45 @@
 
 Channel::Channel(std::string name)
     : _name(name), _topic(name)
-{    
+{
+    init_flags();
 }
 
 Channel::~Channel()
 {
 }
 
+void Channel::init_flags()
+{
+    this->_mode.clear();
+    this->_mode['p'] = false;
+    this->_mode['s'] = false;
+    this->_mode['i'] = false;
+    this->_mode['n'] = false;
+    this->_mode['m'] = false;
+    this->_mode['k'] = false;
+}
+
+void Channel::set_flag(char c, bool is_on)
+{
+    if (this->_mode.find(c) != this->_mode.end())
+        this->_mode[c] = is_on;
+}
+
+bool Channel::add_mask(std::string mask)
+{
+    _masks.push_back(mask);
+}
+
 std::list<Client *> Channel::get_clients()
 {
-    map_client_iter iter = _clients.begin();
-    map_client_iter end = _clients.end();
-    list_client     clients;
+    map_client_iter iter = clients->begin();
+    map_client_iter end = clients->end();
+    list_client     list_client;
 
     for (; iter != end; iter++)
-        clients.push_back(iter->second);
-    return clients;
+        list_client.push_back(iter->second);
+    return list_client;
 }
 
 std::string Channel::get_name()
@@ -25,9 +48,105 @@ std::string Channel::get_name()
     return _name;
 }
 
-std::string Channel::get_password()
+std::string Channel::get_topic()
 {
-    return _password;
+    return _topic;
+}
+
+std::string Channel::get_key()
+{
+    return _key;
+}
+
+std::string Channel::get_flag_str(Client* client)
+{
+    map_flag::iterator  iter = _mode.begin();
+    map_flag::iterator  end = _mode.end();
+    std::string         result = "[+";
+
+    for (; iter != end; iter++)
+    {
+        if (iter->second)
+            result.push_back(iter->first);
+    }
+    if (this->_key.size() > 0)
+    {
+        result.push_back(' ');
+        if (this->clients->exist(client))
+            result.append(_key);
+        else
+            result.append("<key>");
+    }
+    result.push_back(']');
+    return (result);
+}
+
+bool Channel::check_key(std::string key)
+{
+    return (key == this->_key);
+}
+
+bool Channel::check_flag(char c)
+{
+    std::map<char, bool>::iterator iter = this->_mode.find(c);
+
+    if (iter != this->_mode.end())
+        return (iter->second);
+    return false;
+}
+
+void Channel::set_limit(int limit)
+{
+    this->_limit = limit;
+}
+
+void Channel::set_topic(std::string topic)
+{
+    this->_topic = topic;
+}
+
+void Channel::set_key(std::string key)
+{
+    this->_key = key;
+}
+
+void    Channel::join(Client* client, std::string pass)
+{
+    // _mode에 따라서 확인한다.
+
+    // switch (this->_mode)
+    // {
+    // case SCRET:
+    //     if (!check_key(pass))
+    //     {
+    //         // 비밀 번호 틀림
+    //         return ;
+    //     }
+
+    // case INVIT:
+    //     if (!invited.exist(client))
+    //     {
+    //         // 초대 받지 않음
+    //         return ;
+    //     }
+    // default:;
+    // }
+
+    (void)pass;
+    if (banned->exist(client) && !invited->exist(client))
+    {
+        // banned이고, 초대받지 않음
+        return ;
+    }
+
+    invited->del(client);
+    clients->add(client);
+    client->add_channel(this);
+}
+
+void Channel::leave(Client* client)
+{
+    clients->del(client);
 }
 
 void Channel::message_channel(std::string message)
@@ -41,81 +160,4 @@ void Channel::message_channel(std::string message)
         if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
             throw std::runtime_error("Couldn't send message_channel");
     }
-}
-
-Client* Channel::get_client(map_client map, std::string name)
-{
-    map_client_iter result = map.find(name);
-
-    return (result != map.end() ? result->second : NULL);
-}
-
-bool    Channel::check_invitation(Client* client)
-{
-    return (get_client(_invited, client->get_nickname()) != NULL);
-}
-
-bool    Channel::check_ban_list(Client* client)
-{
-    return (get_client(_banned, client->get_nickname()) != NULL);
-}
-
-bool    Channel::check_password(std::string key)
-{
-    return (key == this->_password);
-}
-
-bool Channel::add_client(map_client map, Client *client)
-{
-    std::pair<map_client_iter, bool>    result;
-    std::string                         nickname = client->get_nickname();
-
-    result = map.insert(std::pair<std::string, Client *>(nickname, client));
-    return (result.second);
-}
-
-void Channel::delete_client(map_client map, Client *client)
-{
-    map.erase(client->get_nickname());
-}
-
-void    Channel::join_channel(Client* client, std::string pass)
-{
-    switch (_mode)
-    {
-    case SCRET:
-        if (!check_password(pass))
-        {
-            // 비밀 번호 틀림
-            return ;
-        }
-
-    case INVIT:
-        if (!check_invitation(client))
-        {
-            // 초대 받지 않음
-            return ;
-        }
-    default:;
-    }
-
-    if (check_ban_list(client) && !check_invitation(client))
-    {
-        // banned이고, 초대받지 않음
-        return ;
-    }
-
-    delete_client(_invited, client);
-    add_client(_clients, client);
-    client->add_channel(this);
-}
-
-void    Channel::leave_channel(Client* client)
-{
-    delete_client(_clients, client);
-}
-
-void Channel::set_admin_client(Client* client)
-{
-    this->_admin = client;
 }

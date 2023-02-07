@@ -12,3 +12,14 @@ std::list<std::string> split(std::string input, char delimiter)
 
     return (answer);
 }
+
+int stoi(std::string str)
+{
+    int result = 0;
+    std::stringstream ssInt(str);
+    ssInt >> result;
+
+    if (!ssInt.fail())
+        return (-1);
+    return result;
+}

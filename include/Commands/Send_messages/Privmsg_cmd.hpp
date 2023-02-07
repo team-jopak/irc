@@ -18,7 +18,7 @@
 
 사용자 간 개인 메시지를 보내는 데 사용
 
-receiver는 쉼표로 구분 된 닉네임이나 채널 이름
+receiver는 쉼표로 구분 된 닉네임이나 채널 이름 (only comma, no space)
 
 서버/호스트 마스크일 수도 있음(운영자만 사용 가능)
 
@@ -36,28 +36,102 @@ receiver는 쉼표로 구분 된 닉네임이나 채널 이름
 
 class Privmsg_cmd : public Command
 {
+private:
+    std::list<std::string> _receiver;
+    std::string _message;
+    bool _wildcard;
+
+    bool is_wildcard_exist(std::string str)
+    {
+        if (str.find('?') != std::string::npos)
+            return true;
+        if (str.find('*') != std::string::npos)
+            return true;
+        return false;
+    }
+
+    bool check_wildcard_validity()
+    {
+        bool ret = true;
+
+        for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
+        {
+            if (*(*it).begin() == '#' || *(*it).begin() == '?')
+            {
+                if ((*it).find_last_of('.') != std::string::npos)
+                {
+                    // check wildcard exist
+                    size_t pos = (*it).find_last_of('.');
+                    std::string substr = (*it).substr(pos + 1);
+                    ret &= !is_wildcard_exist(substr);
+                }
+                else
+                    ret &= false;
+            }
+            else
+            {
+                // if wildcard exist false;
+                ret &= !is_wildcard_exist(*it);
+            }
+        }
+        return (ret);
+    }
 public:
     Privmsg_cmd() : Command("PRIVMSG")
     {
+        _message = "";
+        _wildcard = false;
     }
 
     virtual void parse_args(str_list args)
     {
-        std::cout << "args : ";
-
-        (void)args;
+        str_list_iter   it = args.begin();
+        // args 수가 모자란 경우
+        if (args.size() < 2)
+        {
+            return ;
+        }
+        _receiver = ft::split((*it), ',');
+        _message = (*(++it));
+        // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
+        for (str_list_iter it_rec; it_rec != _receiver.end(); it_rec++)
+        {
+            if (((*it_rec).find('?') != std::string::npos) || (*it_rec).find('*') != std::string::npos)
+                _wildcard = true;
+        }
+        if (_wildcard && !check_wildcard_validity())
+            return ;   // wildcard 예외 메시지
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
         std::cout << "Execute PRIVMSG" << std::endl;
+        if (_wildcard && 0) // 1 << client.is_oper()
+            return ;  // no permission err msg
+        
+        for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
+        {
+            if (*(*it).begin() == '#' || *(*it).begin() == '?')
+            {
+                ; //server or host
+            }
+            else
+            {
+                Client *dest = server->get_client_by_nickname(*it);
+                if (!dest)
+                    return ; // no such client
+                std::string prefix = ":" + dest->get_nickname() + "@" + server->get_host();
+                dest->message_client(prefix + " PRIVMSG " + (*it) + "_message");
+            }
+        }
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        _message = "";
+        _wildcard = false;
+        _receiver.clear();
         std::cout << "Init command" << std::endl;
     }
 

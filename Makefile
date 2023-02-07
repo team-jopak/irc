@@ -1,6 +1,6 @@
 .SUFFIXES:	.cpp .o
 
-SRCS_N		= main Client Channel Server util_funcs
+SRCS_N		= main Client Channel Ch_client Server util_funcs
 
 SRCS_F		= $(addsuffix .cpp, $(SRCS_N))
 

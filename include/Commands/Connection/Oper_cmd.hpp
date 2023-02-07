@@ -62,8 +62,8 @@ public:
             c->set_oper();
         else
             throw Err_464();
-        std::string message = ":127.0.0.1 001 all :" + _options[0] + " became an operator!";
-        client.message_client(message.c_str());
+        std::string message = ":127.0.0.1 001 all :" + _nickname + " became an operator!";
+        client->message_client(message.c_str());
 
         init_cmd();
     }

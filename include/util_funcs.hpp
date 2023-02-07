@@ -5,6 +5,13 @@
 #include <string>
 #include <sstream>
 
-std::list<std::string> split(std::string input, char delimiter); 
+namespace ft
+{
+
+std::list<std::string>  split(std::string input, char delimiter); 
+int                     stoi(std::string str);
+
+}
+
 
 #endif
