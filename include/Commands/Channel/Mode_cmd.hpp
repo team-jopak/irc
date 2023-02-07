@@ -90,7 +90,7 @@ public:
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         if (args.size() < 1)
         {
@@ -98,7 +98,7 @@ public:
             return ;
         }
 
-        str_list_iter iter = args.begin();
+        list_str_iter iter = args.begin();
 
         // nick/channel name
         name = *iter++;

@@ -32,6 +32,7 @@ public:
     int             _client_fd;
     
     Client(int client_fd);
+    Client(const Client &origin);
     ~Client();
     
     int get_socket_fd();

@@ -41,7 +41,7 @@ public:
         _nickname = "";
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         // 닉네임 하나만 받는다.
         if (args.size() != 1)
@@ -49,7 +49,7 @@ public:
             return ;
         }
         
-        str_list_iter it_args = args.begin();
+        list_str_iter it_args = args.begin();
         // 최소, 최대 닉 길이?
         if ((*it_args).size() < 3 || (*it_args).size() > 9)
         {

@@ -1,5 +1,5 @@
-#ifndef JOIN_CMD_HPP
-# define JOIN_CMD_HPP
+#ifndef PART_CMD_HPP
+# define PART_CMD_HPP
 
 #include "../Command.hpp"
 
@@ -16,14 +16,14 @@
 
 */
 
-class Join_cmd : public Command
+class Part_cmd : public Command
 {
 public:
-    Join_cmd() : Command("JOIN")
+    Part_cmd() : Command("PART")
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         std::cout << "args : ";
 
@@ -32,7 +32,9 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute JOIN" << std::endl;
+        (void)server;
+        (void)client;
+        std::cout << "Execute PART" << std::endl;
         init_cmd();
     }
 

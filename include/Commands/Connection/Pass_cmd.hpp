@@ -31,10 +31,10 @@ public:
         _password = "";
     }
 
-    // 클라이언트 넘겨서 어떤 클라이언트에 에러 메시지를 보내줘야 하는지 알아야 한다. 
-    virtual void parse_args(str_list args)
+    // 그냥 벡터를 넘겨줘서 it랑 길이 등 다른 함수도 사용할 수 있는게 좋을 듯?
+    virtual void parse_args(list_str args)
     {
-        str_list_iter it_args = args.begin();
+        list_str_iter it_args = args.begin();
     
         // 파라미터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
         if (args.size() != 1)
@@ -43,9 +43,7 @@ public:
             // return serverResponse(err_461("PASS"), 4);
             throw Err_461("PASS");
         }
-
         _password = *it_args;
-
         std::cout << "\n";
     }
 

@@ -59,10 +59,10 @@ public:
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
-        str_list_iter       iter = args.begin();
-        str_list_iter       end = args.end();
+        list_str_iter       iter = args.begin();
+        list_str_iter       end = args.end();
         std::stringstream   ss;
 
         ch_name = *iter++;

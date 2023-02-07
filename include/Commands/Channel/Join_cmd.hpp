@@ -78,17 +78,17 @@ JOIN이 성공하면 사용자에게 채널의 주제(RPL_TOPIC)와 채널에 �
 class Join_cmd : public Command
 {
 private:
-    str_list	names;
-	str_list	pass;
+    list_str	names;
+	list_str	pass;
 
 public:
     Join_cmd() : Command("JOIN")
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
-        str_list_iter   iter = args.begin();
+        list_str_iter   iter = args.begin();
 
 		// 461: Not enough parameters
         if (args.size() == 0)
@@ -101,10 +101,10 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-		str_list_iter 	name_iter = this->names.begin();
-		str_list_iter 	name_end = this->names.end();
-		str_list_iter 	pass_iter = this->pass.begin();
-		str_list_iter 	pass_end = this->pass.end();
+		list_str_iter 	name_iter = this->names.begin();
+		list_str_iter 	name_end = this->names.end();
+		list_str_iter 	pass_iter = this->pass.begin();
+		list_str_iter 	pass_end = this->pass.end();
 		Channel*		tar_channel;
 
 		for (; name_iter != name_end; name_iter++)
