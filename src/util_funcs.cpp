@@ -1,5 +1,8 @@
 #include "../include/util_funcs.hpp"
 
+namespace ft
+{
+
 std::list<std::string> split(std::string input, char delimiter)
 {
     std::list<std::string> answer;
@@ -23,3 +26,5 @@ int stoi(std::string str)
         return (-1);
     return result;
 }
+
+} // ft

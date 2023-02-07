@@ -3,6 +3,9 @@
 
 // #include <fcntl.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/ip.h> 
+#include <arpa/inet.h>
 #include <iostream>
 #include <list>
 #include "Channel.hpp"
@@ -20,7 +23,6 @@ private:
     std::string     _hostname;
     std::string     _servername;
     std::string     _realname;
-    std::string     _hostname;
     bool            _auth;
     bool            _oper;
     list_channel    _channels;

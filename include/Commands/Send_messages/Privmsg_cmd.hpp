@@ -103,10 +103,8 @@ public:
             return ;   // wildcard 예외 메시지
     }
 
-    virtual void execute(Server* server, Client* client)
+    virtual void execute(Server* server, Client*)
     {
-        (void)client;
-
         std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard && 0) // 1 << client.is_oper()
             return ;  // no permission err msg

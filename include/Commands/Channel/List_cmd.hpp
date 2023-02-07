@@ -72,11 +72,15 @@ public:
 
         rpl_liststart_321();
         if (ch_name.size() != 0)
-            rpl_list_322(*(server->get_channel(ch_name)));
+            rpl_list_322(server->get_channel(ch_name));
         else
         {
-            std::list<Channel *> list = server->get_channel_list();
-            for_each(list.begin(), list.end(), rpl_list_322);
+            std::list<Channel *>            list = server->get_channel_list();
+            std::list<Channel *>::iterator  iter = list.begin();
+            std::list<Channel *>::iterator  end = list.end();
+
+            for (; iter != end; iter++)
+                rpl_list_322(*iter);
         }
         rpl_listend_323();
 
@@ -105,20 +109,20 @@ private:
     // s : 채널명을 * 으로 변경, 옵션을 : 으로 변경
     // p : 아무것도 출력하지 않는다.
     // :irc.local 322 cpak_ #weer 2 :[+mns] asdf
-    void rpl_list_322(Channel &ch)
+    void rpl_list_322(Channel* ch)
     {
-        std::stringstream ss;
-        std::string prefix = this->cmd_server->get_host();
-        std::string nickname = this->cmd_client->get_nickname();
-        std::string ch_name = ch.get_name();
-        std::string ch_nums = std::to_string(ch.clients->clients.size());
-        std::string ch_opt = ch.get_flag_str(cmd_client);
-        std::string ch_topic = ch.get_topic();
-        bool        is_joined = ch.clients->exist(cmd_client);
+        std::stringstream   ss;
+        std::string         prefix = this->cmd_server->get_host();
+        std::string         nickname = this->cmd_client->get_nickname();
+        std::string         ch_name = ch->get_name();
+        std::string         ch_nums = std::to_string(ch->clients->clients.size());
+        std::string         ch_opt = ch->get_flag_str(cmd_client);
+        std::string         ch_topic = ch->get_topic();
+        bool                is_joined = ch->clients->exist(cmd_client);
 
-        if (!is_joined && ch.check_flag('s'))
+        if (!is_joined && ch->check_flag('s'))
             return ;
-        else if (!is_joined && ch.check_flag('p'))
+        else if (!is_joined && ch->check_flag('p'))
         {
             ch_name = "*";
             ch_opt = "";
