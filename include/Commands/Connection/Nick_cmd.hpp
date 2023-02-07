@@ -57,10 +57,8 @@ public:
         }
 
         // 닉네임에 허용되는 단어들
-
         if (check_char(*it_args) == false)
         {
-            // ERR_ERRONEUSNICKNAME
             throw Err_432(*it_args);
         }
         _nickname = *it_args;
@@ -80,7 +78,7 @@ public:
         std::list<Client *> clients = server->get_clients();
         std::list<Client *>::iterator it_clients = clients.begin();
 
-        // 중복되는 닉네임 방지 // 여기서 에러남 내일 여기서 고치자
+        // 중복되는 닉네임 방지
         for (; it_clients != clients.end(); ++it_clients)
         {
             if ((*it_clients)->get_nickname() == _nickname)
