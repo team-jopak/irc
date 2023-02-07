@@ -1,5 +1,5 @@
-#ifndef JOIN_CMD_HPP
-# define JOIN_CMD_HPP
+#ifndef PART_CMD_HPP
+# define PART_CMD_HPP
 
 #include "../Command.hpp"
 
@@ -16,23 +16,52 @@
 
 */
 
-class Join_cmd : public Command
+class Part_cmd : public Command
 {
+private:
+    list_str    channel_strs;
+
 public:
-    Join_cmd() : Command("JOIN")
+    Part_cmd() : Command("PART")
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
-        std::cout << "args : ";
-
-        (void)args;
+        channel_strs = ft::split(*(args.begin()), ',');
     }
 
+    // op, joined, invited, voice에서 제거
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute JOIN" << std::endl;
+        list_str_iter   iter = channel_strs.begin();
+        list_str_iter   end = channel_strs.end();
+        Channel*        ch;
+
+        if (channel_strs.size() == 0)
+        {
+            // ERR_NEEDMOREPARAMS
+        }
+
+        for (; iter != end; iter++)
+        {
+            ch = server->get_channel(*iter);
+            if (ch == NULL)
+            {
+                // ERR_NOSUCHCHANNEL
+            }
+
+            if (!ch->joined->exist(client))
+            {
+                // ERR_NOTONCHANNEL
+            }
+
+            ch->op->del(client);
+            ch->joined->del(client);
+            ch->invited->del(client);
+            ch->voice->del(client);
+            client->delete_channel(ch);
+        }
         init_cmd();
     }
 

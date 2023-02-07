@@ -44,7 +44,7 @@ public:
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         std::cout << "args : ";
 

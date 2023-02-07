@@ -53,10 +53,10 @@ public:
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
-        str_list_iter iter = args.begin();
-        str_list_iter end = args.end();
+        list_str_iter iter = args.begin();
+        list_str_iter end = args.end();
 
         for (; iter != end; iter++)
         {
@@ -115,10 +115,10 @@ private:
         std::string         prefix = this->cmd_server->get_host();
         std::string         nickname = this->cmd_client->get_nickname();
         std::string         ch_name = ch->get_name();
-        std::string         ch_nums = std::to_string(ch->clients->clients.size());
+        std::string         ch_nums = std::to_string(ch->joined->size());
         std::string         ch_opt = ch->get_flag_str(cmd_client);
         std::string         ch_topic = ch->get_topic();
-        bool                is_joined = ch->clients->exist(cmd_client);
+        bool                is_joined = ch->joined->exist(cmd_client);
 
         if (!is_joined && ch->check_flag('s'))
             return ;

@@ -33,7 +33,7 @@ public:
     {
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         std::cout << "args : ";
         
@@ -43,7 +43,7 @@ public:
             throw Err_461("OPER");
         }
 
-        str_list_iter it_args = args.begin();
+        list_str_iter it_args = args.begin();
         _nickname = *it_args;
         _password = *(++it_args);
     }

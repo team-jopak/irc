@@ -40,14 +40,14 @@ public:
         _realname = "";
     }
 
-    virtual void parse_args(str_list args)
+    virtual void parse_args(list_str args)
     {
         if (args.size() != 4)
         {
             throw Err_461("USER");
         }
         
-        str_list_iter it_args = args.begin();
+        list_str_iter it_args = args.begin();
         _username = *(it_args);
         _hostname = *(++it_args);
         _servername = *(++it_args);

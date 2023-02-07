@@ -34,8 +34,8 @@ void Channel::add_mask(std::string mask)
 
 std::list<Client *> Channel::get_clients()
 {
-    map_client_iter iter = clients->begin();
-    map_client_iter end = clients->end();
+    map_client_iter iter = joined->begin();
+    map_client_iter end = joined->end();
     list_client     list_client;
 
     for (; iter != end; iter++)
@@ -72,7 +72,7 @@ std::string Channel::get_flag_str(Client* client)
     if (this->_key.size() > 0)
     {
         result.push_back(' ');
-        if (this->clients->exist(client))
+        if (this->joined->exist(client))
             result.append(_key);
         else
             result.append("<key>");
@@ -140,13 +140,13 @@ void    Channel::join(Client* client, std::string pass)
     }
 
     invited->del(client);
-    clients->add(client);
+    joined->add(client);
     client->add_channel(this);
 }
 
 void Channel::leave(Client* client)
 {
-    clients->del(client);
+    joined->del(client);
 }
 
 void Channel::message_channel(std::string message)
