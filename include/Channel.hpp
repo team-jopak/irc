@@ -44,7 +44,7 @@ public:
 	void 		set_topic(std::string topic);
 	void		set_key(std::string key);
 	void		set_flag(char c, bool is_on);
-	bool		add_mask(std::string mask);
+	void		add_mask(std::string mask);
 
 	bool		check_key(std::string key);
 	bool		check_flag(char c);
@@ -54,6 +54,7 @@ public:
 	void		leave(Client* client);
 
 	void		message_channel(std::string message);
+	void 		message_channel_with_prefix(std::string message);
 };
 
 #include "Ch_client.hpp"

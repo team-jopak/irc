@@ -123,7 +123,7 @@ public:
 
     virtual void init_cmd()
     {
-        std::string _nickname;
+        _nickname = "";
         std::cout << "Init command" << std::endl;
     }
 

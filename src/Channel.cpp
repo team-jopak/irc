@@ -27,15 +27,15 @@ void Channel::set_flag(char c, bool is_on)
         this->_mode[c] = is_on;
 }
 
-bool Channel::add_mask(std::string mask)
+void Channel::add_mask(std::string mask)
 {
     _masks.push_back(mask);
 }
 
 std::list<Client *> Channel::get_clients()
 {
-    map_client_iter iter = clients->begin();
-    map_client_iter end = clients->end();
+    map_client_iter iter = joined->begin();
+    map_client_iter end = joined->end();
     list_client     list_client;
 
     for (; iter != end; iter++)
@@ -140,13 +140,13 @@ void    Channel::join(Client* client, std::string pass)
     }
 
     invited->del(client);
-    clients->add(client);
+    joined->add(client);
     client->add_channel(this);
 }
 
 void Channel::leave(Client* client)
 {
-    clients->del(client);
+    joined->del(client);
 }
 
 void Channel::message_channel(std::string message)
@@ -157,6 +157,21 @@ void Channel::message_channel(std::string message)
         message += "\r\n";
     for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
     {
+        if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
+            throw std::runtime_error("Couldn't send message_channel");
+    }
+}
+
+void Channel::message_channel_with_prefix(std::string message)
+{
+    list_client clients = get_clients();
+
+    if (message.find("\r\n"))
+        message += "\r\n";
+    for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        std::string full_msg = (*it)->get_message_prefix();
+        full_msg += message;
         if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
             throw std::runtime_error("Couldn't send message_channel");
     }

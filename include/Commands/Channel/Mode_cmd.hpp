@@ -158,7 +158,7 @@ private:
         this->flags.push_back(pair_flag(c, is_on));
     }
 
-    void _mode_usr(Server* server, Client* client)
+    void _mode_usr(Server* server, Client*)
     {
         Client*         cli = server->get_client_by_nickname(name);
         vec_flag_iter   iter = this->flags.begin();

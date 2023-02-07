@@ -94,16 +94,9 @@ public:
         {
             ch = server->get_channel(*iter);
             if(ch != NULL && ch->joined->exist(client))
-            {
                 rpl_namreply_353(ch, server, client);
-            }
-            
-            // endline 출력
-
-
-
+            rpl_endofnames_366(ch, server, client);
         }
-
         init_cmd();
     }
 
@@ -113,6 +106,24 @@ public:
     }
 
 private:
+    void rpl_endofnames_366(Channel* ch, Server* server, Client* client)
+    {
+        std::stringstream ss;
+
+        ss << ":";
+        ss << server->get_host();
+        ss << " 366 ";
+        ss << client->get_nickname();
+        ss << " ";
+        if (ch == NULL)
+            ss << "*";
+        else
+            ss << ch->get_name();
+        ss << " :End of /NAMES list.";
+
+        std::cout << ss.str() << std::endl;
+    }
+
     void rpl_namreply_353(Channel* ch, Server* server, Client* client)
     {
         std::stringstream   ss;
@@ -125,6 +136,8 @@ private:
         ss << " ";
         ss << "353";
         ss << " ";
+        ss << client->get_nickname();
+        ss << " ";
         ss << ch->get_name();
         ss << " ";
         
@@ -134,10 +147,10 @@ private:
             mode = "*";
         if (ch->check_flag('s'))
             mode = "@";
-        
         ss << mode;
         ss << " ";
 
+        // 채널 이름
         ss << ch->get_name();
         ss << " ";
 
@@ -156,8 +169,8 @@ private:
             ss << nick;
             ss << " ";
         }
+        std::cout << ss.str() << std::endl;
     }
-
 };
 
 #endif

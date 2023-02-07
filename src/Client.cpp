@@ -2,12 +2,12 @@
 
 Client::Client(int client_fd)
 {
-	struct sockaddr_in clientaddr;
+	sockaddr_in clientaddr;
 	socklen_t client_len;
 	
 	client_len = sizeof(clientaddr);
 	this->_client_fd = client_fd;
-	getsockname(client_sockfd, (struct sockaddr *)&clientaddr, &client_len);
+	getsockname(_client_fd, (struct sockaddr *)&clientaddr, &client_len);
 	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
 	this->_auth = false;
@@ -34,11 +34,6 @@ Client::~Client()
 	this->_mode['w'] = false;
 }
 
-void Client::set_nickname(std::string nickname)
-{
-	this->_nickname = nickname;
-}
-
 int Client::get_socket_fd()
 {
 	return (this->_client_fd);
@@ -49,9 +44,9 @@ std::string Client::get_nickname()
 	return (this->_nickname);
 }
 
-void Client::set_username(std::string username)
+void Client::set_nickname(std::string nickname)
 {
-	_username = username;
+	this->_nickname = nickname;
 }
 
 std::string Client::get_username()
@@ -59,9 +54,29 @@ std::string Client::get_username()
 	return (this->_username);
 }
 
-void Client::set_realname(std::string realname)
+void Client::set_username(std::string username)
 {
-	_realname = realname;
+	_username = username;
+}
+
+std::string Client::get_hostname()
+{
+	return (this->_hostname);
+}
+
+void Client::set_hostname(std::string hostname)
+{
+	_hostname = hostname;
+}
+
+std::string Client::get_servername()
+{
+	return (this->_servername);
+}
+
+void Client::set_servername(std::string servername)
+{
+	_servername = servername;
 }
 
 std::string Client::get_realname()
@@ -69,9 +84,9 @@ std::string Client::get_realname()
 	return (this->_realname);
 }
 
-std::string Client::get_hostname()
+void Client::set_realname(std::string realname)
 {
-	return (this->_hostname);
+	_realname = realname;
 }
 
 std::string Client::get_message_prefix()
@@ -93,6 +108,16 @@ bool Client::is_auth()
 void Client::set_auth()
 {
 	this->_auth = true;
+}
+
+bool Client::is_oper()
+{
+	return (this->_oper);
+}
+
+void Client::set_oper()
+{
+	this->_oper = true;
 }
 
 void Client::add_channel(Channel *channel)

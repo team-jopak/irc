@@ -2,6 +2,7 @@
 # define OPER_CMD_HPP
 
 #include "../Command.hpp"
+#define OPER "42"
 
 /*
 
@@ -23,6 +24,10 @@ OPER 메시지는 클라이언트-서버 전용
 
 class Oper_cmd : public Command
 {
+private:
+    std::string _nickname;
+    std::string _password;
+
 public:
     Oper_cmd() : Command("OPER")
     {
@@ -31,15 +36,34 @@ public:
     virtual void parse_args(list_str args)
     {
         std::cout << "args : ";
+        
+        // 매개변수 개수 확인
+        if (args.size() != 2)
+        {
+            return ;
+        }
 
-        (void)args;
+        list_str_iter it_args = args.begin();
+        _nickname = *it_args;
+        _password = *(++it_args);
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
         std::cout << "Execute OPER" << std::endl;
+
+        (void)client;
+        Client *c = server->get_client_by_nickname(_nickname);
+        if (!c)
+            return ;
+        if (c->is_oper())
+            return ;
+        if (_password == OPER)
+            c->set_oper();
+        else
+            return ;
+        // server.messageAllBut(":127.0.0.1 001 all :" + _options[0] + " became an operator!", u->getSocket());
+
         init_cmd();
     }
 
