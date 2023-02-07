@@ -50,11 +50,9 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
         std::cout << "Execute QUIT" << std::endl;
 
-        server->message_all(":" + client->get_nickname() + " QUIT :" + _message);
+        server->message_all(":" + client->get_nickname() + " QUIT :" + _message + "\r\n");
         server->delete_client(client->get_socket_fd());
 
         init_cmd();
