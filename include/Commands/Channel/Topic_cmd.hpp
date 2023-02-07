@@ -1,7 +1,6 @@
 #ifndef TOPIC_CMD_HPP
 # define TOPIC_CMD_HPP
 
-#include <time.h>
 #include "../Command.hpp"
 
 /*
@@ -81,17 +80,21 @@ public:
     {
         std::string         prefix = server->get_host();
         std::string         nickname = client->get_nickname();
-        std::stringstream   ss;
+        Channel*            ch = server->get_channel(this->ch_name);
+        std::string         msg;
+
+        if (ch == NULL)
+        {
+            // ERR_NOSUCHCHANNEL
+        }
 
         if (topic.size() == 0)
         {
-            ss << ":" << prefix << " 332 " << nickname << " " << this->ch_name << this->topic;
-            ss << ":" << prefix << " 333 " << nickname << " " << this->ch_name << client->get_message_prefix() << ":" << clock();
+            server->reply->topic_332(client, ch, this->topic);
+            server->reply->clock_333(client, ch);
         }
         else
         {
-            Channel* ch = server->get_channel(this->ch_name);
-
             if (ch->check_flag('t'))
             {
                 if (ch->op->exist(client))
@@ -104,10 +107,10 @@ public:
             }
             else
                 ch->set_topic(this->topic);
-            ss << client->get_message_prefix() << " TOPIC " << ch->get_name() << " :" << this->topic;
-            ch->message_channel(ss.str());
-        }
 
+            msg = "TOPIC " + ch->get_name() + " :" + this->topic;
+            server->reply->broadcast_exec(client, ch, msg);
+        }
         init_cmd();
     }
 

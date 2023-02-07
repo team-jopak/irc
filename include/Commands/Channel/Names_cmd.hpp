@@ -89,13 +89,23 @@ public:
         list_str_iter   iter = this->ch_list.begin();
         list_str_iter   end = this->ch_list.end();
         Channel*        ch;
+        std::string     mode;
+
+        
 
         while (iter != end)
         {
             ch = server->get_channel(*iter);
-            if(ch != NULL && ch->joined->exist(client))
-                rpl_namreply_353(ch, server, client);
-            rpl_endofnames_366(ch, server, client);
+            if (ch != NULL && ch->joined->exist(client))
+            {
+                mode = "=";
+                if (ch->check_flag('p'))
+                    mode = "*";
+                if (ch->check_flag('s'))
+                    mode = "@";
+                server->reply->namreply_353(client, ch, mode);
+            }
+            server->reply->endofnames_366(client, ch);
         }
         init_cmd();
     }
@@ -103,73 +113,6 @@ public:
     virtual void init_cmd()
     {
         std::cout << "Init command" << std::endl;
-    }
-
-private:
-    void rpl_endofnames_366(Channel* ch, Server* server, Client* client)
-    {
-        std::stringstream ss;
-
-        ss << ":";
-        ss << server->get_host();
-        ss << " 366 ";
-        ss << client->get_nickname();
-        ss << " ";
-        if (ch == NULL)
-            ss << "*";
-        else
-            ss << ch->get_name();
-        ss << " :End of /NAMES list.";
-
-        std::cout << ss.str() << std::endl;
-    }
-
-    void rpl_namreply_353(Channel* ch, Server* server, Client* client)
-    {
-        std::stringstream   ss;
-        map_client_iter     iter = ch->joined->begin();
-        map_client_iter     end = ch->joined->end();
-        list_str            list;
-
-        ss << ":";
-        ss << server->get_host();
-        ss << " ";
-        ss << "353";
-        ss << " ";
-        ss << client->get_nickname();
-        ss << " ";
-        ss << ch->get_name();
-        ss << " ";
-        
-        // channel의 모드를 확인
-        std::string mode = "=";
-        if (ch->check_flag('p'))
-            mode = "*";
-        if (ch->check_flag('s'))
-            mode = "@";
-        ss << mode;
-        ss << " ";
-
-        // 채널 이름
-        ss << ch->get_name();
-        ss << " ";
-
-        ss << ":";
-        // client를 확인한다. op, voice
-        for (; iter != end; iter++)
-        {
-            std::string nick;
-
-            if (ch->voice->exist(iter->second))
-                nick = "+";
-            if (ch->op->exist(iter->second))
-                nick = "@";
-            nick.append(iter->first);
-            list.push_back(nick);
-            ss << nick;
-            ss << " ";
-        }
-        std::cout << ss.str() << std::endl;
     }
 };
 

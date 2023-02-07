@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <sstream>
 
+#include "../Reply.hpp"
 #include "../Exceptions.hpp"
 #include "../util_funcs.hpp"
 

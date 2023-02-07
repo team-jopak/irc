@@ -12,10 +12,13 @@
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
 
+
 class Message;
 class Command;
 class Client;
 class Channel;
+
+#include "Reply.hpp"
 
 class Server
 {
@@ -31,6 +34,8 @@ private:
     Command* _cmd;
 
 public:
+    Reply*  reply;
+
     Server(std::string host, std::string port, std::string password);
     ~Server();
 
@@ -62,6 +67,7 @@ public:
     void serverResponse(std::string message, int client_fd);
 
 };
+
 
 #include "Channel.hpp"
 #include "Message.hpp"
