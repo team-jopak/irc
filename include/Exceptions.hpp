@@ -257,7 +257,7 @@ private:
     std::string _message;
 
 public:
-    Err_461(std::string m) : _message(m + " :Not enough parameters") {}
+    Err_461(std::string command) : _message(command + " :Not enough parameters") {}
     ~Err_461() throw() {return ;}
     
     const char* what() const throw() { return _message.c_str(); }

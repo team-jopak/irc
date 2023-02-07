@@ -60,7 +60,6 @@ public:
 
     // 에러 관련 함수
     void serverResponse(std::string message, int client_fd);
-
 };
 
 #include "Channel.hpp"

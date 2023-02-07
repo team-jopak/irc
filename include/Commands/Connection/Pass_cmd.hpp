@@ -39,8 +39,6 @@ public:
         // 파라미터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
         if (args.size() != 1)
         {
-            // 클라이언트로 메세지 보내야 한다.
-            // return serverResponse(err_461("PASS"), 4);
             throw Err_461("PASS");
         }
         _password = *it_args;
