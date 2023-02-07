@@ -3,6 +3,9 @@
 
 // #include <fcntl.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/ip.h> 
+#include <arpa/inet.h>
 #include <iostream>
 #include <list>
 #include "Channel.hpp"

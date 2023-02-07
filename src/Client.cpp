@@ -2,12 +2,12 @@
 
 Client::Client(int client_fd)
 {
-	struct sockaddr_in clientaddr;
+	sockaddr_in clientaddr;
 	socklen_t client_len;
 	
 	client_len = sizeof(clientaddr);
 	this->_client_fd = client_fd;
-	getsockname(client_sockfd, (struct sockaddr *)&clientaddr, &client_len);
+	getsockname(_client_fd, (struct sockaddr *)&clientaddr, &client_len);
 	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
 	this->_auth = false;

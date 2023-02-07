@@ -27,7 +27,7 @@ void Channel::set_flag(char c, bool is_on)
         this->_mode[c] = is_on;
 }
 
-bool Channel::add_mask(std::string mask)
+void Channel::add_mask(std::string mask)
 {
     _masks.push_back(mask);
 }

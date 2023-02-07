@@ -93,10 +93,10 @@ public:
 		// 461: Not enough parameters
         if (args.size() == 0)
 			return ;
-		this->names = split(*iter, ',');
+		this->names = ft::split(*iter, ',');
         iter++;
         if (iter != args.end())
-            this->pass = split(*iter, ',');
+            this->pass = ft::split(*iter, ',');
     }
 
     virtual void execute(Server* server, Client* client)
