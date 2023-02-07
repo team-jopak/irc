@@ -144,11 +144,11 @@ int Server::recv_message(int cur_fd)
 					_cmd = _message->parse_msg(tmp_buf);
 					_cmd->execute(this, get_client_by_socket_fd(cur_fd));
 				}
-				catch (const std::exception &e)
+				catch (const std::exception& e)
 				{
-					// 에러처리
-					std::cout << "message 에러 처리 해야함" << std::endl;
+					serverResponse(e.what(), cur_fd);
 				}
+				
 				break;
 			}
 		}
@@ -295,4 +295,13 @@ Channel* Server::get_channel(std::string name)
 	}
 
 	return NULL;
+}
+
+void Server::serverResponse(std::string message, int client_fd)
+{
+	std::string res;
+
+	res += message + "\r\n";
+	if (send(client_fd, res.c_str(), strlen(res.c_str()), 0) == -1)
+		throw std::runtime_error("Couldn't SEND socket");
 }

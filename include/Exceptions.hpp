@@ -1,7 +1,8 @@
-#ifndef EXCEPTION_HPP
-# define EXCEPTION_HPP
+#ifndef EXCEPTIONS_HPP
+# define EXCEPTIONS_HPP
 
 #include <exception>
+#include <iostream>
 
 class Bad_auth: public std::exception
 {
@@ -15,10 +16,17 @@ public:
     const char* what() const throw() { return ("잘못된 매개변수"); }
 };
 
-class Wrong_command: public std::exception
+// ERR_NOSUCHNICK
+class Err_401: public std::exception
 {
+private:
+    std::string _message;
+
 public:
-    const char* what() const throw() { return ("잘못된 명령어"); }
+    Err_401(std::string nickname) : _message(nickname + " :No such nick/channel") {}
+    ~Err_401() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
 };
 
 // ERR_NOSUCHSERVER

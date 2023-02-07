@@ -17,9 +17,12 @@ private:
 
     std::string     _nickname;
     std::string     _username;
+    std::string     _hostname;
+    std::string     _servername;
     std::string     _realname;
     std::string     _hostname;
     bool            _auth;
+    bool            _oper;
     list_channel    _channels;
     map_flag        _mode;
 

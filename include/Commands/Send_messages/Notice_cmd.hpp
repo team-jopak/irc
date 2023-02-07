@@ -1,40 +1,30 @@
-#ifndef PRIVMSG_CMD_HPP
-# define PRIVMSG_CMD_HPP
+#ifndef NOTICE_CMD_HPP
+# define NOTICE_CMD_HPP
 
 #include "../Command.hpp"
 
 /*
 
-1. Command: PRIVMSG
-2. Parameters: <receiver>{,<receiver>} <text to be send>
+1. Command: NOTICE
+2. Parameters: <nickname> <text>
 3. Replies
-    1. ERR_NORECIPIENT
-    2. ERR_NOTEXTTOSEND
-    3. ERR_CANNOTSENDTOCHAN
-    4. ERR_NOTOPLEVEL
-    5. ERR_NOSUCHNICK
-    6. ERR_TOOMANYTARGETS
-    7. RPL_AWAY
+    1. None
 
-사용자 간 개인 메시지를 보내는 데 사용
+PRIVMSG와 유사하게 사용함
 
-receiver는 쉼표로 구분 된 닉네임이나 채널 이름 (only comma, no space)
+NOTICE에 대한 응답으로 자동 회신을 보내면 안됨
 
-서버/호스트 마스크일 수도 있음(운영자만 사용 가능)
+이 규칙은 서버에도 적용
 
-이 경우 마스크와 일치하는 서버 또는 호스트가 있는 사람에게만 메시지를 전송
+알림을 받았을 때 클라이언트에게 오류 응답을 보내선 안됨
 
-마스크에는 .이 하나 이상 있어야 함
+해당 규칙은 클라이언트가 수신한 내용에 대한 응답으로 자동으로 무언가를 보내는 사이의 루프를 방지하는 것
 
-그리고 마지막 .뒤에는 와일드 카드가 없음
-
-해당 요구사항은 모든 사람들에게 메시지를 보내는 것을 방지하기 위함
-
-와일드 카드는 ?, /, *
+일반적으로 다른 자동화 장치와 루프가 되지 않도록 항상 응답하는 것으로 보이는 자동 장치에 의해 사용됨
 
 */
 
-class Privmsg_cmd : public Command
+class Notice_cmd : public Command
 {
 private:
     std::list<std::string> _receiver;
@@ -77,7 +67,7 @@ private:
         return (ret);
     }
 public:
-    Privmsg_cmd() : Command("PRIVMSG")
+    Notice_cmd() : Command("NOTICE")
     {
         _message = "";
         _wildcard = false;
@@ -91,7 +81,7 @@ public:
         {
             return ;
         }
-        _receiver = ft::split((*it), ',');
+        _receiver = split((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
         for (str_list_iter it_rec; it_rec != _receiver.end(); it_rec++)
@@ -100,16 +90,14 @@ public:
                 _wildcard = true;
         }
         if (_wildcard && !check_wildcard_validity())
-            return ;   // wildcard 예외 메시지
+            return ;
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)client;
-
         std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard && 0) // 1 << client.is_oper()
-            return ;  // no permission err msg
+            return ;
         
         for (str_list_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
@@ -118,7 +106,7 @@ public:
                 Channel *dest = server->get_channel(*it);
                 if (!dest)
                     return ; // err_msg;
-                dest->message_channel_with_prefix(" PRIVMSG " + (*it) + _message);
+                dest->message_channel_with_prefix(" NOTICE " + (*it) + _message);
             } 
             else if (*(*it).begin() == '?')
             {
@@ -128,8 +116,8 @@ public:
             {
                 Client *dest = server->get_client_by_nickname(*it);
                 if (!dest)
-                    return ; // no such client
-                dest->message_client(dest->get_message_prefix() + " PRIVMSG " + (*it) + _message);
+                    return ;
+                dest->message_client(dest->get_message_prefix() + " NOTICE " + (*it) + _message);
             }
         }
         init_cmd();
