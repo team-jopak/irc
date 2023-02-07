@@ -2,7 +2,13 @@
 
 Client::Client(int client_fd)
 {
+	struct sockaddr_in clientaddr;
+	socklen_t client_len;
+	
+	client_len = sizeof(clientaddr);
 	this->_client_fd = client_fd;
+	getsockname(client_sockfd, (struct sockaddr *)&clientaddr, &client_len);
+	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
 	this->_auth = false;
 };
@@ -66,11 +72,21 @@ std::string Client::get_realname()
 	return (this->_realname);
 }
 
-void Client::set_realname(std::string realname)
+std::string Client::get_hostname()
 {
-	_realname = realname;
+	return (this->_hostname);
 }
 
+std::string Client::get_message_prefix()
+{
+	std::string prefix;
+	prefix += _nickname;
+	prefix += "!";
+	prefix += _username;
+	prefix += "@";
+	prefix += _hostname;
+	return (prefix);
+}
 
 bool Client::is_auth()
 {

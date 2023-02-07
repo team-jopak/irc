@@ -20,6 +20,7 @@ private:
     std::string     _hostname;
     std::string     _servername;
     std::string     _realname;
+    std::string     _hostname;
     bool            _auth;
     bool            _oper;
     list_channel    _channels;
@@ -37,6 +38,8 @@ public:
     std::string get_hostname();
     std::string get_servername();
     std::string get_realname();
+    std::string get_hostname();
+    std::string get_message_prefix();
     void set_nickname(std::string nickname);
     void set_username(std::string username);
     void set_hostname(std::string hostname);
