@@ -159,6 +159,19 @@ public:
     const char* what() const throw() { return _message.c_str(); }
 };
 
+// ERR_UNKNOWNCOMMAND
+class Err_421: public std::exception
+{
+private:
+    std::string _message;
+
+public:
+    Err_421(std::string cmd) : _message(cmd + " :Unknown command") {}
+    ~Err_421() throw() {return ;}
+    
+    const char* what() const throw() { return _message.c_str(); }
+};
+
 // ERR_NONICKNAMEGIVEN
 class Err_431: public std::exception
 {
