@@ -26,9 +26,9 @@ public:
     Command* parse_msg(std::string msg);
 
 private:
-    bool _is_command(std::string str);
-    bool _is_prefix(std::string str);
-    void _remove_nl(std::string& str);
+    bool        _is_command(std::string str);
+    bool        _is_prefix(std::string str);
+    std::string _remove_nl(std::string str);
 };
 
 #endif

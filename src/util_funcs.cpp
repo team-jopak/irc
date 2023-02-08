@@ -27,4 +27,14 @@ int stoi(std::string str)
     return result;
 }
 
+std::string str_toupper(std::string str)
+{
+    std::string::iterator   iter = str.begin();
+    std::string::iterator   end = str.end();
+
+    for (; iter != end; iter++)
+        *iter = toupper(*iter);
+    return (str);
+}
+
 } // ft
