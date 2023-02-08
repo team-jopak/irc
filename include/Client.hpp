@@ -53,6 +53,7 @@ public:
     void set_oper();
     void add_channel(Channel *channel);
     void delete_channel(Channel *channel);
+    int get_channel_size();
     void message_client(std::string message);
 
     void set_flag(char c, bool is_on);

@@ -58,6 +58,7 @@ std::string Channel::get_key()
     return _key;
 }
 
+// limit이 있으면 key 다음에 표시된다.
 std::string Channel::get_flag_str(Client* client)
 {
     map_flag::iterator  iter = _mode.begin();
@@ -93,6 +94,11 @@ bool Channel::check_flag(char c)
     if (iter != this->_mode.end())
         return (iter->second);
     return false;
+}
+
+bool Channel::check_limit()
+{
+    return (this->joined->size() < this->_limit);
 }
 
 void Channel::set_limit(int limit)
@@ -131,6 +137,31 @@ void    Channel::join(Client* client, std::string pass)
     //     }
     // default:;
     // }
+
+    // key이지만 invited라면 무조건 들어올 수 있다.
+
+    // invited가 아닌경우 key를 확인한다.
+    // invited가 아니고, key도 아닌 경우 key error
+    // invited가 아니고, key가 맞은 경우 invited error
+
+    if (!invited->exist(client))
+    {
+        if (check_flag('k') && !check_key(pass))
+            throw Err_475(get_name());
+
+        if (check_flag('i') && !invited->exist(client))
+            throw Err_473(get_name());
+
+        if (check_flag('l') && check_limit())
+            throw Err_471(get_name());
+
+        if (banned->exist(client))
+            throw Err_474(get_name());
+
+
+
+    }
+
 
     (void)pass;
     if (banned->exist(client) && !invited->exist(client))

@@ -209,6 +209,13 @@ public:
     Err_475(std::string channel) { message = channel + " :Cannot join channel (+k)"; }
 };
 
+// ERR_INVALIDCHAN
+class Err_476: Irc_exception
+{
+public:
+    Err_476(std::string channel) { message = channel + " :Invalid channel name"; }
+};
+
 // ERR_NOPRIVILEGES
 class Err_481: Irc_exception
 {

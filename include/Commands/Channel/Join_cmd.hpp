@@ -73,6 +73,15 @@ JOIN이 성공하면 사용자에게 채널의 주제(RPL_TOPIC)와 채널에 �
 - 없는 채널인 경우, 새로운 채널이 생성된다.
     - 채널장은 채널을 생성한 클라이언트
 
+
+
+
+    8. ERR_TOOMANYCHANNELS
+
+    9. RPL_TOPIC
+
+    405 cpak #ff :You are on too many channels
+
 */
 
 class Join_cmd : public Command
@@ -90,9 +99,8 @@ public:
     {
         list_str_iter   iter = args.begin();
 
-		// 461: Not enough parameters
         if (args.size() == 0)
-			return ;
+			throw Err_461("JOIN");
 		this->names = ft::split(*iter, ',');
         iter++;
         if (iter != args.end())
@@ -109,11 +117,10 @@ public:
 
 		for (; name_iter != name_end; name_iter++)
 		{
-			// 채널 이름 유효성 검사
 			if (!check_name_validation(*name_iter))
-				return ;
-
-			// 채널 확인 후, 참여 또는 생성
+				throw Err_476(tar_channel->get_name());
+            if (!check_client_ch_limit(server, client))
+                throw Err_405(tar_channel->get_name());
 			tar_channel = server->get_channel(*name_iter);
 			if (tar_channel)
                 tar_channel->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
@@ -133,15 +140,15 @@ private:
 	// - 최대 길이는 200자
     // - ‘&’ 또는 ‘#’으로 시작된다.
     // - 공백, ^G, 콤마를 포함할 수 없다.
-	bool	check_name_validation(std::string name)
+	bool check_name_validation(std::string name)
 	{
-		if ((name.size() <= 200) && (name[0] == '#') && (name.find(7) == std::string::npos))
-		{
-			// 476: Not enough parameters
-			return true;
-		}
-		return false;
+		return ((name.size() <= 200) && (name[0] == '#') && (name.find(7) == std::string::npos));
 	}
+
+    bool check_client_ch_limit(Server* server, Client* client)
+    {
+        return(client->get_channel_size() < server->ch_limit);
+    }
 };
 
 #endif

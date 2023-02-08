@@ -1,7 +1,7 @@
 #include "../include/Server.hpp"
 
 Server::Server(std::string host, std::string port, std::string password)
-	: _host(host), _port(port), _password(password), _message(new Message()), reply(new Reply(this))
+	: _host(host), _port(port), _password(password), _message(new Message()), reply(new Reply(this)), ch_limit(20)
 {
 	init();
 }

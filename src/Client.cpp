@@ -144,6 +144,11 @@ void Client::delete_channel(Channel *channel)
 	}
 }
 
+int Client::get_channel_size()
+{
+	return (_channels.size());
+}
+
 void Client::message_client(std::string message)
 {
 	if (message.find("\r\n"))
