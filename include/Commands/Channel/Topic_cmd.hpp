@@ -109,7 +109,7 @@ public:
                 ch->set_topic(this->topic);
 
             msg = "TOPIC " + ch->get_name() + " :" + this->topic;
-            server->reply->broadcast_exec(client, ch, msg);
+            server->reply->send_channel_exec(ch, client, msg);
         }
         init_cmd();
     }

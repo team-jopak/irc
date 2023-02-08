@@ -91,8 +91,6 @@ public:
         Channel*        ch;
         std::string     mode;
 
-        
-
         while (iter != end)
         {
             ch = server->get_channel(*iter);

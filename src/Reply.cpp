@@ -93,7 +93,7 @@ void Reply::send_channel(Channel* ch)
     init_ss();
 }
 
-void Reply::broadcast_exec(Client* client, Channel* ch, std::string cmd)
+void Reply::send_channel_exec(Channel* ch, Client* client, std::string cmd)
 {
     set_colon_msg(client->get_message_prefix());
     set_string(cmd);

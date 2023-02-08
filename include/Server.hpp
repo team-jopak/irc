@@ -11,18 +11,16 @@
 #include <cstring>
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
-
+#include "Reply.hpp"
 
 class Message;
 class Command;
 class Client;
 class Channel;
 
-#include "Reply.hpp"
-
 class Server
 {
-private:
+private:;
     int _socket_fd;
     std::string _host;
     std::string _port;
@@ -30,11 +28,11 @@ private:
     std::vector<pollfd> _poll_fd_vec;
     std::list<Client *> _clients;
     std::list<Channel *> _channels;
-    Message* _message;
-    Command* _cmd;
+    Message*            _message;
+    Command*            _cmd;
 
 public:
-    Reply*  reply;
+    Reply*              reply;
 
     Server(std::string host, std::string port, std::string password);
     ~Server();
@@ -67,7 +65,6 @@ public:
     void serverResponse(std::string message, int client_fd);
 
 };
-
 
 #include "Channel.hpp"
 #include "Message.hpp"
