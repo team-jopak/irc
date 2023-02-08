@@ -40,12 +40,7 @@ Message::~Message()
 
 Command* Message::parse_msg(std::string msg) 
 {
-    // msg 끝에는 개행이 있어야 한다.
-
-    // 개행 제거
-    _remove_nl(msg);
-
-    list_str        splited = ft::split(msg, ' ');
+    list_str        splited = ft::split(_remove_nl(msg), ' ');
     list_str_iter   cmd_iter = splited.begin();
     std::string     prefix;
     cmd_map_iter    result;
@@ -83,11 +78,12 @@ bool Message::_is_prefix(std::string str)
     return (str[0] == ':');
 }
 
-void Message::_remove_nl(std::string& str)
+std::string Message::_remove_nl(std::string str)
 {
     std::string::iterator   end_iter = std::prev(str.end());
     char                    end_char = *(end_iter);
 
     if (end_char == '\n')
         str.erase(end_iter);
+    return (str);
 }
