@@ -9,7 +9,7 @@ private:
 	typedef std::map<std::string, Client *>	map_client;
 	typedef map_client::iterator			map_client_iter;
 
-	map_client	clients;
+	map_client		clients;
 
 public:
 	map_client_iter	begin();
