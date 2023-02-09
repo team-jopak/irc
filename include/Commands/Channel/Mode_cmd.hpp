@@ -214,7 +214,7 @@ private:
             if (flag == 'o')
                 _mode_ch_o(ch, client, is_on);
             else if (flag == 'l')
-                _mode_ch_l(ch, ft::stoi(_get_arg()));
+                _mode_ch_l(ch, is_on, ft::stoi(_get_arg()));
             else if (flag == 'b')
                 _mode_ch_b(ch, _get_arg());
             else if (flag == 'v')
@@ -247,13 +247,14 @@ private:
     }
 
     // 채널 limit 설정
-    void _mode_ch_l(Channel* ch, int limit)
+    void _mode_ch_l(Channel* ch, bool is_on, int limit)
     {
         if (limit == -1)
         {
             // 잘못된 limit 예외 처리
             return ;
         }
+        ch->set_flag('l', is_on);
         ch->set_limit(limit);
     }
    

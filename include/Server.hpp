@@ -62,7 +62,7 @@ public:
     void			delete_client(int socket_fd);
 
     // 채널 관련 함수
-	void			add_channel(std::string name, Client* client);
+	Channel*		add_channel(std::string name, Client* client);
     list_ch			get_channel_list();
     list_ch			get_channel_list(Client* client);
     Channel*		get_channel(std::string name);

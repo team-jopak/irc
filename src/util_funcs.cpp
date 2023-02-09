@@ -59,7 +59,6 @@ bool strmatch(std::string pattern, std::string string)
 					return (false);
 				else
 				{
-					int flag = 0;
 					while (j < strsize)
 					{
 						if (ft::strmatch(pat + i + 1, str + j))

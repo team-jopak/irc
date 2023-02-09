@@ -118,6 +118,50 @@ void Reply::send_channel_exec(Channel* ch, Client* client, std::string cmd)
     send_channel(ch);
 }
 
+void Reply::liststart_321(Client* client)
+{
+    set_prefix();
+    set_number("321");
+    set_nickname(client);
+    set_string("Channel :Users Name");
+}
+
+void Reply::list_322(Client* client, std::string ch_name)
+{
+    Channel*    ch = _server->get_channel(ch_name);
+    if (ch == NULL)
+        return ;
+
+    std::string ch_opt = ch->get_flag_str(client);
+    std::string ch_topic = ch->get_topic();
+    bool        is_joined = ch->joined->exist(client);
+
+    if (!is_joined && ch->check_flag('s'))
+        return ;
+    else if (!is_joined && ch->check_flag('p'))
+    {
+        ch_name = "*";
+        ch_opt = "";
+        ch_topic = "";
+    }
+
+    set_prefix();
+    set_nickname(client);
+    set_string(ch_name);
+    set_string(std::to_string(ch->joined->size()));
+    set_string(ch_opt);
+    set_string(ch_topic);
+    send_client(client);
+}
+
+void Reply::listend_323(Client* client)
+{
+    set_prefix();
+    set_number("323");
+    set_nickname(client);
+    set_string(":End of channel list.");
+}
+
 void Reply::topic_332(Client* client, Channel* ch)
 {
     set_prefix();

@@ -28,6 +28,7 @@ void Channel::init_flags()
     this->_mode['n'] = false;
     this->_mode['m'] = false;
     this->_mode['k'] = false;
+    this->_mode['l'] = false;
 }
 
 void Channel::set_flag(char c, bool is_on)
@@ -67,7 +68,6 @@ std::string Channel::get_key()
     return _key;
 }
 
-// limit이 있으면 key 다음에 표시된다.
 std::string Channel::get_flag_str(Client* client)
 {
     map_flag::iterator  iter = _mode.begin();
@@ -79,13 +79,18 @@ std::string Channel::get_flag_str(Client* client)
         if (iter->second)
             result.push_back(iter->first);
     }
-    if (this->_key.size() > 0)
+    if (check_flag('k'))
     {
         result.push_back(' ');
         if (this->joined->exist(client))
             result.append(_key);
         else
             result.append("<key>");
+    }
+    if (check_flag('l'))
+    {
+        result.push_back(' ');
+        result.push_back(_limit + 48);
     }
     result.push_back(']');
     return (result);

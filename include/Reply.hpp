@@ -43,6 +43,9 @@ public:
     void        send_channel(Channel* ch);
     void        send_channel_exec(Channel* ch, Client* client, std::string cmd);
 
+    void        liststart_321(Client* client);
+    void        list_322(Client* client, std::string ch_name);
+    void        listend_323(Client* client);
     void        topic_332(Client* client, Channel* ch);
     void        clock_333(Client* client, Channel* ch);
     void        namreply_353(Client* client, Channel* ch);

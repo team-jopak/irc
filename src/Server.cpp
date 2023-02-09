@@ -198,6 +198,11 @@ std::string Server::get_host()
     return _host;
 }
 
+std::string Server::get_name()
+{
+	return _name;
+}
+
 std::list<Client *> Server::get_clients()
 {
 	return _clients;
