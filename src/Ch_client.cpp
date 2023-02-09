@@ -22,7 +22,7 @@ bool Ch_client::add(Client* client)
 	std::pair<map_client_iter, bool>    result;
 	std::string                         nickname = client->get_nickname();
 
-	result = clients.insert(std::pair<std::string, Client *>(nickname, client));
+	result = clients.insert(std::pair<const std::string, Client *>(nickname, client));
 	return (result.second);
 }
 

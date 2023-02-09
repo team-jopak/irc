@@ -1,13 +1,22 @@
 #include "../include/Channel.hpp"
 
-Channel::Channel(std::string name)
-    : _name(name), _topic(name)
+Channel::Channel(std::string name) : _name(name), _topic("")
 {
     init_flags();
+    this->op = new Ch_client();
+    this->joined = new Ch_client();
+    this->invited = new Ch_client();
+    this->banned = new Ch_client();
+    this->voice = new Ch_client();
 }
 
 Channel::~Channel()
 {
+    delete this->op;
+    delete this->joined;
+    delete this->invited;
+    delete this->banned;
+    delete this->voice;
 }
 
 void Channel::init_flags()
@@ -116,34 +125,12 @@ void Channel::set_key(std::string key)
     this->_key = key;
 }
 
+// key이지만 invited라면 무조건 들어올 수 있다.
+// invited가 아닌경우 key를 확인한다.
+// invited가 아니고, key도 아닌 경우 key error
+// invited가 아니고, key가 맞은 경우 invited error
 void    Channel::join(Client* client, std::string pass)
 {
-    // _mode에 따라서 확인한다.
-
-    // switch (this->_mode)
-    // {
-    // case SCRET:
-    //     if (!check_key(pass))
-    //     {
-    //         // 비밀 번호 틀림
-    //         return ;
-    //     }
-
-    // case INVIT:
-    //     if (!invited.exist(client))
-    //     {
-    //         // 초대 받지 않음
-    //         return ;
-    //     }
-    // default:;
-    // }
-
-    // key이지만 invited라면 무조건 들어올 수 있다.
-
-    // invited가 아닌경우 key를 확인한다.
-    // invited가 아니고, key도 아닌 경우 key error
-    // invited가 아니고, key가 맞은 경우 invited error
-
     if (!invited->exist(client))
     {
         if (check_flag('k') && !check_key(pass))
@@ -157,19 +144,7 @@ void    Channel::join(Client* client, std::string pass)
 
         if (banned->exist(client))
             throw Err_474(get_name());
-
-
-
     }
-
-
-    (void)pass;
-    if (banned->exist(client) && !invited->exist(client))
-    {
-        // banned이고, 초대받지 않음
-        return ;
-    }
-
     invited->del(client);
     joined->add(client);
     client->add_channel(this);

@@ -74,13 +74,32 @@ JOIN이 성공하면 사용자에게 채널의 주제(RPL_TOPIC)와 채널에 �
     - 채널장은 채널을 생성한 클라이언트
 
 
-
-
-    8. ERR_TOOMANYCHANNELS
-
-    9. RPL_TOPIC
+- RPL_TOPIC
 
     405 cpak #ff :You are on too many channels
+
+
+    127.000.000.001.53776-127.000.000.001.06667: JOIN #a
+
+    127.000.000.001.06667-127.000.000.001.53776: :cpak_!root@127.0.0.1 JOIN :#a
+    :irc.local 332 cpak_ #b :aaaaa
+    :irc.local 333 cpak_ #b cpak!root@127.0.0.1 :1675900578
+    :irc.local 353 cpak_ = #a :cpak__ cpak cpak_
+    :irc.local 366 cpak_ #a :End of /NAMES list.
+
+    127.000.000.001.06667-127.000.000.001.43062: :cpak_!root@127.0.0.1 JOIN :#a
+
+    127.000.000.001.06667-127.000.000.001.56940: :cpak_!root@127.0.0.1 JOIN :#a
+
+
+    - 토픽이 설정된 경우
+    127.000.000.001.53776-127.000.000.001.06667: JOIN #b
+
+    127.000.000.001.06667-127.000.000.001.53776: :cpak_!root@127.0.0.1 JOIN :#b
+    :irc.local 332 cpak_ #b :aaaaa
+    :irc.local 333 cpak_ #b cpak!root@127.0.0.1 :1675900578
+    :irc.local 353 cpak_ = #b :@cpak cpak_
+    :irc.local 366 cpak_ #b :End of /NAMES list.
 
 */
 
@@ -113,19 +132,20 @@ public:
 		list_str_iter 	name_end = this->names.end();
 		list_str_iter 	pass_iter = this->pass.begin();
 		list_str_iter 	pass_end = this->pass.end();
-		Channel*		tar_channel;
+		Channel*		ch;
 
 		for (; name_iter != name_end; name_iter++)
 		{
 			if (!check_name_validation(*name_iter))
-				throw Err_476(tar_channel->get_name());
+				throw Err_476(*name_iter);
             if (!check_client_ch_limit(server, client))
-                throw Err_405(tar_channel->get_name());
-			tar_channel = server->get_channel(*name_iter);
-			if (tar_channel)
-                tar_channel->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
+                throw Err_405(*name_iter);
+			ch = server->get_channel(*name_iter);
+			if (ch != NULL)
+                ch->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
 			else
-				server->add_channel(*name_iter, client);
+				ch = server->add_channel(*name_iter, client);
+            reply_join(client, ch, server);
 		}
         init_cmd();
     }
@@ -145,9 +165,29 @@ private:
 		return ((name.size() <= 200) && (name[0] == '#') && (name.find(7) == std::string::npos));
 	}
 
+    // 서버에 정해져있는 limit을 넘어가면 join을 사용할 수 없다.
+    // limit은 client가 참여할 수 있는 채널수이다.
     bool check_client_ch_limit(Server* server, Client* client)
     {
         return(client->get_channel_size() < server->ch_limit);
+    }
+
+    // join 명령어를 실행하고 client에 응답 메시지를 보낸다.
+    // 해당 channel에 topic이 있는 경우에만 topic 메시지를 추가한다.
+    // 마지막에는 변경된 topic을 채널에 있는 client에게 모두 전달한다.
+    void reply_join(Client* client, Channel* ch, Server* server)
+    {
+        server->reply->send_client_exec(client, "JOIN :" + ch->get_name());
+
+        std::string s = ch->get_topic();
+        if (s.size() != 0)
+        {
+            server->reply->topic_332(client, ch);
+            server->reply->clock_333(client, ch);
+        }
+        server->reply->namreply_353(client, ch);
+        server->reply->endofnames_366(client, ch);
+        server->reply->send_channel_exec(ch, client, "JOIN :" + ch->get_name());
     }
 };
 

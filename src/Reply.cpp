@@ -16,6 +16,17 @@ std::string Reply::get_str()
     return (_ss.str());
 }
 
+std::string Reply::get_ch_mode(Channel* ch)
+{
+    std::string mode = "=";
+
+    if (ch->check_flag('p'))
+        mode = "*";
+    if (ch->check_flag('s'))
+        mode = "@";
+    return (mode);
+}
+
 void Reply::set_space()
 {
     _ss << " ";
@@ -87,6 +98,13 @@ void Reply::send_client(Client* client)
     init_ss();
 }
 
+void Reply::send_client_exec(Client* client, std::string cmd)
+{
+    set_colon_msg(client->get_message_prefix());
+    set_string(cmd);
+    send_client(client);
+}
+
 void Reply::send_channel(Channel* ch)
 {
     ch->message_channel(_ss.str());
@@ -100,13 +118,13 @@ void Reply::send_channel_exec(Channel* ch, Client* client, std::string cmd)
     send_channel(ch);
 }
 
-void Reply::topic_332(Client* client, Channel* ch, std::string msg)
+void Reply::topic_332(Client* client, Channel* ch)
 {
     set_prefix();
     set_number("332");
     set_nickname(client);
     set_ch_name(ch);
-    set_colon_msg(msg);
+    set_colon_msg(ch->get_topic());
     send_client(client);
 }
 
@@ -121,12 +139,12 @@ void Reply::clock_333(Client* client, Channel* ch)
     send_client(client);
 }
 
-void Reply::namreply_353(Client* client, Channel* ch, std::string mode)
+void Reply::namreply_353(Client* client, Channel* ch)
 {
     set_prefix();
     set_number("353");
     set_nickname(client);
-    set_string(mode);
+    set_string(get_ch_mode(ch));
     set_ch_name(ch);
     _ss << ":";
     set_clients_nickname(ch, ch->joined);

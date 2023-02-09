@@ -269,13 +269,14 @@ Client* Server::get_client_by_nickname(std::string nickname)
 
 
 /** 채널 관련 함수 **/
-void Server::add_channel(std::string name, Client* client)
+Channel* Server::add_channel(std::string name, Client* client)
 {
 	Channel*	new_channel = new Channel(name);
 
-	new_channel->join(client, "");
+	new_channel->joined->add(client);
 	new_channel->op->add(client);
 	this->_channels.push_back(new_channel);
+	return (new_channel);
 }
 
 std::list<Channel *>  Server::get_channel_list()

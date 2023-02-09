@@ -45,6 +45,8 @@
 - 변경 응답 : 호스트 / 332 / 닉네임 / 서버이름 / 토픽
 - 호스트 / 333 / 닉네임 / 서버이름 / 클라이언트 이름 / 시간
 
+- 채널에 있는 모든 클라이언트에 토픽 메시지를 보낸다.
+
 */
 
 class Topic_cmd : public Command
@@ -90,7 +92,7 @@ public:
 
         if (topic.size() == 0)
         {
-            server->reply->topic_332(client, ch, this->topic);
+            server->reply->topic_332(client, ch);
             server->reply->clock_333(client, ch);
         }
         else
