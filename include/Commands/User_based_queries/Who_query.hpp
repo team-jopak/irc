@@ -34,6 +34,10 @@ o 매개 변수가 전달되면 결과 중에서 오퍼레이터인 결과만 �
 
 class Who_query : public Command
 {
+private:
+    std::string _who_name;
+    std::string _o;
+
 public:
     Who_query() : Command("WHO")
     {
@@ -41,21 +45,60 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        std::cout << "args : ";
+        list_str_iter it_args = args.begin();
 
-        (void)args;
+        if (args.size() > 2 || args.size() == 0)
+        {
+            throw Err_461("WHO");
+        }
+
+        _who_name = *it_args;
+        if (args.size() == 2)
+        {
+            it_args++;
+            _o = *it_args;
+        }
+        std::cout << "\n";
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        (void)server;
-        (void)client;
         std::cout << "Execute WHO" << std::endl;
+
+        // 와일드 카드 제거
+        _who_name.erase(std::remove(_who_name.begin(), _who_name.end(), '*'), _who_name.end());
+        _who_name.erase(std::remove(_who_name.begin(), _who_name.end(), '?'), _who_name.end());
+
+        std::list<Client *> clients = server->get_clients();
+        std::list<Client *>::iterator it_clients = clients.begin();
+
+        // 이름 찾기
+        for (; it_clients != clients.end(); ++it_clients)
+        {
+            if ((*it_clients)->get_realname().find(_who_name) != std::string::npos)
+            {
+                std::cout << "Find client" << std::endl;
+                std::cout << (*it_clients)->get_realname() << std::endl;
+                
+                // 352 RPL_WHOREPLY, <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
+                std::string message = "352 " + client->get_nickname() + " " + (*it_clients)->get_nickname() + " " + \
+                                        (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
+                                        (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
+                                        " H* :0 " + (*it_clients)->get_realname();
+                client->message_client(message.c_str());
+            }
+        }
+        // 315 RPL_ENDOFWHO, <name> :End of WHO list
+        std::string message = "315 " + client->get_nickname() + " " + _who_name + " :End of WHO list";
+        client->message_client(message.c_str());
+
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        _who_name = "";
+        _o = "";
         std::cout << "Init command" << std::endl;
     }
 
