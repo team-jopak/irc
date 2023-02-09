@@ -26,6 +26,7 @@ public:
     void        init_ss();
 
     std::string get_str();
+    std::string get_ch_mode(Channel* ch);
 
     void        set_space();
     void        set_prefix();
@@ -38,12 +39,13 @@ public:
     void        set_clients_nickname(Channel* ch, Ch_client* clients);
 
     void        send_client(Client* client);
+    void        send_client_exec(Client* client, std::string cmd);
     void        send_channel(Channel* ch);
     void        send_channel_exec(Channel* ch, Client* client, std::string cmd);
 
-    void        topic_332(Client* client, Channel* ch, std::string msg);
+    void        topic_332(Client* client, Channel* ch);
     void        clock_333(Client* client, Channel* ch);
-    void        namreply_353(Client* client, Channel* ch, std::string mode);
+    void        namreply_353(Client* client, Channel* ch);
     void        endofnames_366(Client* client, Channel* ch);
 };
 

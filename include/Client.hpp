@@ -34,7 +34,7 @@ public:
     Client(int client_fd);
     Client(const Client &origin);
     ~Client();
-    
+   
     int				get_socket_fd();
     std::string		get_nickname();
     std::string		get_username();

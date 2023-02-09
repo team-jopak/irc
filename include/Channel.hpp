@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Client.hpp"
+#include "Exceptions.hpp"
 
 class Client;
 class Ch_client;
@@ -48,6 +49,7 @@ public:
 
 	bool		check_key(std::string key);
 	bool		check_flag(char c);
+	bool		check_limit();
 	
 	void		init_flags();
 	void		join(Client* client, std::string pass);

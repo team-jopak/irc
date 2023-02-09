@@ -89,20 +89,12 @@ public:
         list_str_iter   iter = this->ch_list.begin();
         list_str_iter   end = this->ch_list.end();
         Channel*        ch;
-        std::string     mode;
 
         while (iter != end)
         {
             ch = server->get_channel(*iter);
             if (ch != NULL && ch->joined->exist(client))
-            {
-                mode = "=";
-                if (ch->check_flag('p'))
-                    mode = "*";
-                if (ch->check_flag('s'))
-                    mode = "@";
-                server->reply->namreply_353(client, ch, mode);
-            }
+                server->reply->namreply_353(client, ch);
             server->reply->endofnames_366(client, ch);
         }
         init_cmd();

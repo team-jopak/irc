@@ -12,6 +12,7 @@
 #include <fcntl.h> // send
 #include <netdb.h> // addrinfo
 #include "Reply.hpp"
+#include "Exceptions.hpp"
 
 class Message;
 class Command;
@@ -37,7 +38,8 @@ private:
     Command*		_cmd;
 
 public:
-    Reply*			reply;
+    Reply*      reply;
+    int         ch_limit;
 
     Server(std::string host, std::string port, std::string password);
     ~Server();
