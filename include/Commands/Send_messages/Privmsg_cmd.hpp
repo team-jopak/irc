@@ -129,10 +129,6 @@ public:
                         return ; // err_msg;
                     dest->message_channel_with_prefix(" PRIVMSG " + (*it) + _message);
                 }
-            } 
-            else if (*(*it).begin() == '?')
-            {
-                ; //server or host
             }
             else
             {
