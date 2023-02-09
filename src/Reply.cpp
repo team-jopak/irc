@@ -59,7 +59,7 @@ void Reply::set_colon_msg(std::string msg)
 
 void Reply::set_prefix()
 {
-    set_colon_msg(_server->get_host());
+    set_colon_msg(_server->get_name());
     set_space();
 }
 
