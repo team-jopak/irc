@@ -16,7 +16,7 @@ std::string Reply::get_str()
     return (_ss.str());
 }
 
-std::string Reply::get_ch_mode(Channel* ch)
+std::string Reply::get_channel_mode(Channel* ch)
 {
     std::string mode = "=";
 
@@ -32,21 +32,21 @@ void Reply::set_space()
     _ss << " ";
 }
 
-void Reply::set_string(std::string str)
+void Reply::set_msg(std::string msg)
 {
-    _ss << str;
+    _ss << msg;
     set_space();
 }
 
-void Reply::set_number(std::string num_str)
+void Reply::set_msg_colon(std::string msg)
+{
+    _ss << ":" << msg;
+    set_space();
+}
+
+void Reply::set_rpl_number(std::string num_str)
 {
     _ss << num_str;
-    set_space();
-}
-
-void Reply::set_nickname(Client* client)
-{
-    _ss << client->get_nickname();
     set_space();
 }
 
@@ -56,25 +56,25 @@ void Reply::set_client_prefix(Client* client)
     set_space();
 }
 
-void Reply::set_ch_name(Channel* ch)
+void Reply::set_channel_name(Channel* ch)
 {
     _ss << ch->get_name();
     set_space();
 }
 
-void Reply::set_colon_msg(std::string msg)
-{
-    _ss << ":" << msg;
-    set_space();
-}
-
 void Reply::set_prefix()
 {
-    set_colon_msg(_server->get_name());
+    set_msg_colon(_server->get_name());
     set_space();
 }
 
-void Reply::set_clients_nickname(Channel* ch, Ch_client* clients)
+void Reply::set_client_nickname(Client* client)
+{
+    _ss << client->get_nickname();
+    set_space();
+}
+
+void Reply::set_client_nickname(Ch_client* clients, Channel* ch)
 {
     map_client_iter     iter = clients->begin();
     map_client_iter     end = clients->end();
@@ -88,7 +88,7 @@ void Reply::set_clients_nickname(Channel* ch, Ch_client* clients)
         if (ch->op->exist(iter->second))
             nick = "@";
         nick.append(iter->first);
-        set_string(nick);
+        set_msg(nick);
     }
 }
 
@@ -100,9 +100,10 @@ void Reply::send_client(Client* client)
 
 void Reply::send_client_exec(Client* client, std::string cmd)
 {
-    set_colon_msg(client->get_message_prefix());
-    set_string(cmd);
+    set_msg_colon(client->get_message_prefix());
+    set_msg(cmd);
     send_client(client);
+    init_ss();
 }
 
 void Reply::send_channel(Channel* ch)
@@ -111,19 +112,35 @@ void Reply::send_channel(Channel* ch)
     init_ss();
 }
 
+void Reply::send_channel_except(Channel* ch, Client* client)
+{
+    Server::list_client         clients = ch->get_clients();
+    Server::list_client_iter    iter = clients.begin();
+    Server::list_client_iter    end = clients.end();
+
+    for (; iter != end; iter++)
+    {
+        if (*iter != client)
+            (*iter)->message_client(_ss.str());
+    }
+    init_ss();
+}
+
 void Reply::send_channel_exec(Channel* ch, Client* client, std::string cmd)
 {
-    set_colon_msg(client->get_message_prefix());
-    set_string(cmd);
-    send_channel(ch);
+    set_msg_colon(client->get_message_prefix());
+    set_msg(cmd);
+    send_channel_except(ch, client);
+    init_ss();
 }
 
 void Reply::liststart_321(Client* client)
 {
     set_prefix();
-    set_number("321");
-    set_nickname(client);
-    set_string("Channel :Users Name");
+    set_rpl_number("321");
+    set_client_nickname(client);
+    set_msg("Channel :Users Name");
+    send_client(client);
 }
 
 void Reply::list_322(Client* client, std::string ch_name)
@@ -131,7 +148,6 @@ void Reply::list_322(Client* client, std::string ch_name)
     Channel*    ch = _server->get_channel(ch_name);
     if (ch == NULL)
         return ;
-
     std::string ch_opt = ch->get_flag_str(client);
     std::string ch_topic = ch->get_topic();
     bool        is_joined = ch->joined->exist(client);
@@ -146,38 +162,40 @@ void Reply::list_322(Client* client, std::string ch_name)
     }
 
     set_prefix();
-    set_nickname(client);
-    set_string(ch_name);
-    set_string(std::to_string(ch->joined->size()));
-    set_string(ch_opt);
-    set_string(ch_topic);
+    set_rpl_number("322");
+    set_client_nickname(client);
+    set_msg(ch_name);
+    set_msg(std::to_string(ch->joined->size()));
+    set_msg_colon(ch_opt);
+    set_msg(ch_topic);
     send_client(client);
 }
 
 void Reply::listend_323(Client* client)
 {
     set_prefix();
-    set_number("323");
-    set_nickname(client);
-    set_string(":End of channel list.");
+    set_rpl_number("323");
+    set_client_nickname(client);
+    set_msg(":End of channel list.");
+    send_client(client);
 }
 
 void Reply::topic_332(Client* client, Channel* ch)
 {
     set_prefix();
-    set_number("332");
-    set_nickname(client);
-    set_ch_name(ch);
-    set_colon_msg(ch->get_topic());
+    set_rpl_number("332");
+    set_client_nickname(client);
+    set_channel_name(ch);
+    set_msg_colon(ch->get_topic());
     send_client(client);
 }
 
 void Reply::clock_333(Client* client, Channel* ch)
 {
     set_prefix();
-    set_number("333");
-    set_nickname(client);
-    set_ch_name(ch);
+    set_rpl_number("333");
+    set_client_nickname(client);
+    set_channel_name(ch);
     set_client_prefix(client);
     _ss << ":" << clock();
     send_client(client);
@@ -186,24 +204,24 @@ void Reply::clock_333(Client* client, Channel* ch)
 void Reply::namreply_353(Client* client, Channel* ch)
 {
     set_prefix();
-    set_number("353");
-    set_nickname(client);
-    set_string(get_ch_mode(ch));
-    set_ch_name(ch);
+    set_rpl_number("353");
+    set_client_nickname(client);
+    set_msg(get_channel_mode(ch));
+    set_channel_name(ch);
     _ss << ":";
-    set_clients_nickname(ch, ch->joined);
+    set_client_nickname(ch->joined, ch);
     send_client(client);
 }
 
 void Reply::endofnames_366(Client* client, Channel* ch)
 {
     set_prefix();
-    set_number("366");
-    set_nickname(client);
+    set_rpl_number("366");
+    set_client_nickname(client);
     if (ch == NULL)
         _ss << "*";
     else
         _ss << ch->get_name();
-    set_string(" :End of /NAMES list.");
+    set_msg(" :End of /NAMES list.");
     send_client(client);
 }

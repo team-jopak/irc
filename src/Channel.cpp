@@ -3,6 +3,8 @@
 Channel::Channel(std::string name) : _name(name), _topic("")
 {
     init_flags();
+    this->_mode['n'] = true;
+    this->_mode['t'] = true;
     this->op = new Ch_client();
     this->joined = new Ch_client();
     this->invited = new Ch_client();

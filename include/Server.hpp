@@ -21,11 +21,13 @@ class Channel;
 
 class Server
 {
-private:
+public:
 	typedef std::vector<pollfd>		vec_pollfd;
 	typedef std::list<Client *>		list_client;
+	typedef list_client::iterator	list_client_iter;
 	typedef std::list<Channel *>	list_ch;
 
+private:
     int				_socket_fd;
     std::string		_name;
     std::string		_host;

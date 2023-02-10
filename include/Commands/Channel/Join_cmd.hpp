@@ -142,7 +142,11 @@ public:
                 throw Err_405(*name_iter);
 			ch = server->get_channel(*name_iter);
 			if (ch != NULL)
+            {
+                if (ch->joined->exist(client))
+                    continue ;
                 ch->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
+            }
 			else
 				ch = server->add_channel(*name_iter, client);
             reply_join(client, ch, server);

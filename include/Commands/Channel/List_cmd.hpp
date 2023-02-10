@@ -70,25 +70,29 @@ public:
         cmd_server = server;
         cmd_client = client;
 
+        std::cout << "LIST" << std::endl;
+
         server->reply->liststart_321(client);
         if (ch_name.size() != 0)
             server->reply->list_322(client, ch_name);
         else
         {
-            std::list<Channel *>            list = server->get_channel_list();
-            std::list<Channel *>::iterator  iter = list.begin();
-            std::list<Channel *>::iterator  end = list.end();
+            list_ch       list = server->get_channel_list();
+            list_ch_iter  iter = list.begin();
+            list_ch_iter  end = list.end();
 
             for (; iter != end; iter++)
-                server->reply->list_322(client, ch_name);
+                server->reply->list_322(client, (*iter)->get_name());
         }
         server->reply->listend_323(client);
-
         init_cmd();
     }
 
     virtual void init_cmd()
     {
+        ch_name = "";
+        cmd_server = NULL;
+        cmd_client = NULL;
         std::cout << "Init command" << std::endl;
     }
 };
