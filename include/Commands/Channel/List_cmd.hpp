@@ -45,8 +45,6 @@ class List_cmd : public Command
 {
 private:
     std::string ch_name;
-    Server*     cmd_server;
-    Client*     cmd_client;
 
 public:
     List_cmd() : Command("LIST")
@@ -67,11 +65,6 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        cmd_server = server;
-        cmd_client = client;
-
-        std::cout << "LIST" << std::endl;
-
         server->reply->liststart_321(client);
         if (ch_name.size() != 0)
             server->reply->list_322(client, ch_name);
@@ -91,9 +84,6 @@ public:
     virtual void init_cmd()
     {
         ch_name = "";
-        cmd_server = NULL;
-        cmd_client = NULL;
-        std::cout << "Init command" << std::endl;
     }
 };
 
