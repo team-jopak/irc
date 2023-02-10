@@ -11,7 +11,7 @@ Message::Message()
 
     // Channel
     commands["JOIN"] = new Join_cmd();
-    commands["List"] = new List_cmd();
+    commands["LIST"] = new List_cmd();
     commands["MODE"] = new Mode_cmd();
     commands["NAMES"] = new Names_cmd();
     commands["PART"] = new Part_cmd();
@@ -19,7 +19,7 @@ Message::Message()
 
     // Miscellaneous_messages
     commands["ERROR"] = new Error_cmd();
-    commands["Kill"] = new Kill_cmd();
+    commands["KILL"] = new Kill_cmd();
     commands["PING"] = new Ping_cmd();
     commands["PONG"] = new Pong_cmd();
 

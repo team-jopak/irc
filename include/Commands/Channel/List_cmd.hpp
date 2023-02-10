@@ -30,7 +30,7 @@
 :irc.local 322 cpak_ #a 5 :[+nt]
 :irc.local 323 cpak_ :End of channel list.
 
- - 서버 / 번호 / 이름 / 채널명 / 인원수 / [ 옵션 [키] ] / 주제
+ - 서버 / 번호 / 이름 / 채널명 / 인원수 / [ 옵션 [key] [limit] ] / 주제
 
  - 개인 채널인 경우 채널명을 * 으로 표시하고, 옵션은 표시하지 않는다.
  - 없는 채널명인 경우 빈 목록을 보낸다.
@@ -45,8 +45,6 @@ class List_cmd : public Command
 {
 private:
     std::string ch_name;
-    Server*     cmd_server;
-    Client*     cmd_client;
 
 public:
     List_cmd() : Command("LIST")
@@ -67,73 +65,26 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        cmd_server = server;
-        cmd_client = client;
-
-        rpl_liststart_321();
+        server->reply->liststart_321(client);
         if (ch_name.size() != 0)
-            rpl_list_322(server->get_channel(ch_name));
+            server->reply->list_322(client, ch_name);
         else
         {
-            std::list<Channel *>            list = server->get_channel_list();
-            std::list<Channel *>::iterator  iter = list.begin();
-            std::list<Channel *>::iterator  end = list.end();
+            list_ch       list = server->get_channel_list();
+            list_ch_iter  iter = list.begin();
+            list_ch_iter  end = list.end();
 
             for (; iter != end; iter++)
-                rpl_list_322(*iter);
+                server->reply->list_322(client, (*iter)->get_name());
         }
-        rpl_listend_323();
-
+        server->reply->listend_323(client);
         init_cmd();
     }
 
     virtual void init_cmd()
     {
-        std::cout << "Init command" << std::endl;
+        ch_name = "";
     }
-
-private:
-    // 리스트 시작 출력
-    // :irc.local 321 cpak_ Channel :Users Name
-    void rpl_liststart_321()
-    {
-    }
-
-    // 리스트 마지막 출력
-    // :irc.local 323 cpak_ :End of channel list.
-    void rpl_listend_323()
-    {
-    }
-
-    // 채널의 옵션을 확인하고 메시지를 보낸다.
-    // s : 채널명을 * 으로 변경, 옵션을 : 으로 변경
-    // p : 아무것도 출력하지 않는다.
-    // :irc.local 322 cpak_ #weer 2 :[+mns] asdf
-    void rpl_list_322(Channel* ch)
-    {
-        std::stringstream   ss;
-        std::string         prefix = this->cmd_server->get_host();
-        std::string         nickname = this->cmd_client->get_nickname();
-        std::string         ch_name = ch->get_name();
-        std::string         ch_nums = std::to_string(ch->joined->size());
-        std::string         ch_opt = ch->get_flag_str(cmd_client);
-        std::string         ch_topic = ch->get_topic();
-        bool                is_joined = ch->joined->exist(cmd_client);
-
-        if (!is_joined && ch->check_flag('s'))
-            return ;
-        else if (!is_joined && ch->check_flag('p'))
-        {
-            ch_name = "*";
-            ch_opt = "";
-            ch_topic = "";
-        }
-
-        ss << ":" << prefix << " 322 " << nickname << " ";
-        ss << ch_name << " " << ch_nums << " :" << ch_opt << " " << ch_topic;
-        std::cout << ss.str() << std::endl;
-    }
-
 };
 
 #endif

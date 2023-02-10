@@ -19,6 +19,8 @@ class Command
 public:
     typedef std::list<std::string>          list_str;
     typedef list_str::iterator              list_str_iter;
+    typedef std::list<Channel *>            list_ch;
+    typedef list_ch::iterator               list_ch_iter;
     typedef std::map<std::string, Client *>	map_client;
 	typedef map_client::iterator			map_client_iter;
 
