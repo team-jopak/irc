@@ -110,7 +110,7 @@ public:
                     for (Server::list_client::iterator it_cl = cl_list.begin(); it_cl != cl_list.end(); it_cl++)
                     {
                         if (ft::strmatch((*it), (*it_cl)->get_nickname()))
-                            (*it_cl)->message_client((*it_cl)->get_message_prefix() + " NOTICE " + (*it) + _message)
+                            (*it_cl)->message_client((*it_cl)->get_message_prefix() + " NOTICE " + (*it) + _message);
                     }
                 }
                 else
