@@ -91,7 +91,11 @@ public:
                     for (Server::list_ch::iterator it_ch = chlist.begin(); it_ch != chlist.end(); it_ch++)
                     {
                         if (ft::strmatch((*it), (*it_ch)->get_name()))
+                        {
+                            if (!(*it_ch)->is_talkable(client))
+                                throw Err_404((*it_ch)->get_name());
                             (*it_ch)->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + _message);
+                        }
                     }
                 }
                 else
