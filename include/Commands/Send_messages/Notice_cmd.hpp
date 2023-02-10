@@ -40,32 +40,6 @@ private:
         return false;
     }
 
-    bool check_wildcard_validity()
-    {
-        bool ret = true;
-
-        for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
-        {
-            if (*(*it).begin() == '#' || *(*it).begin() == '?')
-            {
-                if ((*it).find_last_of('.') != std::string::npos)
-                {
-                    // check wildcard exist
-                    size_t pos = (*it).find_last_of('.');
-                    std::string substr = (*it).substr(pos + 1);
-                    ret &= !is_wildcard_exist(substr);
-                }
-                else
-                    ret &= false;
-            }
-            else
-            {
-                // if wildcard exist false;
-                ret &= !is_wildcard_exist(*it);
-            }
-        }
-        return (ret);
-    }
 public:
     Notice_cmd() : Command("NOTICE")
     {
@@ -78,9 +52,7 @@ public:
         list_str_iter   it = args.begin();
         // args 수가 모자란 경우
         if (args.size() < 2)
-        {
-            return ;
-        }
+            throw Err_461("NOTICE");
         _receiver = ft::split((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
@@ -89,15 +61,15 @@ public:
             if (((*it_rec).find('?') != std::string::npos) || (*it_rec).find('*') != std::string::npos)
                 _wildcard = true;
         }
-        if (_wildcard && !check_wildcard_validity())
-            return ;
+        if (!_message.size())
+            throw Err_412();
     }
 
-    virtual void execute(Server* server, Client*)
+    virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute NOTICE" << std::endl;
-        if (_wildcard && 0) // 1 << client.is_oper()
-            return ;  // no permission err msg
+        std::cout << "Execute PRIVMSG" << std::endl;
+        if (_wildcard && !client->is_oper())
+            throw Err_481();
         
         for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
@@ -109,15 +81,15 @@ public:
                     for (Server::list_ch::iterator it_ch = chlist.begin(); it_ch != chlist.end(); it_ch++)
                     {
                         if (ft::strmatch((*it), (*it_ch)->get_name()))
-                            (*it_ch)->message_channel_with_prefix(" PRIVMSG " + (*it) + _message);
+                            (*it_ch)->message_channel(client->get_message_prefix() + " NOTICE " + (*it) + _message);
                     }
                 }
                 else
                 {
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
-                        return ; // err_msg;
-                    dest->message_channel_with_prefix(" PRIVMSG " + (*it) + _message);
+                        throw Err_401(*it);
+                    dest->message_channel(client->get_message_prefix() + " NOTICE " + (*it) + _message);
                 }
             }
             else
@@ -128,17 +100,18 @@ public:
                     for (Server::list_client::iterator it_cl = cl_list.begin(); it_cl != cl_list.end(); it_cl++)
                     {
                         if (ft::strmatch((*it), (*it_cl)->get_nickname()))
-                            (*it_cl)->message_client((*it_cl)->get_message_prefix() + " PRIVMSG " + (*it) + _message)
+                            (*it_cl)->message_client(client->get_message_prefix() + " NOTICE " + (*it) + _message);
                     }
                 }
                 else
                 {
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
-                        return ; // no such client
-                    dest->message_client(dest->get_message_prefix() + " PRIVMSG " + (*it) + _message);
+                        throw Err_401(*it);
+                    dest->message_client(client->get_message_prefix() + " NOTICE " + (*it) + _message);
                 }
             }
+        }
         init_cmd();
     }
 
