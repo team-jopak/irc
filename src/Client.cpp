@@ -41,6 +41,8 @@ int Client::get_socket_fd()
 
 std::string Client::get_nickname()
 {
+	if (this->_nickname.size() == 0)
+		return ("*");
 	return (this->_nickname);
 }
 
@@ -51,6 +53,8 @@ void Client::set_nickname(std::string nickname)
 
 std::string Client::get_username()
 {
+	if (this->_username.size() == 0)
+		return ("*");
 	return (this->_username);
 }
 
@@ -61,6 +65,8 @@ void Client::set_username(std::string username)
 
 std::string Client::get_hostname()
 {
+	if (this->_hostname.size() == 0)
+		return ("*");
 	return (this->_hostname);
 }
 
@@ -71,6 +77,8 @@ void Client::set_hostname(std::string hostname)
 
 std::string Client::get_servername()
 {
+	if (this->_servername.size() == 0)
+		return ("*");
 	return (this->_servername);
 }
 
@@ -81,6 +89,8 @@ void Client::set_servername(std::string servername)
 
 std::string Client::get_realname()
 {
+	if (this->_realname.size() == 0)
+		return ("*");
 	return (this->_realname);
 }
 
@@ -92,11 +102,11 @@ void Client::set_realname(std::string realname)
 std::string Client::get_message_prefix()
 {
 	std::string prefix;
-	prefix += _nickname;
+	prefix += get_nickname();
 	prefix += "!";
-	prefix += _username;
+	prefix += get_username();
 	prefix += "@";
-	prefix += _hostname;
+	prefix += get_hostname();
 	return (prefix);
 }
 
@@ -142,6 +152,11 @@ void Client::delete_channel(Channel *channel)
 			return;
 		}
 	}
+}
+
+int Client::get_channel_size()
+{
+	return (_channels.size());
 }
 
 void Client::message_client(std::string message)

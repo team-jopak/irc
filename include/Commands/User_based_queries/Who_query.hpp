@@ -73,10 +73,13 @@ public:
         std::list<Client *>::iterator it_clients = clients.begin();
 
         // 이름 찾기
+        std::string::size_type find_realname;
         for (; it_clients != clients.end(); ++it_clients)
         {
-            if ((*it_clients)->get_realname().find(_who_name) != std::string::npos)
+            find_realname = (*it_clients)->get_realname().find(_who_name);
+            if (find_realname != std::string::npos)
             {
+                // 서버에 출력(나중에 지워야 함)
                 std::cout << "Find client" << std::endl;
                 std::cout << (*it_clients)->get_realname() << std::endl;
                 
@@ -86,11 +89,15 @@ public:
                                         (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
                                         " H* :0 " + (*it_clients)->get_realname();
                 client->message_client(message.c_str());
+                break;
             }
         }
         // 315 RPL_ENDOFWHO, <name> :End of WHO list
-        std::string message = "315 " + client->get_nickname() + " " + _who_name + " :End of WHO list";
-        client->message_client(message.c_str());
+        if (find_realname != std::string::npos)
+        {
+            std::string message = "315 " + client->get_nickname() + " " + _who_name + " :End of WHO list";
+            client->message_client(message.c_str());
+        }
 
         init_cmd();
     }

@@ -1,13 +1,24 @@
 #include "../include/Channel.hpp"
 
-Channel::Channel(std::string name)
-    : _name(name), _topic(name)
+Channel::Channel(std::string name) : _name(name), _topic("")
 {
     init_flags();
+    this->_mode['n'] = true;
+    this->_mode['t'] = true;
+    this->op = new Ch_client();
+    this->joined = new Ch_client();
+    this->invited = new Ch_client();
+    this->banned = new Ch_client();
+    this->voice = new Ch_client();
 }
 
 Channel::~Channel()
 {
+    delete this->op;
+    delete this->joined;
+    delete this->invited;
+    delete this->banned;
+    delete this->voice;
 }
 
 void Channel::init_flags()
@@ -19,6 +30,7 @@ void Channel::init_flags()
     this->_mode['n'] = false;
     this->_mode['m'] = false;
     this->_mode['k'] = false;
+    this->_mode['l'] = false;
 }
 
 void Channel::set_flag(char c, bool is_on)
@@ -69,13 +81,18 @@ std::string Channel::get_flag_str(Client* client)
         if (iter->second)
             result.push_back(iter->first);
     }
-    if (this->_key.size() > 0)
+    if (check_flag('k'))
     {
         result.push_back(' ');
         if (this->joined->exist(client))
             result.append(_key);
         else
             result.append("<key>");
+    }
+    if (check_flag('l'))
+    {
+        result.push_back(' ');
+        result.push_back(_limit + 48);
     }
     result.push_back(']');
     return (result);
@@ -95,6 +112,11 @@ bool Channel::check_flag(char c)
     return false;
 }
 
+bool Channel::check_limit()
+{
+    return (this->joined->size() < this->_limit);
+}
+
 void Channel::set_limit(int limit)
 {
     this->_limit = limit;
@@ -110,35 +132,26 @@ void Channel::set_key(std::string key)
     this->_key = key;
 }
 
+// key이지만 invited라면 무조건 들어올 수 있다.
+// invited가 아닌경우 key를 확인한다.
+// invited가 아니고, key도 아닌 경우 key error
+// invited가 아니고, key가 맞은 경우 invited error
 void    Channel::join(Client* client, std::string pass)
 {
-    // _mode에 따라서 확인한다.
-
-    // switch (this->_mode)
-    // {
-    // case SCRET:
-    //     if (!check_key(pass))
-    //     {
-    //         // 비밀 번호 틀림
-    //         return ;
-    //     }
-
-    // case INVIT:
-    //     if (!invited.exist(client))
-    //     {
-    //         // 초대 받지 않음
-    //         return ;
-    //     }
-    // default:;
-    // }
-
-    (void)pass;
-    if (banned->exist(client) && !invited->exist(client))
+    if (!invited->exist(client))
     {
-        // banned이고, 초대받지 않음
-        return ;
-    }
+        if (check_flag('k') && !check_key(pass))
+            throw Err_475(get_name());
 
+        if (check_flag('i') && !invited->exist(client))
+            throw Err_473(get_name());
+
+        if (check_flag('l') && check_limit())
+            throw Err_471(get_name());
+
+        if (banned->exist(client))
+            throw Err_474(get_name());
+    }
     invited->del(client);
     joined->add(client);
     client->add_channel(this);
