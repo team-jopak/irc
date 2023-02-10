@@ -16,13 +16,13 @@ std::list<std::string> split(std::string input, char delimiter)
     return (answer);
 }
 
-int stoi(std::string str)
+long stol(std::string str)
 {
-    int result = 0;
-    std::stringstream ssInt(str);
-    ssInt >> result;
+    std::stringstream	ss_long(str);
+    long 				result = 0;
 
-    if (!ssInt.fail())
+    ss_long >> result;
+    if (!ss_long.fail())
         return (-1);
     return result;
 }

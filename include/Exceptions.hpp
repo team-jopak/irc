@@ -258,5 +258,23 @@ public:
     Err_502() { message = ":Cant change mode for other users"; }
 };
 
+class Err_696: public Irc_exception
+{
+public:
+    Err_696(std::string opt, std::string arg, std::string form) 
+    {
+        if (opt == "l")
+        {
+            if (arg.size() == 0)
+                message = opt + " * :You must specify a parameter for the limit mode. Syntax: " + form; 
+            else
+                message = opt + " " + arg + " :Invalid limit mode parameter. Syntax: " + form; 
+        }
+        else if (opt == "k")
+            message = opt + " " + arg + " :You must specify a parameter for the key mode. Syntax: " + form; 
+
+    }
+};
+
 
 #endif

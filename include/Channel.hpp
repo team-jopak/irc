@@ -21,7 +21,7 @@ private:
 	std::string	_topic;
 	std::string	_key;
 	map_flag	_mode;
-	int			_limit;
+	long		_limit;
 	list_str	_masks;
 
 public:
