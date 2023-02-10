@@ -117,6 +117,15 @@ bool Channel::check_limit()
     return (this->joined->size() < this->_limit);
 }
 
+bool Channel::is_talkable(Client *client)
+{
+    if (check_flag('n') && !joined->exist(client))
+        return (false);
+    if (check_flag('m') && !voice->exist(client))
+        return (false);
+    return (true);
+}
+
 void Channel::set_limit(int limit)
 {
     this->_limit = limit;
