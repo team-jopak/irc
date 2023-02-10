@@ -39,7 +39,6 @@ class Privmsg_cmd : public Command
 private:
     std::list<std::string> _receiver;
     std::string _message;
-    std::string _invalid_mask;
     bool _wildcard;
 
     bool is_wildcard_exist(std::string str)
