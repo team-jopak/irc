@@ -42,7 +42,6 @@ public:
             throw Err_461("PASS");
         }
         _password = *it_args;
-        std::cout << "\n";
     }
 
     // 해당 클라이언트 클래스도 넘어와야 할 듯

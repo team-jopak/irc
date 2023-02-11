@@ -11,7 +11,7 @@
     1. ERR_NONICKNAMEGIVEN
     2. ERR_NICKNAMEINUSE
     3. ERR_ERRONEUSNICKNAME
-    4. ERR_NICKCOLLISION
+    4. ERR_NICKCOLLISION // 어디 사용 해야 할지?
 
 사용자에게 별명을 부여하거나 이전 별명을 변경
 
@@ -46,12 +46,12 @@ public:
         // 닉네임 하나만 받는다.
         if (args.size() != 1)
         {
-            throw Err_461("NICK");
+            throw Err_431();
         }
         
         list_str_iter it_args = args.begin();
         // 최소, 최대 닉 길이?
-        if ((*it_args).size() < 3 || (*it_args).size() > 9)
+        if ((*it_args).size() > 9)
         {
             throw Err_432(*it_args);
         }
@@ -70,10 +70,11 @@ public:
         std::cout << "Execute NICK" << std::endl;
 
         // 권한 확인(먼저 PASS에서 권한 획득 해야함)
-        if (client->is_auth() == false)
-        {
-            throw Err_464();
-        }
+        // 권한이 필요 하지 않아도 됨?(아직 잘 모르겠음)
+        // if (client->is_auth() == false)
+        // {
+        //     throw Err_464();
+        // }
 
         std::list<Client *> clients = server->get_clients();
         std::list<Client *>::iterator it_clients = clients.begin();
@@ -86,9 +87,9 @@ public:
                 throw Err_433(_nickname);
             }
         }
-        if (client->get_nickname() != "")
+        if ((client->get_nickname()).compare("*") != 0)
         {
-            server->message_all(":" + client->get_nickname() + " NICK " + _nickname);
+            server->message_all(":" + client->get_message_prefix() + " NICK :" + _nickname);
         }
         client->set_nickname(_nickname);
 
@@ -108,6 +109,7 @@ public:
 
         for (; i < s.length(); i++)
         {
+            // 0-9, A-Z, [ \ ] ^ _ ', a-z, { | }
             if (!(s[i] >= 48 && s[i] <= 57) &&
                 !(s[i] >= 65 && s[i] <= 90) &&
                 !(s[i] >= 91 && s[i] <= 96) &&
