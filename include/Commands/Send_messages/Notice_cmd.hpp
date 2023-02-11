@@ -81,7 +81,11 @@ public:
                     for (Server::list_ch::iterator it_ch = chlist.begin(); it_ch != chlist.end(); it_ch++)
                     {
                         if (ft::strmatch((*it), (*it_ch)->get_name()))
+                        {
+                            if (!(*it_ch)->is_talkable(client))
+                                throw Err_404((*it_ch)->get_name());
                             (*it_ch)->message_channel(client->get_message_prefix() + " NOTICE " + (*it) + _message);
+                        }
                     }
                 }
                 else
@@ -89,6 +93,8 @@ public:
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
                         throw Err_401(*it);
+                    if (!dest->is_talkable(client))
+                        throw Err_404(dest->get_name());
                     dest->message_channel(client->get_message_prefix() + " NOTICE " + (*it) + _message);
                 }
             }
