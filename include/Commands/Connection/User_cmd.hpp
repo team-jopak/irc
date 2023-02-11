@@ -58,12 +58,6 @@ public:
     {
         std::cout << "Execute USER" << std::endl;
 
-        // nickname 체크
-        if (client->get_nickname().empty())
-        {
-            throw Err_431();
-        }
-
         // username이 있으면 중복 방지
         if ((client->get_username().empty()))
         {
@@ -75,10 +69,9 @@ public:
         client->set_hostname(_hostname);
         client->set_servername(_servername);
         client->set_realname(_realname);
-        
-        // 서버와 클라이언트가 주고 받은 메시지만 보내면 되는 상황?
-        std::string message = "USER " + _username + " 0 * " + _realname + "\r\n";
-        client->message_client(message.c_str());
+
+        client->message_client("Welcome ft_irc!! :" + client->get_nickname());
+    
         init_cmd();
     }
 

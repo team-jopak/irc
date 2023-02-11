@@ -45,15 +45,14 @@ public:
             std::cout << *it_args << " ";
             _message += *it_args + " ";
         }
-        std::cout << "\n";
     }
 
     virtual void execute(Server* server, Client* client)
     {
         std::cout << "Execute QUIT" << std::endl;
 
-        server->message_all(":" + client->get_nickname() + " QUIT :" + _message + "\r\n");
         server->delete_client(client->get_socket_fd());
+        server->message_all(":" + client->get_message_prefix() + " QUIT :" + _message);
 
         init_cmd();
     }
