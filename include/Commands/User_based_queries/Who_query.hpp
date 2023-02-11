@@ -45,6 +45,8 @@ public:
 
     virtual void parse_args(list_str args)
     {
+        // pass, nick, user, oper 까지 명령어 입력이 되야 한다.
+
         list_str_iter it_args = args.begin();
 
         if (args.size() > 2 || args.size() == 0)
@@ -58,42 +60,41 @@ public:
             it_args++;
             _o = *it_args;
         }
-        std::cout << "\n";
     }
 
     virtual void execute(Server* server, Client* client)
     {
         std::cout << "Execute WHO" << std::endl;
 
-        // 와일드 카드 제거
-        _who_name.erase(std::remove(_who_name.begin(), _who_name.end(), '*'), _who_name.end());
-        _who_name.erase(std::remove(_who_name.begin(), _who_name.end(), '?'), _who_name.end());
-
         std::list<Client *> clients = server->get_clients();
         std::list<Client *>::iterator it_clients = clients.begin();
 
         // 이름 찾기
-        std::string::size_type find_realname;
+        bool flag = false;
         for (; it_clients != clients.end(); ++it_clients)
         {
-            find_realname = (*it_clients)->get_realname().find(_who_name);
-            if (find_realname != std::string::npos)
+            if (ft::strmatch(_who_name, (*it_clients)->get_realname()))
             {
                 // 서버에 출력(나중에 지워야 함)
                 std::cout << "Find client" << std::endl;
                 std::cout << (*it_clients)->get_realname() << std::endl;
                 
-                // 352 RPL_WHOREPLY, <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
-                std::string message = "352 " + client->get_nickname() + " " + (*it_clients)->get_nickname() + " " + \
-                                        (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
-                                        (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
-                                        " H* :0 " + (*it_clients)->get_realname();
-                client->message_client(message.c_str());
-                break;
+                // oper 가 있는 클라이언트 들만 전송
+                if (_o.compare("o") && (*it_clients)->is_oper())
+                {
+                    send_message(client, it_clients);
+                    flag = true;
+                }
+                // 모든 클라이언트에게 전송
+                else if (_o.compare("o") == -1)
+                {
+                    send_message(client, it_clients);
+                    flag = true;
+                }
             }
         }
         // 315 RPL_ENDOFWHO, <name> :End of WHO list
-        if (find_realname != std::string::npos)
+        if (flag == true)
         {
             std::string message = "315 " + client->get_nickname() + " " + _who_name + " :End of WHO list";
             client->message_client(message.c_str());
@@ -107,6 +108,16 @@ public:
         _who_name = "";
         _o = "";
         std::cout << "Init command" << std::endl;
+    }
+
+    void send_message(Client* client, std::list<Client *>::iterator it_clients)
+    {
+        // 352 RPL_WHOREPLY, <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
+        std::string message = "352 " + client->get_nickname() + " " + (*it_clients)->get_nickname() + " " + \
+                                (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
+                                (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
+                                " H* :0 " + (*it_clients)->get_realname();
+        client->message_client(message.c_str());
     }
 
 };

@@ -51,7 +51,7 @@ public:
         _username = *(it_args);
         _hostname = *(++it_args);
         _servername = *(++it_args);
-        _realname = (*(++it_args)).substr(1);
+        _realname = (*(++it_args));
     }
 
     virtual void execute(Server* server, Client* client)
@@ -65,7 +65,7 @@ public:
         }
 
         // username이 있으면 중복 방지
-        if (!(client->get_username().empty()))
+        if ((client->get_username().empty()))
         {
             throw Err_462();
         }

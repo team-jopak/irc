@@ -71,6 +71,8 @@ public:
 
     virtual void init_cmd()
     {
+        _nickname = "";
+        _password = "";
         std::cout << "Init command" << std::endl;
     }
 
