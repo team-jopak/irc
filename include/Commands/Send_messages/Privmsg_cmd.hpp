@@ -75,10 +75,10 @@ public:
             throw Err_412();
     }
 
-    virtual void execute(Server* server, Client*)
+    virtual void execute(Server* server, Client* client)
     {
         std::cout << "Execute PRIVMSG" << std::endl;
-        if (_wildcard && 0) // 1 << client.is_oper()
+        if (_wildcard && !client->is_oper())
             throw Err_481();
         
         for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
@@ -91,7 +91,11 @@ public:
                     for (Server::list_ch::iterator it_ch = chlist.begin(); it_ch != chlist.end(); it_ch++)
                     {
                         if (ft::strmatch((*it), (*it_ch)->get_name()))
-                            (*it_ch)->message_channel_with_prefix(" NOTICE " + (*it) + _message);
+                        {
+                            if (!(*it_ch)->is_talkable(client))
+                                throw Err_404((*it_ch)->get_name());
+                            (*it_ch)->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + _message);
+                        }
                     }
                 }
                 else
@@ -99,7 +103,9 @@ public:
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
                         throw Err_401(*it);
-                    dest->message_channel_with_prefix(" NOTICE " + (*it) + _message);
+                    if (!dest->is_talkable(client))
+                        throw Err_404(dest->get_name());
+                    dest->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + _message);
                 }
             }
             else
@@ -110,7 +116,7 @@ public:
                     for (Server::list_client::iterator it_cl = cl_list.begin(); it_cl != cl_list.end(); it_cl++)
                     {
                         if (ft::strmatch((*it), (*it_cl)->get_nickname()))
-                            (*it_cl)->message_client((*it_cl)->get_message_prefix() + " NOTICE " + (*it) + _message);
+                            (*it_cl)->message_client(client->get_message_prefix() + " PRIVMSG " + (*it) + _message);
                     }
                 }
                 else
@@ -118,7 +124,7 @@ public:
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
                         throw Err_401(*it);
-                    dest->message_client(dest->get_message_prefix() + " NOTICE " + (*it) + _message);
+                    dest->message_client(client->get_message_prefix() + " PRIVMSG " + (*it) + _message);
                 }
             }
         }
