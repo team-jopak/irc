@@ -103,6 +103,8 @@ public:
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
                         throw Err_401(*it);
+                    if (!dest->is_talkable(client))
+                        throw Err_404(dest->get_name());
                     dest->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + _message);
                 }
             }
