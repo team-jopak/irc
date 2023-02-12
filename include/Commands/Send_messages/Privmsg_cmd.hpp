@@ -66,7 +66,7 @@ public:
         _receiver = ft::split((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
-        for (list_str_iter it_rec; it_rec != _receiver.end(); it_rec++)
+        for (list_str_iter it_rec = _receiver.begin(); it_rec != _receiver.end(); it_rec++)
         {
             if (((*it_rec).find('?') != std::string::npos) || (*it_rec).find('*') != std::string::npos)
                 _wildcard = true;
