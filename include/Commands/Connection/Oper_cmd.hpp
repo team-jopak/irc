@@ -63,7 +63,7 @@ public:
         else
             throw Err_464();
         
-        std::string message = ":127.0.0.1 001 all :" + _nickname + " became an operator!";
+        std::string message = ":You are now an IRC operator";
         client->message_client(message.c_str());
 
         init_cmd();
@@ -71,6 +71,8 @@ public:
 
     virtual void init_cmd()
     {
+        _nickname = "";
+        _password = "";
         std::cout << "Init command" << std::endl;
     }
 

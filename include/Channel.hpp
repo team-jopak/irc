@@ -50,6 +50,7 @@ public:
 	bool		check_key(std::string key);
 	bool		check_flag(char c);
 	bool		check_limit();
+	bool		is_talkable(Client *client);
 	
 	void		init_flags();
 	void		join(Client* client, std::string pass);
