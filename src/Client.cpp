@@ -130,6 +130,11 @@ void Client::set_oper()
 	this->_oper = true;
 }
 
+bool Client::is_registered()
+{
+	return (_auth && _nickname.size() && _username.size());
+}
+
 void Client::add_channel(Channel *channel)
 {
 	std::list<Channel *>::iterator it;
@@ -172,4 +177,3 @@ void Client::set_flag(char c, bool is_on)
 	if (this->_mode.find(c) != this->_mode.end())
 		this->_mode[c] = is_on;
 }
-
