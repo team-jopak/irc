@@ -34,9 +34,14 @@ void Ch_client::set(Client* client)
 		clients[nickname] = client;
 }
 
-void Ch_client::del(Client* client)
+bool Ch_client::del(Client* client)
 {
-	clients.erase(client->get_nickname());
+	if (exist(client))
+	{
+		clients.erase(client->get_nickname());
+		return (true);
+	}
+	return (false);
 }
 
 bool Ch_client::exist(Client* client)

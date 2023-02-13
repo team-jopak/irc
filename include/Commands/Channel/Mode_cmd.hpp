@@ -96,22 +96,65 @@ MODE #asdf +p-aasaanaaataaa+s
 
 
 - 옵션없이 명령어를 사용하면 채널 정보를 띄워준다.
-- 
+
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a
+
+127.000.000.001.06667-127.000.000.001.60288: :irc.local 324 cpak #a +lnpt :1234
+:irc.local 329 cpak #a :1676263198
+
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +b
+
+127.000.000.001.06667-127.000.000.001.60288: :irc.local 368 cpak #a :End of channel ban list
+
+
+- 이미 플래그가 적용되어 있다면 응답 메세지에서 제외된다.
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +l 1234
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a +l :1234
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +lp 1234
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a :+p
+
+
+- 입력되는 플래그의 인자에 따라서 응답 메세지 형식이 달라진다.
+- 마지막 인자에만 : 가 붙는다.
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a -k 1234
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a -k :1234
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +isplk 1234 asdfawe
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a +isplk 1234 :asdfawe
+
+
+
+MODE #a +o awef
+
+127.000.000.001.06667-127.000.000.001.55762: :irc.local 401 aaaa awef :No such nick
+
 
 */
 
 class Mode_cmd : public Command
 {
 private:
-    typedef std::pair<char, bool>   pair_flag;
-    typedef std::vector<pair_flag>  vec_flag;
-    typedef vec_flag::iterator      vec_flag_iter;
+    typedef std::pair<char, bool>       pair_flag;
+    typedef std::vector<pair_flag>      vec_flag;
+    typedef vec_flag::iterator          vec_flag_iter;
+    typedef std::vector<std::string>    vec_str;
+    typedef vec_str::iterator           vec_str_iter;
 
-    bool                        is_ch_mode;
-    std::string                 name;
-    std::string                 flags;
-    std::string                 trash;
-    std::queue<std::string>     cmd_args;
+    bool            is_ch_mode;
+    std::string     name;
+    std::string     flags;
+    std::string     trash;
+    vec_str         cmd_args;
+    vec_str_iter    args_iter;
 
 public:
     Mode_cmd() : Command("MODE")
@@ -123,27 +166,21 @@ public:
         list_str_iter iter = args.begin();
         list_str_iter end = args.end();
 
-        if (args.size() < 1)
-            throw Err_461("MODE");
         if (iter == end)
             throw Err_461("MODE");
         this->is_ch_mode = _set_name(*iter++);
         if (iter == end)
             return ;
         _set_flag(*iter++);
-        _set_cmd_args(iter, args.end());
+        cmd_args.insert(cmd_args.begin(), iter, args.end());
     }
 
     virtual void execute(Server* server, Client* client)
     {
-        _throw_trash(client);
         if (is_ch_mode)
             _mode_ch(server, client);
         else
             _mode_usr(server, client);
-        // server->reply->send_client_exec("MODE " + name );
-        // 마지막에 채널의 모든 client에 메세지를 보낸다.
-        // :cpak__!root@127.0.0.1 MODE #asdf :+p-nt+s
         init_cmd();
     }
 
@@ -153,7 +190,7 @@ public:
         name = "";
         flags = "";
         trash = "";
-        cmd_args = std::queue<std::string>();
+        cmd_args.empty();
     }
 
 private:
@@ -187,12 +224,6 @@ private:
         }
     }
 
-    void _set_cmd_args(list_str_iter iter, list_str_iter end)
-    {
-        for (; iter != end; iter++)
-            this->cmd_args.push(*iter);
-    }
-
     bool _is_flag(char c)
     {
         return ((c == '+' || c == '-') || 
@@ -224,7 +255,17 @@ private:
         return (false);
     }
 
-    void _mode_usr(Server* server, Client*)
+    std::string _get_arg()
+    {
+        std::string arg;
+
+        if (this->args_iter == this->cmd_args.end())
+            return ("");
+        this->args_iter++;
+        return (*this->args_iter);
+    }
+
+    void _mode_usr(Server* server, Client* client)
     {
         Client*                 cli = server->get_client_by_nickname(this->name);
         std::string::iterator   iter = this->flags.begin();
@@ -234,6 +275,7 @@ private:
 
         if (cli == NULL)
             throw Err_401(this->name);
+        _throw_trash(client);
         for (; iter != end; iter++)
         {
             flag = *iter;
@@ -243,7 +285,16 @@ private:
             else if (flag == '-')
                 is_on = false;
             else
-                cli->set_flag(flag, is_on);
+            {
+                try
+                {
+                    cli->set_flag(flag, is_on);
+                }
+                catch (const std::exception& e)
+                {
+                    server->serverResponse(e.what(), client->get_socket_fd());
+                }
+            }
         }
     }
     
@@ -253,86 +304,184 @@ private:
         std::string::iterator   iter = this->flags.begin();
         std::string::iterator   end = this->flags.end();
         char                    flag;
-        bool                    is_on;
+        bool                    is_on = true;
+        std::string             result;
 
         if (ch == NULL)
             throw Err_403(this->name);
-        if (!ch->op->exist(client))
-            throw Err_482(this->name);
+        _throw_trash(client);
+
+        if (iter == end)
+            // 채널의 정보를 보내고 마침
         for (; iter != end; iter++)
         {
             flag = *iter;
 
+            // 채널에 이미 적용되어 있는지 확인
+
             if (flag == '+')
+            {
+                if (is_on == false)
+                    result.push_back(flag);
                 is_on = true;
+            }
             else if (flag == '-')
+            {
+                if (is_on == true)
+                    result.push_back(flag);
                 is_on = false;
-            else if (flag == 'o')
-                _mode_ch_o(ch, client, is_on);
-            else if (flag == 'l')
-                _mode_ch_l(ch, is_on, _get_arg());
-            else if (flag == 'b')
-                _mode_ch_b(ch, _get_arg());
-            else if (flag == 'v')
-                _mode_ch_v(ch, client, is_on);
-            else if (flag == 'k')
-                _mode_ch_k(ch, is_on, "");
-            else
-                ch->set_flag(flag, is_on);
+            }
+            else if (ch->check_flag(flag))
+            {
+                try
+                {
+                    if (_set_mode_ch(ch, client, *iter, is_on))
+                        result.push_back(flag);
+                }
+                catch(const std::exception& e)
+                {
+                    server->serverResponse(e.what(), client->get_socket_fd());
+                }
+            }
         }
+        if (result[0] != '-')
+            result = "+" + result;
+        server->reply->send_channel_exec(ch, client, result);
+        server->reply->send_client_exec(client, result);
+
+        // 마지막에 연산자만 남은 경우
     }
 
-    std::string _get_arg()
+    bool _set_mode_ch(Channel* ch, Client* client, char flag, bool is_on)
     {
-        std::string arg = this->cmd_args.front();
-
-        this->cmd_args.pop();
-        return (arg);
-    }
-
-    // 채널 운영자 설정
-    void _mode_ch_o(Channel* ch, Client* client, bool is_on)
-    {
-        if (is_on)
-            ch->op->set(client);
+        if (flag == 'o')
+            return (_mode_ch_o(ch, client, is_on));
+        else if (flag == 'l')
+            return (_mode_ch_l(ch, client, is_on));
+        else if (flag == 'b')
+            return (_mode_ch_b(ch, client));
+        else if (flag == 'v')
+            return (_mode_ch_v(ch, client, is_on));
+        else if (flag == 'k')
+            return (_mode_ch_k(ch, client, is_on));
+        else if (flag == 'i' || flag == 's')
+            return (_mode_ch_is(ch, client, flag, is_on));
         else
-            ch->op->del(client);
+            return (ch->set_flag(flag, is_on));
+    }
+
+    // Set invite, secret
+    bool _mode_ch_is(Channel* ch, Client* client, char flag, bool is_on)
+    {
+        if (!ch->op->exist(client))
+            throw Err_482(client->get_nickname());
+        return (ch->set_flag(flag, is_on));
     }
 
     // 채널 limit 설정
-    void _mode_ch_l(Channel* ch, bool is_on, std::string limit_str)
+    bool _mode_ch_l(Channel* ch, Client* client, bool is_on)
     {
-        long limit = ft::stol(limit_str);
+        std::string limit_str = _get_arg();
+        long        limit;
 
+        if (limit_str.size() == 0)
+            throw Err_696(ch->get_name(), "l");
+        if (!ch->op->exist(client))
+            throw Err_482(client->get_nickname());
+        limit = ft::stol(limit_str);
         if (limit < 0)
-            throw Err_696("l", limit_str, "<limit>");
+            throw Err_696(ch->get_name(), "l", limit_str);
         ch->set_flag('l', is_on);
         ch->set_limit(limit);
+        return (true);
     }
-   
-    // 채널 마스크 추가
-    void _mode_ch_b(Channel* ch, std::string mask)
+
+    // 채널 운영자 설정
+    bool _mode_ch_o(Channel* ch, Client* client, bool is_on)
     {
-        ch->add_mask(mask);
+        if (!ch->op->exist(client))
+            throw Err_482(client->get_nickname());
+        if (!ch->joined->exist(client))
+            throw Err_401(client->get_nickname());
+        if (is_on)
+            return (ch->op->add(client));
+        else
+            return (ch->op->del(client));
     }
 
     // 사용자에게 말할 수 있는 권한 제공
-    void _mode_ch_v(Channel* ch, Client* client, bool is_on)
+    bool _mode_ch_v(Channel* ch, Client* client, bool is_on)
     {
+        if (!ch->op->exist(client))
+            throw Err_482(client->get_nickname());
+        if (!ch->joined->exist(client))
+            throw Err_401(client->get_nickname());
         if (is_on)
-            ch->voice->add(client);
+            return (ch->voice->add(client));
         else
-            ch->voice->del(client);
+            return (ch->voice->del(client));
     }
 
     // 채널 암호 설정
-    void _mode_ch_k(Channel* ch, bool is_on, std::string key)
+    bool _mode_ch_k(Channel* ch, Client* client, bool is_on)
     {
+        std::string key = _get_arg();
+
         if (key.size() == 0)
-            throw Err_696("k", "*", "<key>");
-        ch->set_flag('k', is_on);
-        ch->set_key(key);
+            throw Err_696(ch->get_name(), "k");
+        if (!ch->op->exist(client))
+            throw Err_482(this->name);
+        if (ch->set_flag('k', is_on))
+        {
+            ch->set_key(key);
+            return (true);
+        }
+        return (false);
     }
+
+// MODE #a +b
+
+// 127.000.000.001.06667-127.000.000.001.55762: :irc.local 367 aaaa #a cpak!*@* aaaa :1676273062
+// :irc.local 367 aaaa #a cpak!awef@* aaaa :1676277115
+// :irc.local 367 aaaa #a cpak!@asgawreg aaaa :1676277128
+// :irc.local 368 aaaa #a :End of channel ban list
+
+    // 채널 마스크 추가
+    bool _mode_ch_b(Channel* ch, Client* client)
+    {
+        std::string mask;
+
+        if (!ch->op->exist(client))
+            throw Err_482(client->get_nickname());
+        mask = _get_arg();
+
+        if (mask.size() == 0)
+        {
+            // send ban list 
+        }
+
+
+        if (!ch->add_mask(mask))
+            throw Err_697(mask);
+        return (true);
+
+        // 이미 존재하는 마스크라면 에러 출력
+        // :irc.local 697 aaaa #a cpak!*@* b :Channel ban list already contains cpak!*@*
+    }
+
+    // std::string _get_mask(std::string mask)
+    // {
+    //     std::string nickname, std::string username, std::string hostname;
+
+    //     std::list<std::string> nickname = split(mask, "!")
+
+
+    //     std::string result;
+    //     result += nickname.size() == 0 ? "*" : nickname;
+    //     result += username.size() == 0 ? "*" : username;
+    //     result += hostname.size() == 0 ? "*" : hostname;
+    //     return (result);
+    // }
 };
 
 #endif

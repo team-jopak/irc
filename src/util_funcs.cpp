@@ -1,4 +1,5 @@
 #include "../include/util_funcs.hpp"
+#include <iostream>
 
 namespace ft
 {
@@ -19,11 +20,14 @@ std::list<std::string> split(std::string input, char delimiter)
 long stol(std::string str)
 {
     std::stringstream	ss_long(str);
-    long 				result = 0;
+    long 				tmp = 0;
+	long				result = 0;
 
-    ss_long >> result;
-    if (!ss_long.fail())
-        return (-1);
+	while (ss_long >> tmp) 
+	{
+		result *= 10;
+		result += tmp;
+	}
     return result;
 }
 

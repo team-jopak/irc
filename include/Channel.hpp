@@ -2,6 +2,7 @@
 # define CHANNEL_HPP
 
 #include <map>
+#include <set>
 #include "Client.hpp"
 #include "Exceptions.hpp"
 
@@ -11,7 +12,7 @@ class Ch_client;
 class Channel
 {
 private:
-	typedef std::list<std::string>			list_str;
+	typedef std::set<std::string>			set_str;
 	typedef std::list<Client *>				list_client;
 	typedef std::map<std::string, Client *>	map_client;
 	typedef map_client::iterator			map_client_iter;
@@ -22,7 +23,7 @@ private:
 	std::string	_key;
 	map_flag	_mode;
 	long		_limit;
-	list_str	_masks;
+	set_str		_masks;
 
 public:
 	Channel(std::string name);
@@ -44,8 +45,8 @@ public:
 	void		set_limit(int limit);
 	void 		set_topic(std::string topic);
 	void		set_key(std::string key);
-	void		set_flag(char c, bool is_on);
-	void		add_mask(std::string mask);
+	bool		set_flag(char c, bool is_on);
+	bool		add_mask(std::string mask);
 
 	bool		check_key(std::string key);
 	bool		check_flag(char c);

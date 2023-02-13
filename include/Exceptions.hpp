@@ -261,20 +261,26 @@ public:
 class Err_696: public Irc_exception
 {
 public:
-    Err_696(std::string opt, std::string arg, std::string form) 
+    Err_696(std::string channel, std::string opt)
     {
         if (opt == "l")
-        {
-            if (arg.size() == 0)
-                message = opt + " * :You must specify a parameter for the limit mode. Syntax: " + form; 
-            else
-                message = opt + " " + arg + " :Invalid limit mode parameter. Syntax: " + form; 
-        }
+            message = channel + " l * :You must specify a parameter for the limit mode. Syntax: <limit>";
         else if (opt == "k")
-            message = opt + " " + arg + " :You must specify a parameter for the key mode. Syntax: " + form; 
+            message = channel + " k * :You must specify a parameter for the key mode. Syntax: <key>"; 
+    }
 
+    Err_696(std::string channel, std::string opt, std::string arg) 
+    {
+        if (opt == "l")
+            message = channel + " l " + arg + " :Invalid limit mode parameter. Syntax: <limit>"; 
+        
     }
 };
 
+class Err_697: public Irc_exception
+{
+public:
+    Err_697(std::string mask) { message = mask + " b :Channel ban list already contains " + mask; }
+};
 
 #endif

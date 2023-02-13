@@ -17,7 +17,7 @@ public:
 	Client* 		get(std::string nickname);
 	bool 			add(Client* client);
 	void 			set(Client* client);
-	void 			del(Client* client);
+	bool 			del(Client* client);
 	bool 			exist(Client* client);
 	int				size();
 };
