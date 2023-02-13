@@ -42,6 +42,14 @@ void Server::init()
 		throw std::runtime_error("error: could not set socket options");
 	}
 
+	if (setsockopt(socket_fd, SOL_SOCKET, SO_NOSIGPIPE, (char *)&on, sizeof(on)) == -1)
+	{
+		freeaddrinfo(res);
+		close(socket_fd);
+		throw std::runtime_error("error: could not set socket options");
+	}
+
+
 	if (bind(socket_fd, res->ai_addr, res->ai_addrlen) != 0)
 	{
 		freeaddrinfo(res);
@@ -87,9 +95,10 @@ void Server::server_run()
 		{
 			cur_poll_fd = *it;
 			// 소켓 연결이 끊겼을 경우
-			if (cur_poll_fd.revents == POLLHUP)
+			if ((cur_poll_fd.revents & POLLHUP) == POLLHUP)
 			{
 				std::cout << "pollhup" << std::endl << std::flush;
+				delete_client(cur_poll_fd.fd);
 				break;
 			}
 			// tmp_poll_fd 돌면서 이벤트가 POLLIN 이면 해당 명령 실행 
