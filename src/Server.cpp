@@ -141,13 +141,17 @@ int Server::recv_message(int cur_fd)
 				// Message 시작
 				try
 				{
+					std::cout << "tmp : " << tmp_buf << std::endl;
 					_cmd = _message->parse_msg(tmp_buf);
 					_cmd->execute(this, get_client_by_socket_fd(cur_fd));
 				}
 				catch (const std::exception& e)
 				{
 					serverResponse(e.what(), cur_fd);
-					_cmd->init_cmd();
+					if (_cmd)
+					{
+						_cmd->init_cmd();
+					}
 				}
 				
 				break;
