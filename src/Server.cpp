@@ -322,7 +322,6 @@ void Server::serverResponse(std::string message, int client_fd)
 	std::string res;
 
 	res += message + "\r\n";
-	std::cout << "cl:" << client_fd << std::endl;
 	if (send(client_fd, res.c_str(), strlen(res.c_str()), 0) == -1)
 		throw std::runtime_error("Couldn't SEND socket");
 }
