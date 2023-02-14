@@ -17,7 +17,9 @@ public:
 class Err_401: public Irc_exception
 {
 public:
-    Err_401(std::string nickname)  { message = nickname + " :No such nick/channel"; }
+    Err_401(std::string nickname, bool is_nick)  {
+        message = nickname + " :No such " + (is_nick ? "nick" : "channel");
+    }
 };
 
 // ERR_NOSUCHSERVER
@@ -267,6 +269,10 @@ public:
             message = channel + " l * :You must specify a parameter for the limit mode. Syntax: <limit>";
         else if (opt == "k")
             message = channel + " k * :You must specify a parameter for the key mode. Syntax: <key>"; 
+        else if (opt == "v")
+            message = channel + " v * :You must specify a parameter for the voice mode. Syntax: <nick>"; 
+        else if (opt == "o")
+            message = channel + " o * :You must specify a parameter for the op mode. Syntax: <nick>"; 
     }
 
     Err_696(std::string channel, std::string opt, std::string arg) 

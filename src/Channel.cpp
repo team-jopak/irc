@@ -98,7 +98,7 @@ std::string Channel::get_flag_str(Client* client)
     if (check_flag('l'))
     {
         result.push_back(' ');
-        result.push_back(_limit + 48);
+        result.append(ft::ltos(_limit));
     }
     result.push_back(']');
     return (result);

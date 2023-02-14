@@ -5,6 +5,7 @@
 #include <set>
 #include "Client.hpp"
 #include "Exceptions.hpp"
+#include "util_funcs.hpp"
 
 class Client;
 class Ch_client;

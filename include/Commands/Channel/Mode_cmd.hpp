@@ -155,6 +155,8 @@ private:
     std::string     trash;
     vec_str         cmd_args;
     vec_str_iter    args_iter;
+    vec_str         result_flag;
+    vec_str         result_args;
 
 public:
     Mode_cmd() : Command("MODE")
@@ -173,6 +175,7 @@ public:
             return ;
         _set_flag(*iter++);
         cmd_args.insert(cmd_args.begin(), iter, args.end());
+        args_iter = cmd_args.begin();
     }
 
     virtual void execute(Server* server, Client* client)
@@ -190,10 +193,62 @@ public:
         name = "";
         flags = "";
         trash = "";
-        cmd_args.empty();
+        result_flag.clear();
+        result_args.clear();
+        cmd_args.clear();
+        args_iter = cmd_args.begin();
     }
 
 private:
+    std::string _get_result_msg()
+    {
+        std::string     flag_str;
+        std::string     arg_str;
+        
+        if (this->result_flag.size() == 0)
+            return ("");
+        {
+            vec_str_iter    iter = this->result_flag.begin();
+            vec_str_iter    end = this->result_flag.end();
+            char            sign = '+';
+
+            for (; iter != end; iter++)
+            {
+                if (iter == this->result_flag.begin())
+                    flag_str.append(*iter);
+                else
+                {
+                    if ((*iter)[0] == sign)
+                        flag_str.push_back((*iter)[1]);
+                    else
+                    {
+                        flag_str.append(*iter);
+                        sign = (*iter)[0];
+                    }
+                }
+            }
+        }
+        {
+            vec_str_iter    end = this->result_args.end();
+            if (end != this->result_args.begin())
+            {
+                end--;
+                *end = ":" + *end;
+                arg_str = ft::vec_str_join(this->result_args, " ");
+            }
+        }
+        return ("MODE " + name + " " + flag_str + " " + arg_str);
+    }
+
+    void _push_flag_str(std::string flag, bool is_on)
+    {
+        if (is_on)
+            this->result_flag.push_back("+" + flag);
+        else
+            this->result_flag.push_back("-" + flag);
+    }
+
+
     void _throw_trash(Client* client)
     {
         std::vector<char>::iterator iter = trash.begin();
@@ -261,8 +316,9 @@ private:
 
         if (this->args_iter == this->cmd_args.end())
             return ("");
+        arg = *this->args_iter;
         this->args_iter++;
-        return (*this->args_iter);
+        return (arg);
     }
 
     void _mode_usr(Server* server, Client* client)
@@ -274,7 +330,7 @@ private:
         bool                    is_on;
 
         if (cli == NULL)
-            throw Err_401(this->name);
+            throw Err_401(this->name, true);
         _throw_trash(client);
         for (; iter != end; iter++)
         {
@@ -288,7 +344,8 @@ private:
             {
                 try
                 {
-                    cli->set_flag(flag, is_on);
+                    if (cli->set_flag(flag, is_on))
+                        _push_flag_str(std::string(1, flag), is_on);
                 }
                 catch (const std::exception& e)
                 {
@@ -305,38 +362,29 @@ private:
         std::string::iterator   end = this->flags.end();
         char                    flag;
         bool                    is_on = true;
-        std::string             result;
 
         if (ch == NULL)
             throw Err_403(this->name);
         _throw_trash(client);
 
         if (iter == end)
+        {
             // 채널의 정보를 보내고 마침
+
+        }
         for (; iter != end; iter++)
         {
             flag = *iter;
 
-            // 채널에 이미 적용되어 있는지 확인
-
             if (flag == '+')
-            {
-                if (is_on == false)
-                    result.push_back(flag);
                 is_on = true;
-            }
             else if (flag == '-')
-            {
-                if (is_on == true)
-                    result.push_back(flag);
                 is_on = false;
-            }
-            else if (ch->check_flag(flag))
+            else if (ch->check_flag(flag) != is_on)
             {
                 try
                 {
-                    if (_set_mode_ch(ch, client, *iter, is_on))
-                        result.push_back(flag);
+                    _set_mode_ch(ch, client, *iter, is_on);
                 }
                 catch(const std::exception& e)
                 {
@@ -344,42 +392,37 @@ private:
                 }
             }
         }
-        if (result[0] != '-')
-            result = "+" + result;
-        server->reply->send_channel_exec(ch, client, result);
-        server->reply->send_client_exec(client, result);
-
-        // 마지막에 연산자만 남은 경우
+        std::string msg = _get_result_msg();
+        if (msg.size() > 0)
+            server->reply->send_channel_exec(ch, client, msg);
     }
 
-    bool _set_mode_ch(Channel* ch, Client* client, char flag, bool is_on)
+    void _set_mode_ch(Channel* ch, Client* client, char flag, bool is_on)
     {
         if (flag == 'o')
-            return (_mode_ch_o(ch, client, is_on));
+            _mode_ch_o(ch, client, is_on);
         else if (flag == 'l')
-            return (_mode_ch_l(ch, client, is_on));
+            _mode_ch_l(ch, client, is_on);
         else if (flag == 'b')
-            return (_mode_ch_b(ch, client));
+            _mode_ch_b(ch, client);
         else if (flag == 'v')
-            return (_mode_ch_v(ch, client, is_on));
+            _mode_ch_v(ch, client, is_on);
         else if (flag == 'k')
-            return (_mode_ch_k(ch, client, is_on));
-        else if (flag == 'i' || flag == 's')
-            return (_mode_ch_is(ch, client, flag, is_on));
+            _mode_ch_k(ch, client, is_on);
         else
-            return (ch->set_flag(flag, is_on));
+            _mode_ch_etc(ch, client, flag, is_on);
     }
 
-    // Set invite, secret
-    bool _mode_ch_is(Channel* ch, Client* client, char flag, bool is_on)
+    void _mode_ch_etc(Channel* ch, Client* client, char flag, bool is_on)
     {
-        if (!ch->op->exist(client))
+        if ((flag == 'i' || flag == 's') && !ch->op->exist(client))
             throw Err_482(client->get_nickname());
-        return (ch->set_flag(flag, is_on));
+        if (ch->set_flag(flag, is_on))
+            _push_flag_str(std::string(1, flag), is_on);
     }
 
     // 채널 limit 설정
-    bool _mode_ch_l(Channel* ch, Client* client, bool is_on)
+    void _mode_ch_l(Channel* ch, Client* client, bool is_on)
     {
         std::string limit_str = _get_arg();
         long        limit;
@@ -393,61 +436,71 @@ private:
             throw Err_696(ch->get_name(), "l", limit_str);
         ch->set_flag('l', is_on);
         ch->set_limit(limit);
-        return (true);
+        _push_flag_str("l", is_on);
+        this->result_args.push_back(limit_str);
     }
 
     // 채널 운영자 설정
-    bool _mode_ch_o(Channel* ch, Client* client, bool is_on)
+    void _mode_ch_o(Channel* ch, Client* client, bool is_on)
     {
+        std::string arg = _get_arg();
+        Client*     tar;
+
+        if (arg.size() == 0)
+            throw Err_696(ch->get_name(), "o");
         if (!ch->op->exist(client))
             throw Err_482(client->get_nickname());
-        if (!ch->joined->exist(client))
-            throw Err_401(client->get_nickname());
-        if (is_on)
-            return (ch->op->add(client));
-        else
-            return (ch->op->del(client));
+        tar = ch->joined->get(arg);
+        if (tar == NULL)
+            throw Err_401(arg, true);
+        if ((is_on && ch->op->add(client)) 
+            || (!is_on && ch->op->del(client)))
+        {
+            _push_flag_str("o", is_on);
+            this->result_args.push_back(arg);
+        }
     }
 
     // 사용자에게 말할 수 있는 권한 제공
-    bool _mode_ch_v(Channel* ch, Client* client, bool is_on)
+    void _mode_ch_v(Channel* ch, Client* client, bool is_on)
     {
+        std::string arg = _get_arg();
+        Client*     tar;
+
+        if (arg.size() == 0)
+            throw Err_696(ch->get_name(), "v");
         if (!ch->op->exist(client))
             throw Err_482(client->get_nickname());
-        if (!ch->joined->exist(client))
-            throw Err_401(client->get_nickname());
-        if (is_on)
-            return (ch->voice->add(client));
-        else
-            return (ch->voice->del(client));
+        tar = ch->joined->get(arg);
+        if (tar == NULL)
+            throw Err_401(arg, true);
+        if ((is_on && ch->voice->add(client)) 
+            || (!is_on && ch->voice->del(client)))
+        {
+            _push_flag_str("v", is_on);
+            this->result_args.push_back(arg);
+        }
     }
 
     // 채널 암호 설정
-    bool _mode_ch_k(Channel* ch, Client* client, bool is_on)
+    void _mode_ch_k(Channel* ch, Client* client, bool is_on)
     {
         std::string key = _get_arg();
 
-        if (key.size() == 0)
+        if (key.size() == 0 && is_on)
             throw Err_696(ch->get_name(), "k");
         if (!ch->op->exist(client))
             throw Err_482(this->name);
         if (ch->set_flag('k', is_on))
         {
             ch->set_key(key);
-            return (true);
+            _push_flag_str("k", is_on);
+            this->result_args.push_back(key);
         }
-        return (false);
     }
 
-// MODE #a +b
-
-// 127.000.000.001.06667-127.000.000.001.55762: :irc.local 367 aaaa #a cpak!*@* aaaa :1676273062
-// :irc.local 367 aaaa #a cpak!awef@* aaaa :1676277115
-// :irc.local 367 aaaa #a cpak!@asgawreg aaaa :1676277128
-// :irc.local 368 aaaa #a :End of channel ban list
-
     // 채널 마스크 추가
-    bool _mode_ch_b(Channel* ch, Client* client)
+    void _mode_ch_b(Channel* ch, Client* client)
     {
         std::string mask;
 
@@ -455,33 +508,37 @@ private:
             throw Err_482(client->get_nickname());
         mask = _get_arg();
 
-        if (mask.size() == 0)
+        if (mask.empty())
         {
             // send ban list 
+
+
         }
 
 
         if (!ch->add_mask(mask))
             throw Err_697(mask);
-        return (true);
 
         // 이미 존재하는 마스크라면 에러 출력
         // :irc.local 697 aaaa #a cpak!*@* b :Channel ban list already contains cpak!*@*
     }
 
-    // std::string _get_mask(std::string mask)
-    // {
-    //     std::string nickname, std::string username, std::string hostname;
+    std::string _get_mask(std::string mask)
+    {
 
-    //     std::list<std::string> nickname = split(mask, "!")
+        std::list<std::string> nickname = ft::split(mask, '!');
+        std::cout << nickname.size() << std::endl;
+
+        std::string str = nickname.back();
+        std::list<std::string> username = ft::split(str, '@');
 
 
-    //     std::string result;
-    //     result += nickname.size() == 0 ? "*" : nickname;
-    //     result += username.size() == 0 ? "*" : username;
-    //     result += hostname.size() == 0 ? "*" : hostname;
-    //     return (result);
-    // }
+        // std::string result;
+        // result += nickname.size() == 0 ? "*" : nickname;
+        // result += username.size() == 0 ? "*" : username;
+        // result += hostname.size() == 0 ? "*" : hostname;
+        return ("");
+    }
 };
 
 #endif

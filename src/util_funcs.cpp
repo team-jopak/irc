@@ -1,5 +1,4 @@
 #include "../include/util_funcs.hpp"
-#include <iostream>
 
 namespace ft
 {
@@ -29,6 +28,14 @@ long stol(std::string str)
 		result += tmp;
 	}
     return result;
+}
+
+std::string ltos(long val)
+{
+	std::stringstream	ss;
+	
+	ss << val;
+	return (ss.str());
 }
 
 std::string str_toupper(std::string str)
@@ -95,6 +102,25 @@ bool strmatch(std::string pattern, std::string string)
 	if (str[j])
 		return (false);
 	return (true);
+}
+
+std::string vec_str_join(std::vector<std::string> vec, std::string delim)
+{
+	std::vector<std::string>::iterator	iter = vec.begin();
+	std::vector<std::string>::iterator	end = vec.end();
+	std::string							result = "";
+
+	for (; iter != end; iter++)
+	{
+		if (iter == vec.begin())
+			result.append(*iter);
+		else
+		{
+			result.append(delim);
+			result.append(*iter);
+		}
+	}
+	return (result);
 }
 
 } // ft
