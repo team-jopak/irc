@@ -2,9 +2,9 @@
 
 SRCS_N		= main Client Channel Ch_client Message Server Reply util_funcs 
 
-SRCS_F		= $(addsuffix .cpp, $(SRCS_N))
+SRCS_C		= Mode_cmd
 
-SRCS		= $(addprefix ./src/, $(SRCS_F))
+SRCS		= $(addprefix ./src/, $(addsuffix .cpp, $(SRCS_N))) $(addprefix ./src/Commands/, $(addsuffix .cpp, $(SRCS_C)))
 
 OBJS		= $(SRCS:.cpp=.o)
 

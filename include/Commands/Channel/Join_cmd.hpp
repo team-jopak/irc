@@ -120,10 +120,10 @@ public:
 
         if (args.size() == 0)
 			throw Err_461("JOIN");
-		this->names = ft::split(*iter, ',');
+		this->names = ft::split_list(*iter, ',');
         iter++;
         if (iter != args.end())
-            this->pass = ft::split(*iter, ',');
+            this->pass = ft::split_list(*iter, ',');
     }
 
     virtual void execute(Server* server, Client* client)

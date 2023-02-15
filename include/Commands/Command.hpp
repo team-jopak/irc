@@ -3,16 +3,16 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <algorithm>
 #include <sstream>
 
-#include "../Reply.hpp"
-#include "../Exceptions.hpp"
 #include "../util_funcs.hpp"
 
 class Server;
 class Client;
+class Channel;
 
 class Command
 {
@@ -47,5 +47,8 @@ public:
     // 명령어 인자 초기화
     virtual void init_cmd() = 0;
 };
+
+#include "../Exceptions.hpp"
+#include "../Reply.hpp"
 
 #endif

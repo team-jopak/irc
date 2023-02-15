@@ -32,7 +32,7 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        channel_strs = ft::split(*(args.begin()), ',');
+        channel_strs = ft::split_list(*(args.begin()), ',');
     }
 
     // op, joined, invited, voice에서 제거
