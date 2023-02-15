@@ -149,7 +149,12 @@ private:
     typedef std::vector<std::string>    vec_str;
     typedef vec_str::iterator           vec_str_iter;
 
+    Server*         server;
+    Client*         client;
+    Channel*        tar_ch;
+    Client*         tar_usr;
     bool            is_ch_mode;
+
     std::string     name;
     std::string     flags;
     std::string     trash;
@@ -159,386 +164,39 @@ private:
     vec_str         result_args;
 
 public:
-    Mode_cmd() : Command("MODE")
-    {
-    }
+    Mode_cmd();
 
-    virtual void parse_args(list_str args)
-    {
-        list_str_iter iter = args.begin();
-        list_str_iter end = args.end();
-
-        if (iter == end)
-            throw Err_461("MODE");
-        this->is_ch_mode = _set_name(*iter++);
-        if (iter == end)
-            return ;
-        _set_flag(*iter++);
-        cmd_args.insert(cmd_args.begin(), iter, args.end());
-        args_iter = cmd_args.begin();
-    }
-
-    virtual void execute(Server* server, Client* client)
-    {
-        if (is_ch_mode)
-            _mode_ch(server, client);
-        else
-            _mode_usr(server, client);
-        init_cmd();
-    }
-
-    virtual void init_cmd()
-    {
-        is_ch_mode = false;
-        name = "";
-        flags = "";
-        trash = "";
-        result_flag.clear();
-        result_args.clear();
-        cmd_args.clear();
-        args_iter = cmd_args.begin();
-    }
+    virtual void    parse_args(list_str args);
+    virtual void    execute(Server* server, Client* client);
+    virtual void    init_cmd();
 
 private:
-    std::string _get_result_msg()
-    {
-        std::string     flag_str;
-        std::string     arg_str;
-        
-        if (this->result_flag.size() == 0)
-            return ("");
-        {
-            vec_str_iter    iter = this->result_flag.begin();
-            vec_str_iter    end = this->result_flag.end();
-            char            sign = '+';
+    std::string     _get_result_msg();
+    void            _throw_trash(Client* client);
+    void            _push_flag_str(std::string flag, bool is_on);
 
-            for (; iter != end; iter++)
-            {
-                if (iter == this->result_flag.begin())
-                    flag_str.append(*iter);
-                else
-                {
-                    if ((*iter)[0] == sign)
-                        flag_str.push_back((*iter)[1]);
-                    else
-                    {
-                        flag_str.append(*iter);
-                        sign = (*iter)[0];
-                    }
-                }
-            }
-        }
-        {
-            vec_str_iter    end = this->result_args.end();
-            if (end != this->result_args.begin())
-            {
-                end--;
-                *end = ":" + *end;
-                arg_str = ft::vec_str_join(this->result_args, " ");
-            }
-        }
-        return ("MODE " + name + " " + flag_str + " " + arg_str);
-    }
+    bool            _is_flag(char c);
+    bool            _is_flag_ch(char c);
+    bool            _is_flag_usr(char c);
 
-    void _push_flag_str(std::string flag, bool is_on)
-    {
-        if (is_on)
-            this->result_flag.push_back("+" + flag);
-        else
-            this->result_flag.push_back("-" + flag);
-    }
+    bool            _set_name(std::string name_str);
+    void            _set_flag(std::string flag_str);
 
+    std::string     _get_arg();
+    std::string     _get_mask(std::string mask);
 
-    void _throw_trash(Client* client)
-    {
-        std::vector<char>::iterator iter = trash.begin();
-        std::vector<char>::iterator end = trash.end();
+    void            _send_banlist();
 
-        for (; iter != end; iter++)
-            client->message_client(Err_472(std::string(1, *iter)).what());
-    }
+    void            _mode_ch();
+    void            _mode_usr();
 
-    bool _set_name(std::string name_str)
-    {
-        this->name = name_str;
-        return (this->name[0] == '#');
-    }
-
-    void _set_flag(std::string flag_str)
-    {
-        int     len = flag_str.size();
-        char    c;
-
-        for (int i=0; i<len; i++)
-        {
-            c = flag_str[i];
-            if (_is_flag(c))
-                this->flags.push_back(c);
-            else
-                this->trash.push_back(c);
-        }
-    }
-
-    bool _is_flag(char c)
-    {
-        return ((c == '+' || c == '-') || 
-                (this->is_ch_mode && _is_flag_ch(c)) ||
-                (!this->is_ch_mode && _is_flag_usr(c)));
-    }
-
-    bool _is_flag_ch(char c)
-    {
-        char op[11] = {'o', 'p', 's', 'i', 't', 'n', 'm', 'l', 'b', 'v', 'k'};
-
-        for (int i=0; i<11; i++)
-        {
-            if (op[i] == c)
-                return (true);
-        }
-        return (false);
-    }
-
-    bool _is_flag_usr(char c)
-    {
-        char op[4] = {'i', 's', 'w', 'o'};
-
-        for (int i=0; i<4; i++)
-        {
-            if (op[i] == c)
-                return (true);
-        }
-        return (false);
-    }
-
-    std::string _get_arg()
-    {
-        std::string arg;
-
-        if (this->args_iter == this->cmd_args.end())
-            return ("");
-        arg = *this->args_iter;
-        this->args_iter++;
-        return (arg);
-    }
-
-    void _mode_usr(Server* server, Client* client)
-    {
-        Client*                 cli = server->get_client_by_nickname(this->name);
-        std::string::iterator   iter = this->flags.begin();
-        std::string::iterator   end = this->flags.end();
-        char                    flag;
-        bool                    is_on;
-
-        if (cli == NULL)
-            throw Err_401(this->name, true);
-        _throw_trash(client);
-        for (; iter != end; iter++)
-        {
-            flag = *iter;
-
-            if (flag == '+')
-                is_on = true;
-            else if (flag == '-')
-                is_on = false;
-            else
-            {
-                try
-                {
-                    if (cli->set_flag(flag, is_on))
-                        _push_flag_str(std::string(1, flag), is_on);
-                }
-                catch (const std::exception& e)
-                {
-                    server->serverResponse(e.what(), client->get_socket_fd());
-                }
-            }
-        }
-    }
-    
-    void _mode_ch(Server* server, Client* client)
-    {
-        Channel*                ch = server->get_channel(name);
-        std::string::iterator   iter = this->flags.begin();
-        std::string::iterator   end = this->flags.end();
-        char                    flag;
-        bool                    is_on = true;
-
-        if (ch == NULL)
-            throw Err_403(this->name);
-        _throw_trash(client);
-
-        if (iter == end)
-        {
-            // 채널의 정보를 보내고 마침
-
-        }
-        for (; iter != end; iter++)
-        {
-            flag = *iter;
-
-            if (flag == '+')
-                is_on = true;
-            else if (flag == '-')
-                is_on = false;
-            else if (ch->check_flag(flag) != is_on)
-            {
-                try
-                {
-                    _set_mode_ch(ch, client, *iter, is_on);
-                }
-                catch(const std::exception& e)
-                {
-                    server->serverResponse(e.what(), client->get_socket_fd());
-                }
-            }
-        }
-        std::string msg = _get_result_msg();
-        if (msg.size() > 0)
-            server->reply->send_channel_exec(ch, client, msg);
-    }
-
-    void _set_mode_ch(Channel* ch, Client* client, char flag, bool is_on)
-    {
-        if (flag == 'o')
-            _mode_ch_o(ch, client, is_on);
-        else if (flag == 'l')
-            _mode_ch_l(ch, client, is_on);
-        else if (flag == 'b')
-            _mode_ch_b(ch, client);
-        else if (flag == 'v')
-            _mode_ch_v(ch, client, is_on);
-        else if (flag == 'k')
-            _mode_ch_k(ch, client, is_on);
-        else
-            _mode_ch_etc(ch, client, flag, is_on);
-    }
-
-    void _mode_ch_etc(Channel* ch, Client* client, char flag, bool is_on)
-    {
-        if ((flag == 'i' || flag == 's') && !ch->op->exist(client))
-            throw Err_482(client->get_nickname());
-        if (ch->set_flag(flag, is_on))
-            _push_flag_str(std::string(1, flag), is_on);
-    }
-
-    // 채널 limit 설정
-    void _mode_ch_l(Channel* ch, Client* client, bool is_on)
-    {
-        std::string limit_str = _get_arg();
-        long        limit;
-
-        if (limit_str.size() == 0)
-            throw Err_696(ch->get_name(), "l");
-        if (!ch->op->exist(client))
-            throw Err_482(client->get_nickname());
-        limit = ft::stol(limit_str);
-        if (limit < 0)
-            throw Err_696(ch->get_name(), "l", limit_str);
-        ch->set_flag('l', is_on);
-        ch->set_limit(limit);
-        _push_flag_str("l", is_on);
-        this->result_args.push_back(limit_str);
-    }
-
-    // 채널 운영자 설정
-    void _mode_ch_o(Channel* ch, Client* client, bool is_on)
-    {
-        std::string arg = _get_arg();
-        Client*     tar;
-
-        if (arg.size() == 0)
-            throw Err_696(ch->get_name(), "o");
-        if (!ch->op->exist(client))
-            throw Err_482(client->get_nickname());
-        tar = ch->joined->get(arg);
-        if (tar == NULL)
-            throw Err_401(arg, true);
-        if ((is_on && ch->op->add(client)) 
-            || (!is_on && ch->op->del(client)))
-        {
-            _push_flag_str("o", is_on);
-            this->result_args.push_back(arg);
-        }
-    }
-
-    // 사용자에게 말할 수 있는 권한 제공
-    void _mode_ch_v(Channel* ch, Client* client, bool is_on)
-    {
-        std::string arg = _get_arg();
-        Client*     tar;
-
-        if (arg.size() == 0)
-            throw Err_696(ch->get_name(), "v");
-        if (!ch->op->exist(client))
-            throw Err_482(client->get_nickname());
-        tar = ch->joined->get(arg);
-        if (tar == NULL)
-            throw Err_401(arg, true);
-        if ((is_on && ch->voice->add(client)) 
-            || (!is_on && ch->voice->del(client)))
-        {
-            _push_flag_str("v", is_on);
-            this->result_args.push_back(arg);
-        }
-    }
-
-    // 채널 암호 설정
-    void _mode_ch_k(Channel* ch, Client* client, bool is_on)
-    {
-        std::string key = _get_arg();
-
-        if (key.size() == 0 && is_on)
-            throw Err_696(ch->get_name(), "k");
-        if (!ch->op->exist(client))
-            throw Err_482(this->name);
-        if (ch->set_flag('k', is_on))
-        {
-            ch->set_key(key);
-            _push_flag_str("k", is_on);
-            this->result_args.push_back(key);
-        }
-    }
-
-    // 채널 마스크 추가
-    void _mode_ch_b(Channel* ch, Client* client)
-    {
-        std::string mask;
-
-        if (!ch->op->exist(client))
-            throw Err_482(client->get_nickname());
-        mask = _get_arg();
-
-        if (mask.empty())
-        {
-            // send ban list 
-
-
-        }
-
-
-        if (!ch->add_mask(mask))
-            throw Err_697(mask);
-
-        // 이미 존재하는 마스크라면 에러 출력
-        // :irc.local 697 aaaa #a cpak!*@* b :Channel ban list already contains cpak!*@*
-    }
-
-    std::string _get_mask(std::string mask)
-    {
-
-        std::list<std::string> nickname = ft::split(mask, '!');
-        std::cout << nickname.size() << std::endl;
-
-        std::string str = nickname.back();
-        std::list<std::string> username = ft::split(str, '@');
-
-
-        // std::string result;
-        // result += nickname.size() == 0 ? "*" : nickname;
-        // result += username.size() == 0 ? "*" : username;
-        // result += hostname.size() == 0 ? "*" : hostname;
-        return ("");
-    }
+    void            _set_mode_ch(char flag, bool is_on);
+    void            _mode_ch_b(bool is_on);
+    void            _mode_ch_l(bool is_on);
+    void            _mode_ch_o(bool is_on);
+    void            _mode_ch_v(bool is_on);
+    void            _mode_ch_k(bool is_on);
+    void            _mode_ch_etc(char flag, bool is_on);
 };
 
 #endif
