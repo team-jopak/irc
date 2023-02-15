@@ -39,7 +39,7 @@ public:
     {
         if (args.size() != 1)
         {
-            throw Err_461();
+            throw Err_461("PING");
         }
         list_str_iter it = args.begin();
         _server = (*it);
