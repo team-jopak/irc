@@ -63,7 +63,7 @@ public:
         else
             throw Err_464();
         
-        std::string message = ":You are now an IRC operator";
+        std::string message = ":" + client->get_message_prefix() + " You are now an IRC operator";
         client->message_client(message.c_str());
 
         init_cmd();

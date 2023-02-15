@@ -97,7 +97,7 @@ void Server::server_run()
 			// 소켓 연결이 끊겼을 경우
 			if ((cur_poll_fd.revents & POLLHUP) == POLLHUP)
 			{
-				std::cout << "pollhup" << std::endl << std::flush;
+				std::cout << "!!!!!!!!!!!!!!!!!!pollhup!!!!!!!!!!!!!!" << std::endl << std::flush;
 				delete_client(cur_poll_fd.fd);
 				break;
 			}
