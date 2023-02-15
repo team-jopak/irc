@@ -49,43 +49,49 @@ void Mode_cmd::init_cmd()
 }
 
 std::string Mode_cmd::_get_result_msg()
-{
-    std::string     flag_str;
-    std::string     arg_str;
-    
+{   
     if (this->result_flag.size() == 0)
         return ("");
-    {
-        vec_str_iter    iter = this->result_flag.begin();
-        vec_str_iter    end = this->result_flag.end();
-        char            sign = '+';
+    return ("MODE " + name + " " + _get_flag_str() + " " + _get_arg_str());
+}
 
-        for (; iter != end; iter++)
+std::string Mode_cmd::_get_flag_str()
+{
+    vec_str_iter    iter = this->result_flag.begin();
+    vec_str_iter    end = this->result_flag.end();
+    std::string     result = "";
+    char            sign = '+';
+
+    for (; iter != end; iter++)
+    {
+        if (iter == this->result_flag.begin())
+            result.append(*iter);
+        else
         {
-            if (iter == this->result_flag.begin())
-                flag_str.append(*iter);
+            if ((*iter)[0] == sign)
+                result.push_back((*iter)[1]);
             else
             {
-                if ((*iter)[0] == sign)
-                    flag_str.push_back((*iter)[1]);
-                else
-                {
-                    flag_str.append(*iter);
-                    sign = (*iter)[0];
-                }
+                result.append(*iter);
+                sign = (*iter)[0];
             }
         }
     }
+    return (result);
+}
+
+std::string Mode_cmd::_get_arg_str()
+{
+    vec_str_iter    end = this->result_args.end();
+    std::string     result = "";
+
+    if (end != this->result_args.begin())
     {
-        vec_str_iter    end = this->result_args.end();
-        if (end != this->result_args.begin())
-        {
-            end--;
-            *end = ":" + *end;
-            arg_str = ft::vec_str_join(this->result_args, " ");
-        }
+        end--;
+        *end = ":" + *end;
+        result = ft::vec_str_join(this->result_args, " ");
     }
-    return ("MODE " + name + " " + flag_str + " " + arg_str);
+    return (result);
 }
 
 void Mode_cmd::_push_flag_str(std::string flag, bool is_on)
@@ -99,8 +105,8 @@ void Mode_cmd::_push_flag_str(std::string flag, bool is_on)
 
 void Mode_cmd::_throw_trash(Client* client)
 {
-    std::vector<char>::iterator iter = trash.begin();
-    std::vector<char>::iterator end = trash.end();
+    std::string::iterator iter = trash.begin();
+    std::string::iterator end = trash.end();
 
     for (; iter != end; iter++)
         client->message_client(Err_472(std::string(1, *iter)).what());
@@ -213,39 +219,44 @@ void Mode_cmd::_mode_ch()
         throw Err_403(this->name);
     _throw_trash(this->client);
     if (iter_flag == end)
-    {
-        // 채널의 정보를 보내고 마침
-    }
+        server->reply->channelmodeis_324(this->client, this->tar_ch);
     for (; iter_flag != end; iter_flag++)
     {
         if (*iter_flag == '+')
             is_on = true;
         else if (*iter_flag == '-')
             is_on = false;
-        else if (this->tar_ch->check_flag(*iter_flag) != is_on)
-            _set_mode_ch(*iter_flag, is_on);
+        else if (_is_changeable(*iter_flag, is_on))
+            _set_ch_mode(*iter_flag, is_on);
     }
     msg = _get_result_msg();
     if (msg.size() > 0)
         this->server->reply->send_channel_exec(this->tar_ch, this->client, msg);
 }
 
-void Mode_cmd::_set_mode_ch(char flag, bool is_on)
+bool Mode_cmd::_is_changeable(char flag, bool is_on)
 {
-   try
+    if (flag == 'o' || flag == 'b' || flag == 'v')
+        return (true);
+    return (this->tar_ch->check_flag(flag) != is_on);
+}
+
+void Mode_cmd::_set_ch_mode(char flag, bool is_on)
+{
+    try
     {
         if (flag == 'o')
-            _mode_ch_o(is_on);
+            _set_ch_o(is_on);
         else if (flag == 'l')
-            _mode_ch_l(is_on);
+            _set_ch_l(is_on);
         else if (flag == 'b')
-            _mode_ch_b(is_on);
+            _set_ch_b(is_on);
         else if (flag == 'v')
-            _mode_ch_v(is_on);
+            _set_ch_v(is_on);
         else if (flag == 'k')
-            _mode_ch_k(is_on);
+            _set_ch_k(is_on);
         else
-            _mode_ch_etc(flag, is_on);
+            _set_ch_etc(flag, is_on);
     }
     catch(const std::exception& e)
     {
@@ -253,7 +264,7 @@ void Mode_cmd::_set_mode_ch(char flag, bool is_on)
     }
 }
 
-void Mode_cmd::_mode_ch_etc(char flag, bool is_on)
+void Mode_cmd::_set_ch_etc(char flag, bool is_on)
 {
     if ((flag == 'i' || flag == 's') && !this->tar_ch->op->exist(client))
         throw Err_482(client->get_nickname());
@@ -261,8 +272,7 @@ void Mode_cmd::_mode_ch_etc(char flag, bool is_on)
         _push_flag_str(std::string(1, flag), is_on);
 }
 
-// 채널 limit 설정
-void Mode_cmd::_mode_ch_l(bool is_on)
+void Mode_cmd::_set_ch_l(bool is_on)
 {
     std::string limit_str = _get_arg();
     long        limit;
@@ -280,8 +290,7 @@ void Mode_cmd::_mode_ch_l(bool is_on)
     this->result_args.push_back(limit_str);
 }
 
-// 채널 운영자 설정
-void Mode_cmd::_mode_ch_o(bool is_on)
+void Mode_cmd::_set_ch_o(bool is_on)
 {
     std::string arg = _get_arg();
     Client*     tar;
@@ -301,8 +310,7 @@ void Mode_cmd::_mode_ch_o(bool is_on)
     }
 }
 
-// 사용자에게 말할 수 있는 권한 제공
-void Mode_cmd::_mode_ch_v(bool is_on)
+void Mode_cmd::_set_ch_v(bool is_on)
 {
     std::string arg = _get_arg();
     Client*     tar;
@@ -322,8 +330,7 @@ void Mode_cmd::_mode_ch_v(bool is_on)
     }
 }
 
-// 채널 암호 설정
-void Mode_cmd::_mode_ch_k(bool is_on)
+void Mode_cmd::_set_ch_k(bool is_on)
 {
     std::string key = _get_arg();
 
@@ -339,29 +346,31 @@ void Mode_cmd::_mode_ch_k(bool is_on)
     }
 }
 
-// 채널 마스크 추가
-void Mode_cmd::_mode_ch_b(bool is_on)
+void Mode_cmd::_set_ch_b(bool is_on)
 {
     std::string mask;
 
     if (!this->tar_ch->op->exist(client))
         throw Err_482(client->get_nickname());
     mask = _get_arg();
-
-    if (mask.empty())
+    if (mask.size() == 0)
     {
-        // send ban list 
-
-
+        _send_banlist();
+        return ;
     }
-
-    // is_on에 따라서 ban 추가 / 제거
-
-    if (!this->tar_ch->add_mask(mask))
-        throw Err_697(mask);
-
-    // 이미 존재하는 마스크라면 에러 출력
-    // :irc.local 697 aaaa #a cpak!*@* b :Channel ban list already contains cpak!*@*
+    mask = _get_mask(mask);
+    if (is_on)
+    {
+        if (!this->tar_ch->banned->add(mask, this->client))
+            throw Err_697(this->tar_ch->get_name(), mask);
+    }
+    else
+    {
+        if (!this->tar_ch->banned->del(mask))
+            throw Err_698(this->tar_ch->get_name(), mask);
+    }
+    _push_flag_str("b", is_on);
+    this->result_args.push_back(mask);
 }
 
 void Mode_cmd::_send_banlist()
@@ -370,24 +379,38 @@ void Mode_cmd::_send_banlist()
     map_client_iter end = this->tar_ch->banned->end();
 
     for (; iter != end; iter++)
-    {
-
-    }
+        this->server->reply->banlist_367(this->client, this->tar_ch, iter->first);
+    this->server->reply->endofbanlist_368(this->client, this->tar_ch);
 }
 
 std::string Mode_cmd::_get_mask(std::string mask)
 {
+    std::string::iterator   iter = mask.begin();
+    std::string::iterator   end = mask.end();
+    std::string             nickname = "";
+    std::string             username = "*";
+    std::string             hostname = "*";
+    int                     step = 0;
 
-    std::list<std::string> nickname = ft::split(mask, '!');
-    std::cout << nickname.size() << std::endl;
+    for (; iter != end; iter++)
+    {
+        if (step == 0 && *iter == '!')
+        {
+            step = 1;
+            username = "";
+        }
+        else if (step == 1 && *iter == '@')
+        {
+            step = 2;
+            hostname = "";
+        }
+        else if (step == 0)
+            nickname.push_back(*iter);
+        else if (step == 1)
+            username.push_back(*iter);
+        else if (step == 2)
+            hostname.push_back(*iter);
+    }
 
-    std::string str = nickname.back();
-    std::list<std::string> username = ft::split(str, '@');
-
-
-    // std::string result;
-    // result += nickname.size() == 0 ? "*" : nickname;
-    // result += username.size() == 0 ? "*" : username;
-    // result += hostname.size() == 0 ? "*" : hostname;
-    return ("");
+    return (nickname + "!" + username + "@" + hostname);
 }

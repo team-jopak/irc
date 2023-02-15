@@ -8,8 +8,8 @@ Channel::Channel(std::string name) : _name(name), _topic("")
     this->op = new Ch_client();
     this->joined = new Ch_client();
     this->invited = new Ch_client();
-    this->banned = new Ch_client();
     this->voice = new Ch_client();
+    this->banned = new Ch_client_ban();
 }
 
 Channel::~Channel()
@@ -80,7 +80,7 @@ std::string Channel::get_flag_str(Client* client)
 {
     map_flag::iterator  iter = _mode.begin();
     map_flag::iterator  end = _mode.end();
-    std::string         result = "[+";
+    std::string         result = "+";
 
     for (; iter != end; iter++)
     {
@@ -100,7 +100,6 @@ std::string Channel::get_flag_str(Client* client)
         result.push_back(' ');
         result.append(ft::ltos(_limit));
     }
-    result.push_back(']');
     return (result);
 }
 
@@ -115,7 +114,7 @@ bool Channel::check_flag(char c)
 
     if (iter != this->_mode.end())
         return (iter->second);
-    return false;
+    return (false);
 }
 
 bool Channel::check_limit()

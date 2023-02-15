@@ -40,7 +40,7 @@ Message::~Message()
 
 Command* Message::parse_msg(std::string msg) 
 {
-    list_str        splited = ft::split(_remove_nl(msg), ' ');
+    list_str        splited = ft::split_list(_remove_nl(msg), ' ');
     list_str_iter   cmd_iter = splited.begin();
     std::string     prefix;
     cmd_map_iter    result;

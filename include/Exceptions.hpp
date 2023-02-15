@@ -286,7 +286,14 @@ public:
 class Err_697: public Irc_exception
 {
 public:
-    Err_697(std::string mask) { message = mask + " b :Channel ban list already contains " + mask; }
+    Err_697(std::string channel, std::string mask) { message = channel + " " + mask + " b :Channel ban list already contains " + mask; }
 };
+
+class Err_698: public Irc_exception
+{
+public:
+    Err_698(std::string channel, std::string mask) { message = channel + " " + mask + " b :Channel ban list does not contain " + mask; }
+};
+
 
 #endif

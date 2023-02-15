@@ -76,7 +76,7 @@ public:
     // 첫번째 인자만 처리한다.
     virtual void parse_args(list_str args)
     {
-        this->ch_list = ft::split(*(args.begin()), ',');
+        this->ch_list = ft::split_list(*(args.begin()), ',');
     }
 
     // 채널명으로 채널을 가져와서 client가 참여하고 있는지 확인

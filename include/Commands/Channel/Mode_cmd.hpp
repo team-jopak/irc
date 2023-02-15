@@ -171,32 +171,35 @@ public:
     virtual void    init_cmd();
 
 private:
-    std::string     _get_result_msg();
     void            _throw_trash(Client* client);
     void            _push_flag_str(std::string flag, bool is_on);
 
     bool            _is_flag(char c);
     bool            _is_flag_ch(char c);
     bool            _is_flag_usr(char c);
+    bool            _is_changeable(char c, bool is_on);
 
     bool            _set_name(std::string name_str);
     void            _set_flag(std::string flag_str);
 
     std::string     _get_arg();
     std::string     _get_mask(std::string mask);
+    std::string     _get_result_msg();
+    std::string     _get_flag_str();
+    std::string     _get_arg_str();
 
     void            _send_banlist();
 
     void            _mode_ch();
     void            _mode_usr();
 
-    void            _set_mode_ch(char flag, bool is_on);
-    void            _mode_ch_b(bool is_on);
-    void            _mode_ch_l(bool is_on);
-    void            _mode_ch_o(bool is_on);
-    void            _mode_ch_v(bool is_on);
-    void            _mode_ch_k(bool is_on);
-    void            _mode_ch_etc(char flag, bool is_on);
+    void            _set_ch_mode(char flag, bool is_on);
+    void            _set_ch_b(bool is_on);
+    void            _set_ch_l(bool is_on);
+    void            _set_ch_o(bool is_on);
+    void            _set_ch_v(bool is_on);
+    void            _set_ch_k(bool is_on);
+    void            _set_ch_etc(char flag, bool is_on);
 };
 
 #endif
