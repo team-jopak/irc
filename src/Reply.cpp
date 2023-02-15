@@ -126,19 +126,11 @@ void Reply::send_channel_except(Channel* ch, Client* client)
     init_ss();
 }
 
-void Reply::send_channel_exec_except(Channel* ch, Client* client, std::string cmd)
-{
-    set_msg_colon(client->get_message_prefix());
-    set_msg(cmd);
-    send_channel_except(ch, client);
-    init_ss();
-}
-
 void Reply::send_channel_exec(Channel* ch, Client* client, std::string cmd)
 {
     set_msg_colon(client->get_message_prefix());
     set_msg(cmd);
-    send_channel(ch);
+    send_channel_except(ch, client);
     init_ss();
 }
 
@@ -232,22 +224,4 @@ void Reply::endofnames_366(Client* client, Channel* ch)
         _ss << ch->get_name();
     set_msg(" :End of /NAMES list.");
     send_client(client);
-}
-
-void Reply::banlist_367(Client* client, Channel* ch, std::string banid)
-{
-    set_prefix();
-    set_rpl_number("367");
-    set_client_nickname(client);
-    set_channel_name(ch);
-    set_msg(banid);
-}
-
-void Reply::banlist_368(Client* client, Channel* ch)
-{
-    set_prefix();
-    set_rpl_number("368");
-    set_client_nickname(client);
-    set_channel_name(ch);
-    set_msg(":End of channel ban list");
 }

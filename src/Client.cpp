@@ -172,12 +172,8 @@ void Client::message_client(std::string message)
 		throw std::runtime_error("Could't send messageUser");
 }
 
-bool Client::set_flag(char c, bool is_on)
+void Client::set_flag(char c, bool is_on)
 {
-	if (this->_mode.find(c) != this->_mode.end() && this->_mode[c] != is_on)
-	{
+	if (this->_mode.find(c) != this->_mode.end())
 		this->_mode[c] = is_on;
-		return (true);
-	}
-	return (false);
 }

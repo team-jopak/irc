@@ -92,7 +92,7 @@ public:
                 {
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
-                        throw Err_401(*it, false);
+                        throw Err_401(*it);
                     if (!dest->is_talkable(client))
                         throw Err_404(dest->get_name());
                     dest->message_channel(client->get_message_prefix() + " NOTICE " + (*it) + " " + _message);
@@ -113,7 +113,7 @@ public:
                 {
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
-                        throw Err_401(*it, true);
+                        throw Err_401(*it);
                     dest->message_client(client->get_message_prefix() + " NOTICE " + (*it) + " " + _message);
                 }
             }
