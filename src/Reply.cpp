@@ -160,6 +160,7 @@ void Reply::list_322(Client* client, std::string ch_name)
     std::string ch_topic = ch->get_topic();
     bool        is_joined = ch->joined->exist(client);
 
+    ch_opt = "[" + ch_opt + "]";
     if (!is_joined && ch->check_flag('s'))
         return ;
     else if (!is_joined && ch->check_flag('p'))
@@ -185,6 +186,20 @@ void Reply::listend_323(Client* client)
     set_rpl_number("323");
     set_client_nickname(client);
     set_msg(":End of channel list.");
+    send_client(client);
+}
+
+void Reply::channelmodeis_324(Client* client, Channel* ch)
+{
+    std::string                 ch_mode = ch->get_flag_str(client);
+    std::vector<std::string>    opts = ft::split_vec(ch_mode, ' ');
+
+    opts[opts.size() - 1] = ":" + opts[opts.size() - 1];
+    set_prefix();
+    set_rpl_number("324");
+    set_client_nickname(client);
+    set_channel_name(ch);
+    set_msg(ft::vec_str_join(opts, " "));
     send_client(client);
 }
 
@@ -241,13 +256,17 @@ void Reply::banlist_367(Client* client, Channel* ch, std::string banid)
     set_client_nickname(client);
     set_channel_name(ch);
     set_msg(banid);
+    set_msg(ch->banned->get(banid)->get_nickname());
+    set_msg_colon(ft::ltos(ch->banned->time(banid)));
+    send_client(client);
 }
 
-void Reply::banlist_368(Client* client, Channel* ch)
+void Reply::endofbanlist_368(Client* client, Channel* ch)
 {
     set_prefix();
     set_rpl_number("368");
     set_client_nickname(client);
     set_channel_name(ch);
     set_msg(":End of channel ban list");
+    send_client(client);
 }

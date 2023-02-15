@@ -47,13 +47,14 @@ public:
 
     void        liststart_321(Client* client);
     void        list_322(Client* client, std::string ch_name);
+    void        channelmodeis_324(Client* client, Channel* ch);
     void        listend_323(Client* client);
     void        topic_332(Client* client, Channel* ch);
     void        clock_333(Client* client, Channel* ch);
     void        namreply_353(Client* client, Channel* ch);
     void        endofnames_366(Client* client, Channel* ch);
     void        banlist_367(Client* client, Channel* ch, std::string banid);
-    void        banlist_368(Client* client, Channel* ch);
+    void        endofbanlist_368(Client* client, Channel* ch);
 };
 
 #include "Server.hpp"
