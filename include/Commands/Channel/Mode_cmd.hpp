@@ -255,7 +255,7 @@ private:
         std::vector<char>::iterator end = trash.end();
 
         for (; iter != end; iter++)
-            client->message_client(Err_472(std::string(1, *iter)).what());
+            client->message_client(Err_472(std::string(1, *iter)).message);
     }
 
     bool _set_name(std::string name_str)

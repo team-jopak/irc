@@ -15,7 +15,7 @@ class Err_401: public Irc_exception
 {
 public:
     Err_401(std::string nickname, bool is_nick)  {
-        number = "401"
+        number = "401";
         message = nickname + " :No such " + (is_nick ? "nick" : "channel");
     }
 };
@@ -263,6 +263,7 @@ class Err_696: public Irc_exception
 public:
     Err_696(std::string channel, std::string opt)
     {
+        number = "696";
         if (opt == "l")
             message = channel + " l * :You must specify a parameter for the limit mode. Syntax: <limit>";
         else if (opt == "k")
@@ -275,6 +276,7 @@ public:
 
     Err_696(std::string channel, std::string opt, std::string arg) 
     {
+        number = "696";
         if (opt == "l")
             message = channel + " l " + arg + " :Invalid limit mode parameter. Syntax: <limit>"; 
         
@@ -284,7 +286,7 @@ public:
 class Err_697: public Irc_exception
 {
 public:
-    Err_697(std::string mask) { message = mask + " b :Channel ban list already contains " + mask; }
+    Err_697(std::string mask) {number = "697", message = mask + " b :Channel ban list already contains " + mask; }
 };
 
 #endif
