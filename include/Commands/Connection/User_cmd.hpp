@@ -2,6 +2,7 @@
 # define USER_CMD_HPP
 
 #include "../Command.hpp"
+#include <algorithm>
 
 /*
 
@@ -42,7 +43,7 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        if (args.size() != 4)
+        if (args.size() <= 3)
         {
             throw Err_461("USER");
         }
@@ -51,7 +52,21 @@ public:
         _username = *(it_args);
         _hostname = *(++it_args);
         _servername = *(++it_args);
-        _realname = (*(++it_args));
+        ++it_args; // 서버이름 다음 리얼이름으로 넘어가기
+        for (;it_args != args.end();++it_args)
+        {
+            std::string::iterator it = find((*it_args).begin(), (*it_args).end(), ':');
+            if (it != (*it_args).end())
+            {
+                (*it_args).erase(it);
+                _realname += *it_args;
+            }
+            else
+            {
+                _realname += ' ';
+                _realname += *(it_args);
+            }
+        }
     }
 
     virtual void execute(Server* server, Client* client)
@@ -69,8 +84,15 @@ public:
         client->set_hostname(_hostname);
         client->set_servername(_servername);
         client->set_realname(_realname);
-
-        client->message_client("Welcome ft_irc!! :" + client->get_nickname());
+        // client->message_client(":irc.local NOTICE * :*** Looking up your hostname...");
+        // client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
+        client->message_client(":irc.local 001 " + client->get_nickname() + " : " + client->get_nickname());
+        // client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
+        // client->message_client(":irc.local 002 aaaa :Your host is irc.local, running version InspIRCd-3");
+        // client->message_client(":irc.local 003 aaaa :This server was created 03:23:32 Feb 13 2023");
+        // client->message_client(":irc.local 004 aaaa irc.local InspIRCd-3 iosw biklmnopstv :bklov");
+        // client->message_client(":irc.local 005 aaaa AWAYLEN=200 CASEMAPPING=rfc1459 CHANLIMIT=#:20 CHANMODES=b,k,l,imnpst CHANNELLEN=64 CHANTYPES=# ELIST=CMNTU HOSTLEN=64 KEYLEN=32 KICKLEN=255 LINELEN=512 MAXLIST=b:100 :are supported by this server");
+        // client->message_client(":irc.local 005 aaaa MAXTARGETS=20 MODES=20 NAMELEN=128 NETWORK=Localnet NICKLEN=30 PREFIX=(ov)@+ SAFELIST STATUSMSG=@+ TOPICLEN=307 USERLEN=10 USERMODES=,,s,iow WHOX :are supported by this server");
     
         init_cmd();
     }
