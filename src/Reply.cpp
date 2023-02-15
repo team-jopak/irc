@@ -94,7 +94,10 @@ void Reply::set_client_nickname(Ch_client* clients, Channel* ch)
 
 void Reply::send_client(Client* client)
 {
-    client->message_client(_ss.str());
+    std::string msg = _ss.str();
+    
+    msg.pop_back();
+    client->message_client(msg);
     init_ss();
 }
 
@@ -117,11 +120,13 @@ void Reply::send_channel_except(Channel* ch, Client* client)
     Server::list_client         clients = ch->get_clients();
     Server::list_client_iter    iter = clients.begin();
     Server::list_client_iter    end = clients.end();
-
+    std::string                 msg = _ss.str();
+    
+    msg.pop_back();
     for (; iter != end; iter++)
     {
         if (*iter != client)
-            (*iter)->message_client(_ss.str());
+            (*iter)->message_client(msg);
     }
     init_ss();
 }
