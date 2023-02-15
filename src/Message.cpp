@@ -85,5 +85,7 @@ std::string Message::_remove_nl(std::string str)
 
     if (end_char == '\n')
         str.erase(end_iter);
+    if (*(--end_iter) == '\r')
+        str.erase(end_iter);
     return (str);
 }

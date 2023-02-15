@@ -42,6 +42,14 @@ void Server::init()
 		throw std::runtime_error("error: could not set socket options");
 	}
 
+	if (setsockopt(socket_fd, SOL_SOCKET, SO_NOSIGPIPE, (char *)&on, sizeof(on)) == -1)
+	{
+		freeaddrinfo(res);
+		close(socket_fd);
+		throw std::runtime_error("error: could not set socket options");
+	}
+
+
 	if (bind(socket_fd, res->ai_addr, res->ai_addrlen) != 0)
 	{
 		freeaddrinfo(res);
@@ -87,9 +95,10 @@ void Server::server_run()
 		{
 			cur_poll_fd = *it;
 			// 소켓 연결이 끊겼을 경우
-			if (cur_poll_fd.revents == POLLHUP)
+			if ((cur_poll_fd.revents & POLLHUP) == POLLHUP)
 			{
 				std::cout << "pollhup" << std::endl << std::flush;
+				delete_client(cur_poll_fd.fd);
 				break;
 			}
 			// tmp_poll_fd 돌면서 이벤트가 POLLIN 이면 해당 명령 실행 
@@ -133,21 +142,20 @@ int Server::recv_message(int cur_fd)
 			}
 			if (tmp_buf.find("\n") != std::string::npos)
 			{
-				// 간단한 메세지 보내는 예시(잘 동작하는지 확인용)
-				// std::cout << tmp_buf << std::endl;
-				// ssize_t rc;
-				// rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
-				
-				// Message 시작
+				Client* client = get_client_by_socket_fd(cur_fd);
 				try
 				{
+					std::cout << "tmp : " << tmp_buf << std::endl;
 					_cmd = _message->parse_msg(tmp_buf);
-					_cmd->execute(this, get_client_by_socket_fd(cur_fd));
+					_cmd->execute(this, client);
 				}
-				catch (const std::exception& e)
+				catch (const Irc_exception& e)
 				{
-					serverResponse(e.what(), cur_fd);
-					_cmd->init_cmd();
+    				serverResponse(":"+get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
+					if (_cmd)
+					{
+						_cmd->init_cmd();
+					}
 				}
 				
 				break;

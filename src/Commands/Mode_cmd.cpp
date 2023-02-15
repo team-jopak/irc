@@ -109,7 +109,7 @@ void Mode_cmd::_throw_trash(Client* client)
     std::string::iterator end = trash.end();
 
     for (; iter != end; iter++)
-        client->message_client(Err_472(std::string(1, *iter)).what());
+        client->message_client(Err_472(std::string(1, *iter)).message);
 }
 
 bool Mode_cmd::_set_name(std::string name_str)
@@ -362,7 +362,7 @@ void Mode_cmd::_set_ch_b(bool is_on)
     if (is_on)
     {
         if (!this->tar_ch->banned->add(mask, this->client))
-            throw Err_697(this->tar_ch->get_name(), mask);
+            throw Err_697(mask);
     }
     else
     {

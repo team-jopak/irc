@@ -51,8 +51,9 @@ public:
     {
         std::cout << "Execute QUIT" << std::endl;
 
+        std::string prefix = client->get_message_prefix();
         server->delete_client(client->get_socket_fd());
-        server->message_all(":" + client->get_message_prefix() + " QUIT :" + _message);
+        server->message_all(":" + prefix + " QUIT :" + _message);
 
         init_cmd();
     }

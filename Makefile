@@ -13,7 +13,8 @@ INC			= -I./include
 NAME		= ircserv
 
 CC			= c++
-CFLAGS		= -Wextra -Wall -Werror -std=c++98 -g
+# CFLAGS		= -Wextra -Wall -Werror -std=c++98 -g
+CFLAGS		= -Wextra -Wall -std=c++98 -g
 
 .cpp.o:		$(OBJS)
 			${CC} $(CFLAGS) -c $< -o $(<:.cpp=.o)
@@ -29,6 +30,8 @@ clean:
 fclean:		clean
 			rm -f $(NAME)
 
-re:			clean all
+re:			
+			make fclean
+			make -j8 all
 
 .PHONY:		clean all fclean re

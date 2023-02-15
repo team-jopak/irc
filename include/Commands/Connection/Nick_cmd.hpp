@@ -43,10 +43,10 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        // 닉네임 하나만 받는다.
+        // 닉네임이 들어오지 않았을 경우
         if (args.size() != 1)
         {
-            throw Err_431();
+            throw Err_461("NICK");
         }
         
         list_str_iter it_args = args.begin();

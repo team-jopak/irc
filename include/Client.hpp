@@ -54,6 +54,7 @@ public:
 
     bool			is_auth();
     bool			is_oper();
+    bool            is_registered();
 
     void			add_channel(Channel *channel);
     void			delete_channel(Channel *channel);

@@ -1,16 +1,13 @@
 #ifndef EXCEPTIONS_HPP
 # define EXCEPTIONS_HPP
 
-#include <exception>
 #include <iostream>
 
-class Irc_exception: public std::exception
+class Irc_exception
 {
 public:
     std::string message;
-    
-    ~Irc_exception() throw() {return ;}
-    const char* what() const throw() { return message.c_str(); }
+    std::string number;
 };
 
 // ERR_NOSUCHNICK
@@ -18,6 +15,7 @@ class Err_401: public Irc_exception
 {
 public:
     Err_401(std::string nickname, bool is_nick)  {
+        number = "401";
         message = nickname + " :No such " + (is_nick ? "nick" : "channel");
     }
 };
@@ -26,238 +24,238 @@ public:
 class Err_402: public Irc_exception
 {
 public:
-    Err_402(std::string servername) { message = servername + " :No such server"; }
+    Err_402(std::string servername) {number = "402", message = servername + " :No such server"; }
 };
 
 // ERR_NOSUCHCHANNEL
 class Err_403: public Irc_exception
 {
 public:
-    Err_403(std::string channelname) { message = channelname + " :No such channel"; }
+    Err_403(std::string channelname) {number = "403", message = channelname + " :No such channel"; }
 };
 
 // ERR_CANNOTSENDTOCHAN
 class Err_404: public Irc_exception
 {
 public:
-    Err_404(std::string channelname) { message = channelname + " :Cannot send to channel"; }
+    Err_404(std::string channelname) {number = "404", message = channelname + " :Cannot send to channel"; }
 };
 
 // ERR_TOOMANYCHANNELS
 class Err_405: public Irc_exception
 {
 public:
-    Err_405(std::string channelname) { message = channelname + " :You have joined too many channels"; }
+    Err_405(std::string channelname) {number = "405", message = channelname + " :You have joined too many channels"; }
 };
 
 // ERR_WASNOSUCHNICK
 class Err_406: public Irc_exception
 {
 public:
-    Err_406(std::string nickname) { message = nickname + " :There was no sush nickname"; }
+    Err_406(std::string nickname) {number = "406", message = nickname + " :There was no sush nickname"; }
 };
 
 // ERR_TOOMANYTARGETS
 class Err_407: public Irc_exception
 {
 public:
-    Err_407(std::string target) { message = target + " :Duplicate recipients. No message delivered"; }
+    Err_407(std::string target) {number = "407", message = target + " :Duplicate recipients. No message delivered"; }
 };
 
 // ERR_NOORIGIN
 class Err_409: public Irc_exception
 {
 public:
-    Err_409() { message = ":No origin specified"; }
+    Err_409() {number = "409", message = ":No origin specified"; }
 };
 
 // ERR_NORECIPIENT
 class Err_411: public Irc_exception
 {
 public:
-    Err_411(std::string command) { message = ":No recipient given (" + command + ")"; }
+    Err_411(std::string command) {number = "411", message = ":No recipient given (" + command + ")"; }
 };
 
 // ERR_NOTEXTTOSEND
 class Err_412: public Irc_exception
 {
 public:
-    Err_412() { message = ":No text to send"; }
+    Err_412() {number = "412", message = ":No text to send"; }
 };
 
 // ERR_NOTOPLEVEL
 class Err_413: public Irc_exception
 {
 public:
-    Err_413(std::string mask) { message = mask + " :No toplevel domain specified"; }
+    Err_413(std::string mask) {number = "413", message = mask + " :No toplevel domain specified"; }
 };
 
 // ERR_UNKNOWNCOMMAND
 class Err_421: public Irc_exception
 {
 public:
-    Err_421(std::string cmd) { message = cmd + " :Unknown command"; }
+    Err_421(std::string cmd) {number = "421", message = cmd + " :Unknown command"; }
 };
 
 // ERR_NONICKNAMEGIVEN
 class Err_431: public Irc_exception
 {
 public:
-    Err_431() { message = ":No nickname given"; }
+    Err_431() {number = "431", message = ":No nickname given"; }
 };
 
 // ERR_ERRONEUSNICKNAME
 class Err_432: public Irc_exception
 {
 public:
-    Err_432(std::string nick) { message = nick + " :Erroneus nickname"; }
+    Err_432(std::string nick) {number = "432", message = nick + " :Erroneus nickname"; }
 };
 
 // ERR_NICKNAMEINUSE
 class Err_433: public Irc_exception
 {
 public:
-    Err_433(std::string nick) { message = nick + " :Nickname is already in use"; }
+    Err_433(std::string nick) {number = "433", message = nick + " :Nickname is already in use"; }
 };
 
 // ERR_NICKCOLLISION
 class Err_436: public Irc_exception
 {
 public:
-    Err_436(std::string nick) { message = nick + " :Nickname collision KILL"; }
+    Err_436(std::string nick) {number = "436", message = nick + " :Nickname collision KILL"; }
 };
 
 // ERR_NOTONCHANNEL
 class Err_442: public Irc_exception
 {
 public:
-    Err_442(std::string channel) { message = channel + " :You're not on that channel"; }
+    Err_442(std::string channel) {number = "442", message = channel + " :You're not on that channel"; }
 };
 
 // ERR_USERSDISABLED
 class Err_446: public Irc_exception
 {
 public:
-    Err_446() { message = ":User has been disabled"; }
+    Err_446() {number = "446", message = ":User has been disabled"; }
 };
 
 // ERR_NOTREGISTERED
 class Err_451: public Irc_exception
 {
 public:
-    Err_451() { message = ":You have not registered"; }
+    Err_451() {number = "451", message = ":You have not registered"; }
 };
 
 // ERR_NEEDMOREPARAMS
 class Err_461: public Irc_exception
 {
 public:
-    Err_461(std::string command) { message = command + " :Not enough parameters"; }
+    Err_461(std::string command) {number = "461", message = command + " :Not enough parameters"; }
 };
 
 // ERR_ALREADYREGISTRED
 class Err_462: public Irc_exception
 {
 public:
-    Err_462() { message = ":You may not reregister"; }
+    Err_462() {number = "462", message = ":You may not reregister"; }
 };
 
 // ERR_PASSWDMISMATCH
 class Err_464: public Irc_exception
 {
 public:
-    Err_464() { message = ":Password incorrect"; }
+    Err_464() {number = "464", message = ":Password incorrect"; }
 };
 
 // ERR_KEYSET
 class Err_467: public Irc_exception
 {
 public:
-    Err_467(std::string command) { message = command + " :Channel key already set"; }
+    Err_467(std::string command) {number = "467", message = command + " :Channel key already set"; }
 };
 
 // // ERR_CHANNELISFULL
 class Err_471: public Irc_exception
 {
 public:
-    Err_471(std::string channel) { message = channel + " :Cannot join channel (+l)"; }
+    Err_471(std::string channel) {number = "471", message = channel + " :Cannot join channel (+l)"; }
 };
 
 // ERR_UNKNOWNMODE
 class Err_472: public Irc_exception
 {
 public:
-    Err_472(std::string c) { message = c + " :is unknown mode char to me"; }
+    Err_472(std::string c) {number = "472", message = c + " :is unknown mode char to me"; }
 };
 
 // ERR_INVITEONLYCHAN
 class Err_473: public Irc_exception
 {
 public:
-    Err_473(std::string channel) { message = channel + " :Cannot join channel (+i)"; }
+    Err_473(std::string channel) {number = "473", message = channel + " :Cannot join channel (+i)"; }
 };
 
 // ERR_BANNEDFROMCHAN
 class Err_474: public Irc_exception
 {
 public:
-    Err_474(std::string channel) { message = channel + " :Cannot join channel (+b)"; }
+    Err_474(std::string channel) {number = "474", message = channel + " :Cannot join channel (+b)"; }
 };
 
 // ERR_BADCHANNELKEY
 class Err_475: public Irc_exception
 {
 public:
-    Err_475(std::string channel) { message = channel + " :Cannot join channel (+k)"; }
+    Err_475(std::string channel) {number = "475", message = channel + " :Cannot join channel (+k)"; }
 };
 
 // ERR_INVALIDCHAN
 class Err_476: public Irc_exception
 {
 public:
-    Err_476(std::string channel) { message = channel + " :Invalid channel name"; }
+    Err_476(std::string channel) {number = "476", message = channel + " :Invalid channel name"; }
 };
 
 // ERR_NOPRIVILEGES
 class Err_481: public Irc_exception
 {
 public:
-    Err_481() { message = ":Permission Denied- You're not an IRC operator"; }
+    Err_481() {number = "481", message = ":Permission Denied- You're not an IRC operator"; }
 };
 
 // ERR_CHANOPRIVSNEEDED
 class Err_482: public Irc_exception
 {
 public:
-    Err_482(std::string channel) { message = channel + " :You're not channel operator"; }
+    Err_482(std::string channel) {number = "482", message = channel + " :You're not channel operator"; }
 };
 
 // ERR_CANTKILLSERVER
 class Err_483: public Irc_exception
 {
 public:
-    Err_483() { message = ":You cant kill a server!"; }
+    Err_483() {number = "483", message = ":You cant kill a server!"; }
 };
 
 // ERR_NOOPERHOST
 class Err_491: public Irc_exception
 {
 public:
-    Err_491() { message = ":No O-lines for your host"; }
+    Err_491() {number = "491", message = ":No O-lines for your host"; }
 };
 
 // ERR_UMODEUNKNOWNFLAG
 class Err_501: public Irc_exception
 {
 public:
-    Err_501() { message = ":Unknown Mode flag"; }
+    Err_501() {number = "501", message = ":Unknown Mode flag"; }
 };
 
 // ERR_USERSDONTMATCH
 class Err_502: public Irc_exception
 {
 public:
-    Err_502() { message = ":Cant change mode for other users"; }
+    Err_502() {number = "502", message = ":Cant change mode for other users"; }
 };
 
 class Err_696: public Irc_exception
@@ -265,6 +263,7 @@ class Err_696: public Irc_exception
 public:
     Err_696(std::string channel, std::string opt)
     {
+        number = "696";
         if (opt == "l")
             message = channel + " l * :You must specify a parameter for the limit mode. Syntax: <limit>";
         else if (opt == "k")
@@ -277,6 +276,7 @@ public:
 
     Err_696(std::string channel, std::string opt, std::string arg) 
     {
+        number = "696";
         if (opt == "l")
             message = channel + " l " + arg + " :Invalid limit mode parameter. Syntax: <limit>"; 
         
@@ -286,7 +286,7 @@ public:
 class Err_697: public Irc_exception
 {
 public:
-    Err_697(std::string channel, std::string mask) { message = channel + " " + mask + " b :Channel ban list already contains " + mask; }
+    Err_697(std::string mask) {number = "697", message = mask + " b :Channel ban list already contains " + mask; }
 };
 
 class Err_698: public Irc_exception
