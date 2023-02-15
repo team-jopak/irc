@@ -42,6 +42,7 @@ public:
     void        send_client_exec(Client* client, std::string cmd);
     void        send_channel(Channel* ch);
     void        send_channel_except(Channel* ch, Client* client);
+    void        send_channel_exec_except(Channel* ch, Client* client, std::string cmd);
     void        send_channel_exec(Channel* ch, Client* client, std::string cmd);
 
     void        liststart_321(Client* client);
@@ -51,6 +52,8 @@ public:
     void        clock_333(Client* client, Channel* ch);
     void        namreply_353(Client* client, Channel* ch);
     void        endofnames_366(Client* client, Channel* ch);
+    void        banlist_367(Client* client, Channel* ch, std::string banid);
+    void        banlist_368(Client* client, Channel* ch);
 };
 
 #include "Server.hpp"

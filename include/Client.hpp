@@ -61,7 +61,7 @@ public:
 
     void			message_client(std::string message);
 
-    void			set_flag(char c, bool is_on);
+    bool			set_flag(char c, bool is_on);
 };
 
 #endif
