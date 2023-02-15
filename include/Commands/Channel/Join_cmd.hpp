@@ -191,7 +191,7 @@ private:
         }
         server->reply->namreply_353(client, ch);
         server->reply->endofnames_366(client, ch);
-        server->reply->send_channel_exec(ch, client, "JOIN :" + ch->get_name());
+        server->reply->send_channel_exec_except(ch, client, "JOIN :" + ch->get_name());
     }
 };
 

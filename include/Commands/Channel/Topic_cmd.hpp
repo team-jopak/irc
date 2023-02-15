@@ -111,7 +111,7 @@ public:
                 ch->set_topic(this->topic);
 
             msg = "TOPIC " + ch->get_name() + " :" + this->topic;
-            server->reply->send_channel_exec(ch, client, msg);
+            server->reply->send_channel_exec_except(ch, client, msg);
         }
         init_cmd();
     }

@@ -102,7 +102,7 @@ public:
                 {
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
-                        throw Err_401(*it);
+                        throw Err_401(*it, false);
                     if (!dest->is_talkable(client))
                         throw Err_404(dest->get_name());
                     dest->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message);
@@ -123,7 +123,7 @@ public:
                 {
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
-                        throw Err_401(*it);
+                        throw Err_401(*it, true);
                     dest->message_client(client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
                 }
             }

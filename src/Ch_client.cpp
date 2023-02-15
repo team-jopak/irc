@@ -17,12 +17,21 @@ Client* Ch_client::get(std::string nickname)
 	return (result != clients.end() ? result->second : NULL);
 }
 
+clock_t Ch_client::time(std::string nickname)
+{
+	Client* client = get(nickname);
+
+	return (client != NULL ? times[nickname] : 0);
+}
+
 bool Ch_client::add(Client* client)
 {
 	std::pair<map_client_iter, bool>    result;
 	std::string                         nickname = client->get_nickname();
 
-	result = clients.insert(std::pair<const std::string, Client *>(nickname, client));
+	result = clients.insert(std::pair<std::string, Client *>(nickname, client));
+	if (result.second)
+		times.insert(std::pair<std::string, clock_t>(nickname, clock()));
 	return (result.second);
 }
 
@@ -31,12 +40,23 @@ void Ch_client::set(Client* client)
 	std::string nickname = client->get_nickname();
 
 	if (clients.find(nickname) != clients.end())
+	{
 		clients[nickname] = client;
+		times[nickname] = clock();
+	}
 }
 
-void Ch_client::del(Client* client)
+bool Ch_client::del(Client* client)
 {
-	clients.erase(client->get_nickname());
+	std::string nickname = client->get_nickname();
+
+	if (exist(client))
+	{
+		clients.erase(nickname);
+		times.erase(nickname);
+		return (true);
+	}
+	return (false);
 }
 
 bool Ch_client::exist(Client* client)

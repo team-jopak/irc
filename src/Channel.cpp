@@ -33,15 +33,21 @@ void Channel::init_flags()
     this->_mode['l'] = false;
 }
 
-void Channel::set_flag(char c, bool is_on)
+bool Channel::set_flag(char c, bool is_on)
 {
-    if (this->_mode.find(c) != this->_mode.end())
+    if (this->_mode.find(c) != this->_mode.end() && this->_mode[c] != is_on)
+    {
         this->_mode[c] = is_on;
+        return (true);
+    }
+    return (false);
 }
 
-void Channel::add_mask(std::string mask)
+bool Channel::add_mask(std::string mask)
 {
-    _masks.push_back(mask);
+    std::pair<set_str::iterator, bool> result = _masks.insert(mask);
+    
+    return (result.second);
 }
 
 std::list<Client *> Channel::get_clients()
@@ -92,7 +98,7 @@ std::string Channel::get_flag_str(Client* client)
     if (check_flag('l'))
     {
         result.push_back(' ');
-        result.push_back(_limit + 48);
+        result.append(ft::ltos(_limit));
     }
     result.push_back(']');
     return (result);
