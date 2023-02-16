@@ -35,6 +35,7 @@ public:
 	void			set(std::string mask, Client* client);
 	bool			del(std::string mask);
 	clock_t			time(std::string mask);
+	bool 			exist(Client* client);
 };
 
 #endif

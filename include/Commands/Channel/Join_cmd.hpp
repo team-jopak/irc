@@ -101,6 +101,9 @@ JOIN이 성공하면 사용자에게 채널의 주제(RPL_TOPIC)와 채널에 �
     :irc.local 353 cpak_ = #b :@cpak cpak_
     :irc.local 366 cpak_ #b :End of /NAMES list.
 
+    - ban 리스트에 있는 경우
+    :irc.local 474 aaa #a :Cannot join channel (you're banned)
+
 */
 
 class Join_cmd : public Command
@@ -145,6 +148,8 @@ public:
             {
                 if (ch->joined->exist(client))
                     continue ;
+                if (ch->banned->exist(client))
+                    Err_474(ch->get_name());
                 ch->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
             }
 			else
@@ -156,7 +161,8 @@ public:
 
     virtual void init_cmd()
     {
-        std::cout << "Init command" << std::endl;
+        names.clear();
+        pass.clear();
     }
 
 private:

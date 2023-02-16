@@ -94,3 +94,23 @@ clock_t Ch_client_ban::time(std::string mask)
 
 	return (client != NULL ? times[mask] : 0);
 }
+
+bool Ch_client_ban::exist(Client* client)
+{
+	map_client_iter	iter = clients.begin();
+	map_client_iter end = clients.end();
+	std::string		name;
+
+	name += client->get_nickname();
+	name += "!";
+	name += client->get_username();
+	name += "@";
+	name += client->get_hostname();
+
+	for (; iter != end; iter++)
+	{
+		if (ft::strmatch(iter->first, name))
+			return (true);
+	}
+	return (false);
+}
