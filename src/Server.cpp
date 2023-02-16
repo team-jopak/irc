@@ -64,6 +64,7 @@ void Server::init()
 		throw std::runtime_error("error: could not listen");
 	}
 	_socket_fd = socket_fd;
+	_cmd = NULL;
 }
 
 void Server::server_run()
