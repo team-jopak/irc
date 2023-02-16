@@ -14,7 +14,7 @@
         "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
 
         H: The user is available
-        G: The user is away
+        G: The user is away // 채널에서는 필요 없다 // 떠난 유저 리스트 목록 만들어야 한다.
         *: The user is an IRC operator
         @: The user is a channel operator
         +: The user is a channel voice
