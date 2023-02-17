@@ -112,17 +112,32 @@ std::string Client::get_message_prefix()
 
 bool Client::is_auth()
 {
-	return (this->_auth);
-}
-
-void Client::set_auth()
-{
-	this->_auth = true;
+	return (this->_nick && this->_user);
 }
 
 bool Client::is_oper()
 {
 	return (this->_oper);
+}
+
+bool Client::is_pass()
+{
+	return (this->_pass);
+}
+
+void Client::set_pass()
+{
+	this->_pass = true;
+}
+
+void Client::set_nick()
+{
+	this->_nick = true;
+}
+
+void Client::set_user()
+{
+	this->_user = true;
 }
 
 void Client::set_oper()

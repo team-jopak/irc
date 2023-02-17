@@ -143,7 +143,7 @@ public:
 class Err_451: public Irc_exception
 {
 public:
-    Err_451() {number = "451", message = ":You have not registered"; }
+    Err_451(std::string cmd) {number = "451", message = cmd + " :You have not registered"; }
 };
 
 // ERR_NEEDMOREPARAMS

@@ -147,7 +147,7 @@ int Server::recv_message(int cur_fd)
 				{
 					std::cout << "tmp : " << tmp_buf << std::endl;
 					_cmd = _message->parse_msg(tmp_buf);
-					_cmd->execute(this, client);
+					_cmd->execute_command(this, client);
 				}
 				catch (const Irc_exception& e)
 				{
