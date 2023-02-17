@@ -115,6 +115,22 @@ bool Client::is_auth()
 	return (this->_nick && this->_user);
 }
 
+// nick과 user가 등록되었지만 pass가 등록되지 않았다면,
+// 연결을 끊는 에러를 발생시킨다.
+void Client::set_auth(std::string cmd)
+{
+	if (cmd == "PASS")
+		this->_pass = true;
+	else if (cmd == "NICK")
+		this->_nick = true;
+	else if (cmd == "USER")
+		this->_user = true;
+	if (!this->_pass && this->_nick && this->_user)
+	{
+		// error
+	}
+}
+
 bool Client::is_oper()
 {
 	return (this->_oper);

@@ -59,9 +59,11 @@ public:
     void			set_user();
 
     bool			is_pass();
-    bool			is_auth();
     bool			is_oper();
     bool            is_registered();
+
+    bool			is_auth();
+    void			set_auth(std::string cmd);
 
     void			add_channel(Channel *channel);
     void			delete_channel(Channel *channel);

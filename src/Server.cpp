@@ -122,44 +122,35 @@ void Server::server_run()
 
 int Server::recv_message(int cur_fd)
 {
-	char buf = '\n';
+	Client* client = get_client_by_socket_fd(cur_fd);
 	std::string tmp_buf;
+	char buf = '\n';
 	int b = 0;
+
 	while (42) // tmp_buf.find("\n")
 	{
 		int nbytes;
 		nbytes = recv(cur_fd, &buf, 1, 0);
 		if (nbytes < 0)
-		{
 			continue;
-		}
-		else
+		tmp_buf += buf;
+		if (b > 500)
+			tmp_buf = "/QUIT you can't use this server\r\n";
+		if (tmp_buf.find("\n") != std::string::npos)
 		{
-			tmp_buf += buf;
-			if (b > 500)
+			try
 			{
-				tmp_buf = "/QUIT you can't use this server\r\n";
+				std::cout << "tmp : " << tmp_buf << std::endl;
+				_cmd = _message->parse_msg(tmp_buf);
+				_cmd->execute_command(this, client);
 			}
-			if (tmp_buf.find("\n") != std::string::npos)
+			catch (const Irc_exception& e)
 			{
-				Client* client = get_client_by_socket_fd(cur_fd);
-				try
-				{
-					std::cout << "tmp : " << tmp_buf << std::endl;
-					_cmd = _message->parse_msg(tmp_buf);
-					_cmd->execute_command(this, client);
-				}
-				catch (const Irc_exception& e)
-				{
-    				serverResponse(":"+get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
-					if (_cmd)
-					{
-						_cmd->init_cmd();
-					}
-				}
-				
-				break;
+				serverResponse(":"+get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
+				if (_cmd)
+					_cmd->init_cmd();
 			}
+			break;
 		}
 		b++;
 	}

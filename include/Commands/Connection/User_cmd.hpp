@@ -44,15 +44,12 @@ public:
     virtual void parse_args(list_str args)
     {
         if (args.size() <= 3)
-        {
             throw Err_461("USER");
-        }
-        
         list_str_iter it_args = args.begin();
         _username = *(it_args);
         _hostname = *(++it_args);
         _servername = *(++it_args);
-        ++it_args; // 서버이름 다음 리얼이름으로 넘어가기
+        ++it_args;
         for (;it_args != args.end();++it_args)
         {
             std::string::iterator it = find((*it_args).begin(), (*it_args).end(), ':');
@@ -69,31 +66,14 @@ public:
         }
     }
 
-    virtual void execute(Server* server, Client* client)
+    virtual void execute(Server*, Client* client)
     {
-        std::cout << "Execute USER" << std::endl;
-
-        // username이 있으면 중복 방지
-        if ((client->get_username().empty()))
-        {
+        if ((client->is_auth()))
             throw Err_462();
-        }
-
-        (void)server;
         client->set_username(_username);
         client->set_hostname(_hostname);
         client->set_servername(_servername);
         client->set_realname(_realname);
-        // client->message_client(":irc.local NOTICE * :*** Looking up your hostname...");
-        // client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
-        client->message_client(":irc.local 001 " + client->get_nickname() + " : " + client->get_nickname());
-        // client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
-        // client->message_client(":irc.local 002 aaaa :Your host is irc.local, running version InspIRCd-3");
-        // client->message_client(":irc.local 003 aaaa :This server was created 03:23:32 Feb 13 2023");
-        // client->message_client(":irc.local 004 aaaa irc.local InspIRCd-3 iosw biklmnopstv :bklov");
-        // client->message_client(":irc.local 005 aaaa AWAYLEN=200 CASEMAPPING=rfc1459 CHANLIMIT=#:20 CHANMODES=b,k,l,imnpst CHANNELLEN=64 CHANTYPES=# ELIST=CMNTU HOSTLEN=64 KEYLEN=32 KICKLEN=255 LINELEN=512 MAXLIST=b:100 :are supported by this server");
-        // client->message_client(":irc.local 005 aaaa MAXTARGETS=20 MODES=20 NAMELEN=128 NETWORK=Localnet NICKLEN=30 PREFIX=(ov)@+ SAFELIST STATUSMSG=@+ TOPICLEN=307 USERLEN=10 USERMODES=,,s,iow WHOX :are supported by this server");
-    
         init_cmd();
     }
 
@@ -103,9 +83,20 @@ public:
         _hostname = "";
         _servername = "";
         _realname = "";
-        std::cout << "Init command" << std::endl;
     }
-
 };
 
 #endif
+
+
+// 등록 완료 후 출력 메세지
+
+// client->message_client(":irc.local 001 " + client->get_nickname() + " : " + client->get_nickname());
+// client->message_client(":irc.local NOTICE * :*** Looking up your hostname...");
+// client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
+// client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
+// client->message_client(":irc.local 002 aaaa :Your host is irc.local, running version InspIRCd-3");
+// client->message_client(":irc.local 003 aaaa :This server was created 03:23:32 Feb 13 2023");
+// client->message_client(":irc.local 004 aaaa irc.local InspIRCd-3 iosw biklmnopstv :bklov");
+// client->message_client(":irc.local 005 aaaa AWAYLEN=200 CASEMAPPING=rfc1459 CHANLIMIT=#:20 CHANMODES=b,k,l,imnpst CHANNELLEN=64 CHANTYPES=# ELIST=CMNTU HOSTLEN=64 KEYLEN=32 KICKLEN=255 LINELEN=512 MAXLIST=b:100 :are supported by this server");
+// client->message_client(":irc.local 005 aaaa MAXTARGETS=20 MODES=20 NAMELEN=128 NETWORK=Localnet NICKLEN=30 PREFIX=(ov)@+ SAFELIST STATUSMSG=@+ TOPICLEN=307 USERLEN=10 USERMODES=,,s,iow WHOX :are supported by this server");
