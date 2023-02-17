@@ -14,7 +14,7 @@
         "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
 
         H: The user is available
-        G: The user is away // 채널에서는 필요 없다 // 떠난 유저 리스트 목록 만들어야 한다.
+        G: The user is away // 자리비움같은 옵션?
         *: The user is an IRC operator
         @: The user is a channel operator
         +: The user is a channel voice
@@ -135,12 +135,30 @@ public:
 
     void send_message(Client* client, std::list<Client *>::iterator it_clients)
     {
-        // irc.local 352           hyujo   *root 127.0.0.1 irc.local   hyujo    H           :0            root
-        //           352 <channel> <user>      <host>       <server>   <nick> <H|G>[*][@|+] :<hopcount> <real name>
-        std::string message = "352 " + (*it_clients)->get_nickname() + " " + \
+        // 채널
+        // :penguin.omega.example.org 352 hyu_ #lo1 hyunjinjo 127.0.0.1 penguin.omega.example.org hyu_ H@ :0 HYUNJIN JO
+        // 이름
+        // :penguin.omega.example.org 352 hyu_ #lo1 hyunjinjo 127.0.0.1 penguin.omega.example.org hyu_ H@ :0 HYUNJIN JO
+
+        // 채널인지 이름인지 확인
+        Channel *channel = client->get_last_channel();
+        std::string channelname = "*";
+        if (channel != NULL)
+        {
+            channelname = channel->get_name();
+        }
+        std::cout << client->get_channel_size() << std::endl;
+        std::cout << channelname << std::endl;
+        // 352 RPL_WHOREPLY, <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
+        std::string message = ":irc.local 352 " + client->get_nickname() + " " + channelname + " " + \
                                 (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
                                 (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
-                                " H* :0 " + (*it_clients)->get_realname();
+                                " H @ : 0 " + (*it_clients)->get_realname();
+
+        // std::string message = ":irc.local 352 " + std::string("*") + " " + channel->get_name() + " " + \
+        //                         (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
+        //                         (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
+        //                         " H @ : 0 " + (*it_clients)->get_realname();
         client->message_client(message.c_str());
     }
 
