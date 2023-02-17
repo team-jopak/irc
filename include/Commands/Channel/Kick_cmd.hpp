@@ -7,13 +7,8 @@
 class Kick_cmd : public Command
 {
 private:
-<<<<<<< HEAD
     std::string channel_strs;
     std::string user_strs;
-=======
-    list_str    channel_strs;
-    list_str    user_strs;
->>>>>>> 3933cda920f4ebae86d64c71c8e1713d389a5c1a
     std::string message;
 
 public:
@@ -42,11 +37,7 @@ public:
             // ERR_NEEDMOREPARAMS
         }
 
-<<<<<<< HEAD
         ch = server->get_channel(channel_strs);
-=======
-        ch = server->get_channel(*iter);
->>>>>>> 3933cda920f4ebae86d64c71c8e1713d389a5c1a
         if (ch == NULL)
         {
             // ERR_NOSUCHCHANNEL
