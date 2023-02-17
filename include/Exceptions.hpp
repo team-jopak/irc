@@ -296,6 +296,15 @@ public:
 };
 
 
+class Connection_error
+{
+public:
+    std::string message;
+
+    Connection_error() { message = "ERROR :Closing link: (root@127.0.0.1) [Access denied by configuration]"; }
+};
+
+
 
 
 #endif

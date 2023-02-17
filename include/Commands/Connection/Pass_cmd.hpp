@@ -51,7 +51,7 @@ public:
         if (client->is_auth() == true)
             throw Err_462();
         if (_password == server->get_password())
-            client->set_pass();
+            client->set_auth(this->name);
         init_cmd();
     }
 

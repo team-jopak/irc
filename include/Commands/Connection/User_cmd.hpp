@@ -74,6 +74,7 @@ public:
         client->set_hostname(_hostname);
         client->set_servername(_servername);
         client->set_realname(_realname);
+        client->set_auth(this->name);
         init_cmd();
     }
 
@@ -87,16 +88,3 @@ public:
 };
 
 #endif
-
-
-// 등록 완료 후 출력 메세지
-
-// client->message_client(":irc.local 001 " + client->get_nickname() + " : " + client->get_nickname());
-// client->message_client(":irc.local NOTICE * :*** Looking up your hostname...");
-// client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
-// client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
-// client->message_client(":irc.local 002 aaaa :Your host is irc.local, running version InspIRCd-3");
-// client->message_client(":irc.local 003 aaaa :This server was created 03:23:32 Feb 13 2023");
-// client->message_client(":irc.local 004 aaaa irc.local InspIRCd-3 iosw biklmnopstv :bklov");
-// client->message_client(":irc.local 005 aaaa AWAYLEN=200 CASEMAPPING=rfc1459 CHANLIMIT=#:20 CHANMODES=b,k,l,imnpst CHANNELLEN=64 CHANTYPES=# ELIST=CMNTU HOSTLEN=64 KEYLEN=32 KICKLEN=255 LINELEN=512 MAXLIST=b:100 :are supported by this server");
-// client->message_client(":irc.local 005 aaaa MAXTARGETS=20 MODES=20 NAMELEN=128 NETWORK=Localnet NICKLEN=30 PREFIX=(ov)@+ SAFELIST STATUSMSG=@+ TOPICLEN=307 USERLEN=10 USERMODES=,,s,iow WHOX :are supported by this server");

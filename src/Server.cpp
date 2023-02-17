@@ -122,14 +122,14 @@ void Server::server_run()
 
 int Server::recv_message(int cur_fd)
 {
-	Client* client = get_client_by_socket_fd(cur_fd);
+	Client* 	client = get_client_by_socket_fd(cur_fd);
 	std::string tmp_buf;
-	char buf = '\n';
-	int b = 0;
+	char 		buf = '\n';
+	int 		b = 0;
+	int 		nbytes;
 
-	while (42) // tmp_buf.find("\n")
+	while (42)
 	{
-		int nbytes;
 		nbytes = recv(cur_fd, &buf, 1, 0);
 		if (nbytes < 0)
 			continue;
@@ -140,15 +140,19 @@ int Server::recv_message(int cur_fd)
 		{
 			try
 			{
-				std::cout << "tmp : " << tmp_buf << std::endl;
 				_cmd = _message->parse_msg(tmp_buf);
 				_cmd->execute_command(this, client);
 			}
 			catch (const Irc_exception& e)
 			{
-				serverResponse(":"+get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
+				serverResponse(":" + get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
 				if (_cmd)
 					_cmd->init_cmd();
+			}
+			catch (const Connection_error& e)
+			{
+				serverResponse(e.message, cur_fd);
+				delete_client(client->get_socket_fd());
 			}
 			break;
 		}
