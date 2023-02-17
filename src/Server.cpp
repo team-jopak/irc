@@ -295,6 +295,7 @@ Channel* Server::add_channel(std::string name, Client* client)
 	new_channel->joined->add(client);
 	new_channel->op->add(client);
 	this->_channels.push_back(new_channel);
+	client->add_channel(new_channel);
 	return (new_channel);
 }
 
