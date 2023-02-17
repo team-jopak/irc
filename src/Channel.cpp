@@ -189,6 +189,21 @@ void Channel::message_channel(std::string message)
     }
 }
 
+void Channel::message_channel_except_sender(std::string message, Client *sender)
+{
+    list_client clients = get_clients();
+
+    if (message.find("\r\n"))
+        message += "\r\n";
+    for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if ((*it) == sender)
+            continue;
+        if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
+            throw std::runtime_error("Couldn't send message_channel");
+    }
+}
+
 void Channel::message_channel_with_prefix(std::string message)
 {
     list_client clients = get_clients();
