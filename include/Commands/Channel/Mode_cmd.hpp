@@ -72,213 +72,134 @@ o - 운영자 플래그.
 - 옵션을 실행하면서 channel 또는 user 객체를 변경한다.
 - 객체를 변경하는 함수는 객체의 맴버 함수이다.
 
+
+옵션을 적용하며 적용된 문자열을 모아서 마지막에 client로 보낸다.
+
+MODE #asdf +p-aasaanaaataaa+s
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:irc.local 472 cpak__ a :is not a recognised channel mode.
+:cpak__!root@127.0.0.1 MODE #asdf :+p-nt+s
+
+- 인자가 필요한 플래그에서 출력하는 에러 메세지
+:irc.local 696 cpak #asdf l * :You must specify a parameter for the limit mode. Syntax: <limit>.
+:irc.local 696 cpak #asdf k * :You must specify a parameter for the key mode. Syntax: <key>.
+
+:irc.local 461 aaa MODE :Not enough parameters.
+
+
+- 옵션없이 명령어를 사용하면 채널 정보를 띄워준다.
+
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a
+
+127.000.000.001.06667-127.000.000.001.60288: :irc.local 324 cpak #a +lnpt :1234
+:irc.local 329 cpak #a :1676263198
+
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +b
+
+127.000.000.001.06667-127.000.000.001.60288: :irc.local 368 cpak #a :End of channel ban list
+
+
+- 이미 플래그가 적용되어 있다면 응답 메세지에서 제외된다.
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +l 1234
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a +l :1234
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +lp 1234
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a :+p
+
+
+- 입력되는 플래그의 인자에 따라서 응답 메세지 형식이 달라진다.
+- 마지막 인자에만 : 가 붙는다.
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a -k 1234
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a -k :1234
+
+127.000.000.001.60288-127.000.000.001.06667: MODE #a +isplk 1234 asdfawe
+
+127.000.000.001.06667-127.000.000.001.60288: :cpak!root@127.0.0.1 MODE #a +isplk 1234 :asdfawe
+
+
+
+MODE #a +o awef
+
+127.000.000.001.06667-127.000.000.001.55762: :irc.local 401 aaaa awef :No such nick
+
+
 */
 
 class Mode_cmd : public Command
 {
 private:
-    typedef std::pair<char, bool>   pair_flag;
-    typedef std::vector<pair_flag>  vec_flag;
-    typedef vec_flag::iterator      vec_flag_iter;
+    typedef std::pair<char, bool>       pair_flag;
+    typedef std::vector<pair_flag>      vec_flag;
+    typedef vec_flag::iterator          vec_flag_iter;
+    typedef std::vector<std::string>    vec_str;
+    typedef vec_str::iterator           vec_str_iter;
 
-    std::string             name;
-    vec_flag                flags;
-    std::queue<std::string> cmd_args;
+    Server*         server;
+    Client*         client;
+    Channel*        tar_ch;
+    Client*         tar_usr;
+    bool            is_ch_mode;
+
+    std::string     name;
+    std::string     flags;
+    std::string     trash;
+    vec_str         cmd_args;
+    vec_str_iter    args_iter;
+    vec_str         result_flag;
+    vec_str         result_args;
 
 public:
-    Mode_cmd() : Command("MODE")
-    {
-    }
+    Mode_cmd();
 
-    virtual void parse_args(list_str args)
-    {
-        if (args.size() < 1)
-        {
-            // 461 :Not enough parameters.
-            return ;
-        }
-
-        list_str_iter iter = args.begin();
-
-        // nick/channel name
-        name = *iter++;
-
-        // flags
-        std::string flag_str = *iter;
-        int         len = flag_str.size();
-        bool        is_on = true;
-
-        for (int i=0; i<len; i++)
-        {
-            if (flag_str[i] == '+')
-                is_on = true;
-            else if (flag_str[i] == '-')
-                is_on = false;
-            else
-                _insert_flag(flag_str[i], is_on);
-        }
-        iter++;
-
-        // command args
-        for (; iter!=args.end(); iter++)
-        {
-            this->cmd_args.push(*iter);
-        }
-    }
-
-    virtual void execute(Server* server, Client* client)
-    {
-        if (name[0] == '#')
-            _mode_ch(server, client);
-        else
-            _mode_usr(server, client);
-        init_cmd();
-    }
-
-    virtual void init_cmd()
-    {
-        std::cout << "Init command" << std::endl;
-    }
+    virtual void    parse_args(list_str args);
+    virtual void    execute(Server* server, Client* client);
+    virtual void    init_cmd();
 
 private:
-    void _insert_flag(char c, bool is_on)
-    {
-        vec_flag_iter iter = this->flags.begin();
-        vec_flag_iter end = this->flags.end();
+    void            _throw_trash(Client* client);
+    void            _push_flag_str(std::string flag, bool is_on);
 
-        for (; iter != end; iter++)
-        {
-            if (iter->first == c)
-            {
-                iter->second = is_on;
-                return ;
-            }
-        }
+    bool            _is_flag(char c);
+    bool            _is_flag_ch(char c);
+    bool            _is_flag_usr(char c);
+    bool            _is_changeable(char c, bool is_on);
 
-        this->flags.push_back(pair_flag(c, is_on));
-    }
+    bool            _set_name(std::string name_str);
+    void            _set_flag(std::string flag_str);
 
-    void _mode_usr(Server* server, Client*)
-    {
-        Client*         cli = server->get_client_by_nickname(name);
-        vec_flag_iter   iter = this->flags.begin();
-        vec_flag_iter   end = this->flags.end();
-        char            flag;
-        bool            is_on;
+    std::string     _get_arg();
+    std::string     _get_mask(std::string mask);
+    std::string     _get_result_msg();
+    std::string     _get_flag_str();
+    std::string     _get_arg_str();
 
-        if (cli == NULL)
-        {
-            // 401 :No such nick/channel
-            return ;
-        }
+    void            _send_banlist();
 
-        for (; iter != end; iter++)
-        {
-            flag = iter->first;
-            is_on = iter->second;
+    void            _mode_ch();
+    void            _mode_usr();
 
-            if (flag == 'i' || flag == 's' || flag == 'w' || flag == 'o')
-                cli->set_flag(flag, is_on);
-            else
-            {
-                // 없는 옵션 플래그 예외 처리
-            }
-        }
-    }
-    
-    void _mode_ch(Server* server, Client* client)
-    {
-        Channel*        ch = server->get_channel(name);
-        vec_flag_iter   iter = this->flags.begin();
-        vec_flag_iter   end = this->flags.end();
-        char            flag;
-        bool            is_on;
-
-        if (ch == NULL)
-        {
-            // 403 :No such channel
-            return ;
-        }
-
-        if (!ch->op->exist(client))
-        {
-            // 482 :You must have channel op access or above to set channel mode p
-            return ;
-        }
-
-        for (; iter != end; iter++)
-        {
-            flag = iter->first;
-            is_on = iter->second;
-
-            if (flag == 'o')
-                _mode_ch_o(ch, client, is_on);
-            else if (flag == 'l')
-                _mode_ch_l(ch, is_on, ft::stoi(_get_arg()));
-            else if (flag == 'b')
-                _mode_ch_b(ch, _get_arg());
-            else if (flag == 'v')
-                _mode_ch_v(ch, client, is_on);
-            else if (flag == 'k')
-                _mode_ch_k(ch, is_on, "");
-            else if (flag == 't' || flag == 'p' || flag == 's' || flag == 'i' || flag == 'n' || flag == 'm')
-                ch->set_flag(flag, is_on);
-            else
-            {
-                // 없는 옵션 플래그 예외 처리
-            }
-        }
-    }
-
-    std::string _get_arg()
-    {
-        std::string arg = this->cmd_args.front();
-        this->cmd_args.pop();
-        return (arg);
-    }
-
-    // 채널 운영자 설정
-    void _mode_ch_o(Channel* ch, Client* client, bool is_on)
-    {
-        if (is_on)
-            ch->op->set(client);
-        else
-            ch->op->del(client);
-    }
-
-    // 채널 limit 설정
-    void _mode_ch_l(Channel* ch, bool is_on, int limit)
-    {
-        if (limit == -1)
-        {
-            // 잘못된 limit 예외 처리
-            return ;
-        }
-        ch->set_flag('l', is_on);
-        ch->set_limit(limit);
-    }
-   
-    // 채널 마스크 추가
-    void _mode_ch_b(Channel* ch, std::string mask)
-    {
-        ch->add_mask(mask);
-    }
-
-    // 사용자에게 말할 수 있는 권한 제공
-    void _mode_ch_v(Channel* ch, Client* client, bool is_on)
-    {
-        if (is_on)
-            ch->voice->add(client);
-        else
-            ch->voice->del(client);
-    }
-
-    // 채널 암호 설정
-    void _mode_ch_k(Channel* ch, bool is_on, std::string key)
-    {
-        ch->set_flag('k', is_on);
-        ch->set_key(key);
-    }
+    void            _set_ch_mode(char flag, bool is_on);
+    void            _set_ch_b(bool is_on);
+    void            _set_ch_l(bool is_on);
+    void            _set_ch_o(bool is_on);
+    void            _set_ch_v(bool is_on);
+    void            _set_ch_k(bool is_on);
+    void            _set_ch_etc(char flag, bool is_on);
 };
 
 #endif

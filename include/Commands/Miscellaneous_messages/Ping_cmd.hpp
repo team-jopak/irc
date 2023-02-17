@@ -37,11 +37,9 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        //std::cout << "args : ";
-        //(void)args;
         if (args.size() != 1)
         {
-            return ;
+            throw Err_461("PING");
         }
         list_str_iter it = args.begin();
         _server = (*it);
@@ -50,13 +48,11 @@ public:
     // 
     virtual void execute(Server* server, Client* client)
     {
-        //(void)server;
-        //(void)client;
         std::cout << "Execute PING" << std::endl;
-        if (_server == server->get_host())
-            client->message_client(":" + server->get_host() + " PONG " + server->get_host() + " :" + _server);
+        if (_server == server->get_host() || _server == server->get_name())
+            client->message_client(":" + server->get_name() + " PONG " + server->get_name() + " :" + _server);
         else
-            ; // error msg
+            throw Err_402(_server);
         init_cmd();
     }
 

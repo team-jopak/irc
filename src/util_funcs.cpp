@@ -3,7 +3,7 @@
 namespace ft
 {
 
-std::list<std::string> split(std::string input, char delimiter)
+std::list<std::string> split_list(std::string input, char delimiter)
 {
     std::list<std::string> answer;
     std::stringstream ss(input);
@@ -16,15 +16,39 @@ std::list<std::string> split(std::string input, char delimiter)
     return (answer);
 }
 
-int stoi(std::string str)
+std::vector<std::string> split_vec(std::string input, char delimiter)
 {
-    int result = 0;
-    std::stringstream ssInt(str);
-    ssInt >> result;
+    std::vector<std::string> answer;
+    std::stringstream ss(input);
+    std::string temp;
 
-    if (!ssInt.fail())
-        return (-1);
+    while (std::getline(ss, temp, delimiter)) {
+        answer.push_back(temp);
+    }
+
+    return (answer);
+}
+
+long stol(std::string str)
+{
+    std::stringstream	ss_long(str);
+    long 				tmp = 0;
+	long				result = 0;
+
+	while (ss_long >> tmp) 
+	{
+		result *= 10;
+		result += tmp;
+	}
     return result;
+}
+
+std::string ltos(long val)
+{
+	std::stringstream	ss;
+	
+	ss << val;
+	return (ss.str());
 }
 
 std::string str_toupper(std::string str)
@@ -91,6 +115,25 @@ bool strmatch(std::string pattern, std::string string)
 	if (str[j])
 		return (false);
 	return (true);
+}
+
+std::string vec_str_join(std::vector<std::string> vec, std::string delim)
+{
+	std::vector<std::string>::iterator	iter = vec.begin();
+	std::vector<std::string>::iterator	end = vec.end();
+	std::string							result = "";
+
+	for (; iter != end; iter++)
+	{
+		if (iter == vec.begin())
+			result.append(*iter);
+		else
+		{
+			result.append(delim);
+			result.append(*iter);
+		}
+	}
+	return (result);
 }
 
 } // ft

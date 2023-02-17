@@ -64,6 +64,7 @@ void Server::init()
 		throw std::runtime_error("error: could not listen");
 	}
 	_socket_fd = socket_fd;
+	_cmd = NULL;
 }
 
 void Server::server_run()
@@ -142,21 +143,16 @@ int Server::recv_message(int cur_fd)
 			}
 			if (tmp_buf.find("\n") != std::string::npos)
 			{
-				// 간단한 메세지 보내는 예시(잘 동작하는지 확인용)
-				// std::cout << tmp_buf << std::endl;
-				// ssize_t rc;
-				// rc = send(cur_fd, const_cast<char*>(tmp_buf.c_str()), b, 0);
-				
-				// Message 시작
+				Client* client = get_client_by_socket_fd(cur_fd);
 				try
 				{
 					std::cout << "tmp : " << tmp_buf << std::endl;
 					_cmd = _message->parse_msg(tmp_buf);
-					_cmd->execute(this, get_client_by_socket_fd(cur_fd));
+					_cmd->execute(this, client);
 				}
-				catch (const std::exception& e)
+				catch (const Irc_exception& e)
 				{
-					serverResponse(e.what(), cur_fd);
+    				serverResponse(":"+get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
 					if (_cmd)
 					{
 						_cmd->init_cmd();

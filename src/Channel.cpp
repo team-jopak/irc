@@ -8,8 +8,8 @@ Channel::Channel(std::string name) : _name(name), _topic("")
     this->op = new Ch_client();
     this->joined = new Ch_client();
     this->invited = new Ch_client();
-    this->banned = new Ch_client();
     this->voice = new Ch_client();
+    this->banned = new Ch_client_ban();
 }
 
 Channel::~Channel()
@@ -33,15 +33,21 @@ void Channel::init_flags()
     this->_mode['l'] = false;
 }
 
-void Channel::set_flag(char c, bool is_on)
+bool Channel::set_flag(char c, bool is_on)
 {
-    if (this->_mode.find(c) != this->_mode.end())
+    if (this->_mode.find(c) != this->_mode.end() && this->_mode[c] != is_on)
+    {
         this->_mode[c] = is_on;
+        return (true);
+    }
+    return (false);
 }
 
-void Channel::add_mask(std::string mask)
+bool Channel::add_mask(std::string mask)
 {
-    _masks.push_back(mask);
+    std::pair<set_str::iterator, bool> result = _masks.insert(mask);
+    
+    return (result.second);
 }
 
 std::list<Client *> Channel::get_clients()
@@ -74,7 +80,7 @@ std::string Channel::get_flag_str(Client* client)
 {
     map_flag::iterator  iter = _mode.begin();
     map_flag::iterator  end = _mode.end();
-    std::string         result = "[+";
+    std::string         result = "+";
 
     for (; iter != end; iter++)
     {
@@ -92,9 +98,8 @@ std::string Channel::get_flag_str(Client* client)
     if (check_flag('l'))
     {
         result.push_back(' ');
-        result.push_back(_limit + 48);
+        result.append(ft::ltos(_limit));
     }
-    result.push_back(']');
     return (result);
 }
 
@@ -109,7 +114,7 @@ bool Channel::check_flag(char c)
 
     if (iter != this->_mode.end())
         return (iter->second);
-    return false;
+    return (false);
 }
 
 bool Channel::check_limit()
@@ -179,6 +184,21 @@ void Channel::message_channel(std::string message)
         message += "\r\n";
     for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
     {
+        if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
+            throw std::runtime_error("Couldn't send message_channel");
+    }
+}
+
+void Channel::message_channel_except_sender(std::string message, Client *sender)
+{
+    list_client clients = get_clients();
+
+    if (message.find("\r\n"))
+        message += "\r\n";
+    for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if ((*it) == sender)
+            continue;
         if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
             throw std::runtime_error("Couldn't send message_channel");
     }

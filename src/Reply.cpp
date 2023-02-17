@@ -94,7 +94,10 @@ void Reply::set_client_nickname(Ch_client* clients, Channel* ch)
 
 void Reply::send_client(Client* client)
 {
-    client->message_client(_ss.str());
+    std::string msg = _ss.str();
+    
+    msg.pop_back();
+    client->message_client(msg);
     init_ss();
 }
 
@@ -117,12 +120,22 @@ void Reply::send_channel_except(Channel* ch, Client* client)
     Server::list_client         clients = ch->get_clients();
     Server::list_client_iter    iter = clients.begin();
     Server::list_client_iter    end = clients.end();
-
+    std::string                 msg = _ss.str();
+    
+    msg.pop_back();
     for (; iter != end; iter++)
     {
         if (*iter != client)
-            (*iter)->message_client(_ss.str());
+            (*iter)->message_client(msg);
     }
+    init_ss();
+}
+
+void Reply::send_channel_exec_except(Channel* ch, Client* client, std::string cmd)
+{
+    set_msg_colon(client->get_message_prefix());
+    set_msg(cmd);
+    send_channel_except(ch, client);
     init_ss();
 }
 
@@ -130,7 +143,7 @@ void Reply::send_channel_exec(Channel* ch, Client* client, std::string cmd)
 {
     set_msg_colon(client->get_message_prefix());
     set_msg(cmd);
-    send_channel_except(ch, client);
+    send_channel(ch);
     init_ss();
 }
 
@@ -152,6 +165,7 @@ void Reply::list_322(Client* client, std::string ch_name)
     std::string ch_topic = ch->get_topic();
     bool        is_joined = ch->joined->exist(client);
 
+    ch_opt = "[" + ch_opt + "]";
     if (!is_joined && ch->check_flag('s'))
         return ;
     else if (!is_joined && ch->check_flag('p'))
@@ -177,6 +191,20 @@ void Reply::listend_323(Client* client)
     set_rpl_number("323");
     set_client_nickname(client);
     set_msg(":End of channel list.");
+    send_client(client);
+}
+
+void Reply::channelmodeis_324(Client* client, Channel* ch)
+{
+    std::string                 ch_mode = ch->get_flag_str(client);
+    std::vector<std::string>    opts = ft::split_vec(ch_mode, ' ');
+
+    opts[opts.size() - 1] = ":" + opts[opts.size() - 1];
+    set_prefix();
+    set_rpl_number("324");
+    set_client_nickname(client);
+    set_channel_name(ch);
+    set_msg(ft::vec_str_join(opts, " "));
     send_client(client);
 }
 
@@ -223,5 +251,27 @@ void Reply::endofnames_366(Client* client, Channel* ch)
     else
         _ss << ch->get_name();
     set_msg(" :End of /NAMES list.");
+    send_client(client);
+}
+
+void Reply::banlist_367(Client* client, Channel* ch, std::string banid)
+{
+    set_prefix();
+    set_rpl_number("367");
+    set_client_nickname(client);
+    set_channel_name(ch);
+    set_msg(banid);
+    set_msg(ch->banned->get(banid)->get_nickname());
+    set_msg_colon(ft::ltos(ch->banned->time(banid)));
+    send_client(client);
+}
+
+void Reply::endofbanlist_368(Client* client, Channel* ch)
+{
+    set_prefix();
+    set_rpl_number("368");
+    set_client_nickname(client);
+    set_channel_name(ch);
+    set_msg(":End of channel ban list");
     send_client(client);
 }

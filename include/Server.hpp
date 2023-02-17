@@ -35,6 +35,7 @@ private:
     std::string		_password;
     vec_pollfd		_poll_fd_vec;
     list_client		_clients;
+    list_client     _leave_clients;
     list_ch			_channels;
     Message*		_message;
     Command*		_cmd;

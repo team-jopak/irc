@@ -63,7 +63,7 @@ public:
         // args 수가 모자란 경우
         if (args.size() < 2)
             throw Err_461("PRIVMSG");
-        _receiver = ft::split((*it), ',');
+        _receiver = ft::split_list((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
         for (list_str_iter it_rec = _receiver.begin(); it_rec != _receiver.end(); it_rec++)
@@ -94,7 +94,7 @@ public:
                         {
                             if (!(*it_ch)->is_talkable(client))
                                 throw Err_404((*it_ch)->get_name());
-                            (*it_ch)->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message);
+                            (*it_ch)->message_channel_except_sender(":" + client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message, client);
                         }
                     }
                 }
@@ -102,10 +102,10 @@ public:
                 {
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
-                        throw Err_401(*it);
+                        throw Err_401(*it, false);
                     if (!dest->is_talkable(client))
                         throw Err_404(dest->get_name());
-                    dest->message_channel(client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message);
+                    dest->message_channel_except_sender(":" + client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message, client);
                 }
             }
             else
@@ -116,15 +116,15 @@ public:
                     for (Server::list_client::iterator it_cl = cl_list.begin(); it_cl != cl_list.end(); it_cl++)
                     {
                         if (ft::strmatch((*it), (*it_cl)->get_nickname()))
-                            (*it_cl)->message_client(client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
+                            (*it_cl)->message_client(":" + client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
                     }
                 }
                 else
                 {
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
-                        throw Err_401(*it);
-                    dest->message_client(client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
+                        throw Err_401(*it, true);
+                    dest->message_client(":" + client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
                 }
             }
         }
