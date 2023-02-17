@@ -20,9 +20,16 @@ public:
     {
         list_str_iter   it = args.begin();
 
+        if (args.size() < 2)
+        {
+            throw Err_461("KICK");
+        }
         channel_strs = *it++;
         user_strs = *it++;
-        message = *it;
+        if (args.size() == 3)
+            message = *it;
+        else
+            message = "";
     }
 
     // op, joined, invited, voice에서 제거
@@ -31,21 +38,20 @@ public:
         Channel*        ch;
         Client*         user;
 
-        user = server->get_client_by_nickname(user_strs);
-        if (channel_strs.size() == 0 || user_strs.size() == 0)
-        {
-            // ERR_NEEDMOREPARAMS
-        }
 
         ch = server->get_channel(channel_strs);
+        user = server->get_client_by_nickname(user_strs);
         if (ch == NULL)
         {
-            // ERR_NOSUCHCHANNEL
+            throw Err_403(channel_strs);
         }
-
+        if (!ch->op->exist(client))
+        {
+            throw Err_482(channel_strs);
+        }
         if (!ch->joined->exist(user))
         {
-            // ERR_NOTONCHANNEL
+            throw Err_442(channel_strs);  // need check
         }
 
         ch->op->del(user);
@@ -53,6 +59,7 @@ public:
         ch->invited->del(user);
         ch->voice->del(user);
         user->delete_channel(ch);
+        ch->message_channel(":" + client->get_message_prefix() + " KICK " + channel_strs + user_strs + " :" + message);
         init_cmd();
     }
 
