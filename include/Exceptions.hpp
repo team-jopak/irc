@@ -143,7 +143,7 @@ public:
 class Err_451: public Irc_exception
 {
 public:
-    Err_451() {number = "451", message = ":You have not registered"; }
+    Err_451(std::string cmd) {number = "451", message = cmd + " :You have not registered"; }
 };
 
 // ERR_NEEDMOREPARAMS
@@ -294,6 +294,17 @@ class Err_698: public Irc_exception
 public:
     Err_698(std::string channel, std::string mask) { message = channel + " " + mask + " b :Channel ban list does not contain " + mask; }
 };
+
+
+class Connection_error
+{
+public:
+    std::string message;
+
+    Connection_error() { message = "ERROR :Closing link: (root@127.0.0.1) [Access denied by configuration]"; }
+};
+
+
 
 
 #endif

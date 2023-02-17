@@ -1,4 +1,5 @@
 #include "../include/Client.hpp"
+#include <unistd.h>
 
 Client::Client(int client_fd)
 {
@@ -10,7 +11,6 @@ Client::Client(int client_fd)
 	getsockname(_client_fd, (struct sockaddr *)&clientaddr, &client_len);
 	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
-	this->_auth = false;
 };
 
 Client::Client(const Client &origin)
@@ -19,10 +19,12 @@ Client::Client(const Client &origin)
 	this->_username = origin._username;
 	this->_realname = origin._realname;
 	this->_hostname = origin._hostname;
-	this->_auth = origin._auth;
 	this->_channels = origin._channels;
 	this->_mode = origin._mode;
 	this->_client_fd = origin._client_fd;
+	this->_nick = false;
+	this->_user = false;
+	this->_pass = false;
 }
 
 Client::~Client()
@@ -112,13 +114,34 @@ std::string Client::get_message_prefix()
 
 bool Client::is_auth()
 {
-	return (this->_auth);
+	return (this->_nick && this->_user);
 }
 
-void Client::set_auth()
+// nick과 user가 등록되었지만 pass가 등록되지 않았다면, 연결을 끊는 에러를 발생시킨다.
+void Client::set_auth(std::string cmd)
 {
-	this->_auth = true;
+	if (cmd == "PASS")
+		this->_pass = true;
+	else if (cmd == "NICK")
+		this->_nick = true;
+	else if (cmd == "USER")
+		this->_user = true;
+	if (!this->_pass && is_auth())
+		throw Connection_error();
+	else if (this->_pass && is_auth())
+		message_client(":irc.local 001 " + get_nickname() + " : :Welcome to the Localnet IRC Network " + get_nickname());
 }
+
+// 등록 완료 후 출력 메세지
+// client->message_client(":irc.local 001 " + client->get_nickname() + " : " + client->get_nickname());
+// client->message_client(":irc.local NOTICE * :*** Looking up your hostname...");
+// client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
+// client->message_client(":irc.local 001 aaaa :Welcome to the Localnet IRC Network aaaa!root@127.0.0.1");
+// client->message_client(":irc.local 002 aaaa :Your host is irc.local, running version InspIRCd-3");
+// client->message_client(":irc.local 003 aaaa :This server was created 03:23:32 Feb 13 2023");
+// client->message_client(":irc.local 004 aaaa irc.local InspIRCd-3 iosw biklmnopstv :bklov");
+// client->message_client(":irc.local 005 aaaa AWAYLEN=200 CASEMAPPING=rfc1459 CHANLIMIT=#:20 CHANMODES=b,k,l,imnpst CHANNELLEN=64 CHANTYPES=# ELIST=CMNTU HOSTLEN=64 KEYLEN=32 KICKLEN=255 LINELEN=512 MAXLIST=b:100 :are supported by this server");
+// client->message_client(":irc.local 005 aaaa MAXTARGETS=20 MODES=20 NAMELEN=128 NETWORK=Localnet NICKLEN=30 PREFIX=(ov)@+ SAFELIST STATUSMSG=@+ TOPICLEN=307 USERLEN=10 USERMODES=,,s,iow WHOX :are supported by this server");
 
 bool Client::is_oper()
 {
@@ -128,11 +151,6 @@ bool Client::is_oper()
 void Client::set_oper()
 {
 	this->_oper = true;
-}
-
-bool Client::is_registered()
-{
-	return (_auth && _nickname.size() && _username.size());
 }
 
 void Client::add_channel(Channel *channel)

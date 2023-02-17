@@ -23,10 +23,13 @@ private:
     std::string     _hostname;
     std::string     _servername;
     std::string     _realname;
-    bool            _auth;
     bool            _oper;
     list_channel    _channels;
     map_flag        _mode;
+
+    bool            _pass;
+    bool            _nick;
+    bool            _user;
 
 public:
     int             _client_fd;
@@ -49,12 +52,11 @@ public:
     void			set_hostname(std::string hostname);
     void			set_servername(std::string servername);
     void			set_realname(std::string realname);
-    void			set_auth();
+    
     void			set_oper();
-
-    bool			is_auth();
     bool			is_oper();
-    bool            is_registered();
+    bool			is_auth();
+    void			set_auth(std::string cmd);
 
     void			add_channel(Channel *channel);
     void			delete_channel(Channel *channel);
