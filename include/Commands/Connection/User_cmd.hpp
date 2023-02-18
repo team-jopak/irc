@@ -44,7 +44,7 @@ public:
     virtual void parse_args(list_str args)
     {
         if (args.size() <= 3)
-            throw Err_461("USER");
+            throw Err_needmoreparams("USER");
         list_str_iter it_args = args.begin();
         _username = *(it_args);
         _hostname = *(++it_args);
@@ -69,7 +69,7 @@ public:
     virtual void execute(Server*, Client* client)
     {
         if ((client->is_auth()))
-            throw Err_462();
+            throw Err_alreadyregistred();
         client->set_username(_username);
         client->set_hostname(_hostname);
         client->set_servername(_servername);

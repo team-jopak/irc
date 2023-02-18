@@ -10,7 +10,7 @@ void Mode_cmd::parse_args(list_str args)
     list_str_iter end = args.end();
 
     if (iter == end)
-        throw Err_461("MODE");
+        throw Err_needmoreparams("MODE");
     this->is_ch_mode = _set_name(*iter++);
     if (iter == end)
         return ;
@@ -109,7 +109,7 @@ void Mode_cmd::_throw_trash(Client* client)
     std::string::iterator end = trash.end();
 
     for (; iter != end; iter++)
-        client->message_client(Err_472(std::string(1, *iter)).message);
+        client->message_client(Err_unknownmode(std::string(1, *iter)).message);
 }
 
 bool Mode_cmd::_set_name(std::string name_str)
@@ -183,7 +183,7 @@ void Mode_cmd::_mode_usr()
     bool                    is_on;
 
     if (this->tar_usr == NULL)
-        throw Err_401(this->name, true);
+        throw Err_nosuchnick(this->name, true);
     _throw_trash(client);
     for (; iter != end; iter++)
     {
@@ -216,7 +216,7 @@ void Mode_cmd::_mode_ch()
     std::string             msg;
 
     if (this->tar_ch == NULL)
-        throw Err_403(this->name);
+        throw Err_nosuchchannel(this->name);
     _throw_trash(this->client);
     if (iter_flag == end)
         server->reply->channelmodeis_324(this->client, this->tar_ch);
@@ -267,7 +267,7 @@ void Mode_cmd::_set_ch_mode(char flag, bool is_on)
 void Mode_cmd::_set_ch_etc(char flag, bool is_on)
 {
     if ((flag == 'i' || flag == 's') && !this->tar_ch->op->exist(client))
-        throw Err_482(client->get_nickname());
+        throw Err_chanoprivsneeded(client->get_nickname());
     if (this->tar_ch->set_flag(flag, is_on))
         _push_flag_str(std::string(1, flag), is_on);
 }
@@ -278,12 +278,12 @@ void Mode_cmd::_set_ch_l(bool is_on)
     long        limit;
 
     if (limit_str.size() == 0)
-        throw Err_696(this->tar_ch->get_name(), "l");
+        throw Err_invalidparm(this->tar_ch->get_name(), "l");
     if (!this->tar_ch->op->exist(client))
-        throw Err_482(client->get_nickname());
+        throw Err_chanoprivsneeded(client->get_nickname());
     limit = ft::stol(limit_str);
     if (limit < 0)
-        throw Err_696(this->tar_ch->get_name(), "l", limit_str);
+        throw Err_invalidparm(this->tar_ch->get_name(), "l", limit_str);
     this->tar_ch->set_flag('l', is_on);
     this->tar_ch->set_limit(limit);
     _push_flag_str("l", is_on);
@@ -296,12 +296,12 @@ void Mode_cmd::_set_ch_o(bool is_on)
     Client*     tar;
 
     if (arg.size() == 0)
-        throw Err_696(this->tar_ch->get_name(), "o");
+        throw Err_invalidparm(this->tar_ch->get_name(), "o");
     if (!this->tar_ch->op->exist(client))
-        throw Err_482(client->get_nickname());
+        throw Err_chanoprivsneeded(client->get_nickname());
     tar = this->tar_ch->joined->get(arg);
     if (tar == NULL)
-        throw Err_401(arg, true);
+        throw Err_nosuchnick(arg, true);
     if ((is_on && this->tar_ch->op->add(client)) 
         || (!is_on && this->tar_ch->op->del(client)))
     {
@@ -316,12 +316,12 @@ void Mode_cmd::_set_ch_v(bool is_on)
     Client*     tar;
 
     if (arg.size() == 0)
-        throw Err_696(this->tar_ch->get_name(), "v");
+        throw Err_invalidparm(this->tar_ch->get_name(), "v");
     if (!this->tar_ch->op->exist(client))
-        throw Err_482(client->get_nickname());
+        throw Err_chanoprivsneeded(client->get_nickname());
     tar = this->tar_ch->joined->get(arg);
     if (tar == NULL)
-        throw Err_401(arg, true);
+        throw Err_nosuchnick(arg, true);
     if ((is_on && this->tar_ch->voice->add(client)) 
         || (!is_on && this->tar_ch->voice->del(client)))
     {
@@ -335,9 +335,9 @@ void Mode_cmd::_set_ch_k(bool is_on)
     std::string key = _get_arg();
 
     if (key.size() == 0 && is_on)
-        throw Err_696(this->tar_ch->get_name(), "k");
+        throw Err_invalidparm(this->tar_ch->get_name(), "k");
     if (!this->tar_ch->op->exist(client))
-        throw Err_482(this->name);
+        throw Err_chanoprivsneeded(this->name);
     if (this->tar_ch->set_flag('k', is_on))
     {
         this->tar_ch->set_key(key);
@@ -351,7 +351,7 @@ void Mode_cmd::_set_ch_b(bool is_on)
     std::string mask;
 
     if (!this->tar_ch->op->exist(client))
-        throw Err_482(client->get_nickname());
+        throw Err_chanoprivsneeded(client->get_nickname());
     mask = _get_arg();
     if (mask.size() == 0)
     {
@@ -362,12 +362,12 @@ void Mode_cmd::_set_ch_b(bool is_on)
     if (is_on)
     {
         if (!this->tar_ch->banned->add(mask, this->client))
-            throw Err_697(mask);
+            throw Err_chanalreadycontains(mask);
     }
     else
     {
         if (!this->tar_ch->banned->del(mask))
-            throw Err_698(this->tar_ch->get_name(), mask);
+            throw Err_chandoesntcontain(this->tar_ch->get_name(), mask);
     }
     _push_flag_str("b", is_on);
     this->result_args.push_back(mask);
