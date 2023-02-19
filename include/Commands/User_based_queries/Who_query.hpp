@@ -22,7 +22,7 @@
     - RPL_ENDOFWHO(315)
         
         "<name> :End of WHO list"
- 
+
 
 클라이언트가 제공한 <name> 매개 변수와 '일치하는' 정보 목록을 반환하는 쿼리를 생성하기 위해 클라이언트에 사용됨
 
@@ -147,13 +147,32 @@ public:
         {
             channelname = channel->get_name();
         }
-        std::cout << client->get_channel_size() << std::endl;
-        std::cout << channelname << std::endl;
+
+        // IRC operator 인지 확인
+        std::string oper_option = "";
+        if ((*it_clients)->is_oper() == true)
+        {
+            oper_option = "*";
+        }
+
+        // @, + 옵션 추가
+        std::string co_v_option = "";
+        // 해당 채널에서 오퍼레이터인지 확인
+        // if (channel->is_operator((*it_clients)->get_nickname()) == true)
+        // {
+            co_v_option = "@";
+        // }
+        // 해당 채널에서 보이스인지 확인
+        // else if ((*it_clients)->is_client_mode('v') == true)
+        // {
+            co_v_option = "+";
+        // }
+
         // 352 RPL_WHOREPLY, <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
         std::string message = ":irc.local 352 " + client->get_nickname() + " " + channelname + " " + \
                                 (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
                                 (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
-                                " H @ : 0 " + (*it_clients)->get_realname();
+                                " H" + oper_option + co_v_option +  " :0 " + (*it_clients)->get_realname();
 
         // std::string message = ":irc.local 352 " + std::string("*") + " " + channel->get_name() + " " + \
         //                         (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
