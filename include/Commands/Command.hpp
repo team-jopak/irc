@@ -28,24 +28,15 @@ public:
     std::string prefix;
     int         arg_len;
 
-    Command(std::string name)
-    {
-        this->name = name;
-    }
+    Command(std::string name);
 
-    // 명령어의 인자를 처리
-    // Exception - 매개변수가 충분하지 않거나 잘못된 경우
-    virtual void parse_args(list_str args) = 0;
+    virtual void    parse_args(list_str args) = 0;
+    virtual void    init_cmd() = 0;
+    void            execute_command(Server* server, Client* client);
 
-    // 명령어를 실행
-    // Exception - 잘못된 권한
-    virtual void execute(Server* server, Client* client) = 0;
+protected:
+    virtual void    execute(Server* server, Client* client) = 0;
 
-    // 클라이언트에 응답 메시지를 보낸다.
-    // virtual void response() = 0;
-
-    // 명령어 인자 초기화
-    virtual void init_cmd() = 0;
 };
 
 #include "../Exceptions.hpp"

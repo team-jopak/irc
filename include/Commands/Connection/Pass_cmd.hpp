@@ -31,44 +31,33 @@ public:
         _password = "";
     }
 
-    // 그냥 벡터를 넘겨줘서 it랑 길이 등 다른 함수도 사용할 수 있는게 좋을 듯?
     virtual void parse_args(list_str args)
     {
-        list_str_iter it_args = args.begin();
+        list_str_iter iter = args.begin();
+        list_str_iter end = args.end();
     
-        // 파라미터 길이가 주어진다면 에러처리(패스워드는 하나만 들어오면 된다)
-        if (args.size() != 1)
-        {
+        if (args.size() == 0)
             throw Err_461("PASS");
+        for (; iter != end; iter++)
+        {
+            _password += *iter;
+            _password += " ";
         }
-        _password = *it_args;
+        _password.pop_back();
     }
 
-    // 해당 클라이언트 클래스도 넘어와야 할 듯
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute PASS" << std::endl;
-
-        // 해당 클라이언트가 권한이 있다면 return
         if (client->is_auth() == true)
-        {
-            throw Err_462() ;
-        }
-
-        // 서버클래스가 들어와 비밀번호를 확인해야 할 듯?
+            throw Err_462();
         if (_password == server->get_password())
-        {
-            // 해당 클라이언트에게 권한을 부여한다.
-            client->set_auth();
-        }
-
+            client->set_auth(this->name);
         init_cmd();
     }
 
     virtual void init_cmd()
     {
         _password = "";
-        std::cout << "Init command" << std::endl;
     }
 
 };

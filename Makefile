@@ -2,7 +2,7 @@
 
 SRCS_N		= main Client Channel Ch_client Message Server Reply util_funcs 
 
-SRCS_C		= Mode_cmd
+SRCS_C		= Mode_cmd Command
 
 SRCS		= $(addprefix ./src/, $(addsuffix .cpp, $(SRCS_N))) $(addprefix ./src/Commands/, $(addsuffix .cpp, $(SRCS_C)))
 
