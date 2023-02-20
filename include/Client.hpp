@@ -37,9 +37,10 @@ public:
     Client(int client_fd);
     Client(const Client &origin);
     ~Client();
-   
+
     int				get_socket_fd();
 	int				get_channel_size();
+    Channel*		get_last_channel();
     std::string		get_nickname();
     std::string		get_username();
     std::string		get_hostname();
