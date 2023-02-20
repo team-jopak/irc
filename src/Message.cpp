@@ -4,7 +4,6 @@ Message::Message()
 {
     // Connection
     commands["NICK"] = new Nick_cmd();
-    commands["OPER"] = new Oper_cmd();
     commands["PASS"] = new Pass_cmd();
     commands["QUIT"] = new Quit_cmd();
     commands["USER"] = new User_cmd();
@@ -20,9 +19,7 @@ Message::Message()
 
     // Miscellaneous_messages
     commands["ERROR"] = new Error_cmd();
-    commands["KILL"] = new Kill_cmd();
     commands["PING"] = new Ping_cmd();
-    commands["PONG"] = new Pong_cmd();
 
     // Send_messages
     commands["NOTICE"] = new Notice_cmd();
@@ -30,13 +27,35 @@ Message::Message()
 
     // User_based_queries
     commands["WHO"] = new Who_query();
-    commands["WHOIS"] = new Whois_query();
-    commands["WHOWAS"] = new Whowas_query();
 }
 
 Message::~Message()
 {
-    // command 인스턴스 제거
+    // Connection
+    delete commands["NICK"];
+    delete commands["PASS"];
+    delete commands["QUIT"];
+    delete commands["USER"];
+
+    // Channel
+    delete commands["JOIN"];
+    delete commands["LIST"];
+    delete commands["MODE"];
+    delete commands["NAMES"];
+    delete commands["PART"];
+    delete commands["TOPIC"];
+
+    // Miscellaneous_messages
+    delete commands["ERROR"];
+    delete commands["KILL"];
+    delete commands["PING"];
+
+    // Send_messages
+    delete commands["NOTICE"];
+    delete commands["PRIVMSG"];
+
+    // User_based_queries
+    delete commands["WHO"];
 }
 
 Command* Message::parse_msg(std::string msg) 

@@ -13,8 +13,8 @@ INC			= -I./include
 NAME		= ircserv
 
 CC			= c++
-# CFLAGS		= -Wextra -Wall -Werror -std=c++98 -g
-CFLAGS		= -Wextra -Wall -std=c++98 -g
+CFLAGS		= -Wextra -Wall -Werror -std=c++98 -g
+# CFLAGS		= -Wextra -Wall -std=c++98 -g3 -fsanitize=address
 
 .cpp.o:		$(OBJS)
 			${CC} $(CFLAGS) -c $< -o $(<:.cpp=.o)

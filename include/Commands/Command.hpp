@@ -29,6 +29,7 @@ public:
     int         arg_len;
 
     Command(std::string name);
+    virtual ~Command();
 
     virtual void    parse_args(list_str args) = 0;
     virtual void    init_cmd() = 0;
