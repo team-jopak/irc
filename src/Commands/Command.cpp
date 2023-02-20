@@ -19,6 +19,6 @@ client 등록
 void Command::execute_command(Server* server, Client* client)
 {
     if (!client->is_auth() && !(this->name == "NICK" || this->name == "USER" || this->name == "PASS"))
-        throw Err_451(this->name);
+        throw Err_notregistered(this->name);
     this->execute(server, client);
 }

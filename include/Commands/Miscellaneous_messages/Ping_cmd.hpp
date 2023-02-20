@@ -39,7 +39,7 @@ public:
     {
         if (args.size() != 1)
         {
-            throw Err_461("PING");
+            throw Err_needmoreparams("PING");
         }
         list_str_iter it = args.begin();
         _server = (*it);
@@ -52,7 +52,7 @@ public:
         if (_server == server->get_host() || _server == server->get_name())
             client->message_client(":" + server->get_name() + " PONG " + server->get_name() + " :" + _server);
         else
-            throw Err_402(_server);
+            throw Err_nosuchserver(_server);
         init_cmd();
     }
 

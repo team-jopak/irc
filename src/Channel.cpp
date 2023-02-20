@@ -155,16 +155,16 @@ void    Channel::join(Client* client, std::string pass)
     if (!invited->exist(client))
     {
         if (check_flag('k') && !check_key(pass))
-            throw Err_475(get_name());
+            throw Err_badchannelkey(get_name());
 
         if (check_flag('i') && !invited->exist(client))
-            throw Err_473(get_name());
+            throw Err_inviteonlychan(get_name());
 
         if (check_flag('l') && check_limit())
-            throw Err_471(get_name());
+            throw Err_channelisfull(get_name());
 
         if (banned->exist(client))
-            throw Err_474(get_name());
+            throw Err_bannedfromchan(get_name());
     }
     invited->del(client);
     joined->add(client);
@@ -173,7 +173,10 @@ void    Channel::join(Client* client, std::string pass)
 
 void Channel::leave(Client* client)
 {
+    op->del(client);
     joined->del(client);
+    invited->del(client);
+    voice->del(client);
 }
 
 void Channel::message_channel(std::string message)

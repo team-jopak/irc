@@ -122,7 +122,7 @@ public:
         list_str_iter   iter = args.begin();
 
         if (args.size() == 0)
-			throw Err_461("JOIN");
+			throw Err_needmoreparams("JOIN");
 		this->names = ft::split_list(*iter, ',');
         iter++;
         if (iter != args.end())
@@ -140,16 +140,16 @@ public:
 		for (; name_iter != name_end; name_iter++)
 		{
 			if (!check_name_validation(*name_iter))
-				throw Err_476(*name_iter);
+				throw Err_invalidchan(*name_iter);
             if (!check_client_ch_limit(server, client))
-                throw Err_405(*name_iter);
+                throw Err_toomanychannels(*name_iter);
 			ch = server->get_channel(*name_iter);
 			if (ch != NULL)
             {
                 if (ch->joined->exist(client))
                     continue ;
                 if (ch->banned->exist(client))
-                    Err_474(ch->get_name());
+                    Err_bannedfromchan(ch->get_name());
                 ch->join(client, (pass_iter != pass_end) ? (*pass_iter++) : "");
             }
 			else

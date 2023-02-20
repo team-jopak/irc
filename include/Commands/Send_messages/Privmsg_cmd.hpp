@@ -62,7 +62,7 @@ public:
         list_str_iter   it = args.begin();
         // args 수가 모자란 경우
         if (args.size() < 2)
-            throw Err_461("PRIVMSG");
+            throw Err_needmoreparams("PRIVMSG");
         _receiver = ft::split_list((*it), ',');
         _message = (*(++it));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
@@ -72,14 +72,14 @@ public:
                 _wildcard = true;
         }
         if (!_message.size())
-            throw Err_412();
+            throw Err_notexttosend();
     }
 
     virtual void execute(Server* server, Client* client)
     {
         std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard && !client->is_oper())
-            throw Err_481();
+            throw Err_noprivileges();
         
         for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
@@ -93,7 +93,7 @@ public:
                         if (ft::strmatch((*it), (*it_ch)->get_name()))
                         {
                             if (!(*it_ch)->is_talkable(client))
-                                throw Err_404((*it_ch)->get_name());
+                                throw Err_cannotsendtochan((*it_ch)->get_name());
                             (*it_ch)->message_channel_except_sender(":" + client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message, client);
                         }
                     }
@@ -102,9 +102,9 @@ public:
                 {
                     Channel *dest = server->get_channel(*it);
                     if (!dest)
-                        throw Err_401(*it, false);
+                        throw Err_nosuchnick(*it, false);
                     if (!dest->is_talkable(client))
-                        throw Err_404(dest->get_name());
+                        throw Err_cannotsendtochan(dest->get_name());
                     dest->message_channel_except_sender(":" + client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message, client);
                 }
             }
@@ -123,7 +123,7 @@ public:
                 {
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
-                        throw Err_401(*it, true);
+                        throw Err_nosuchnick(*it, true);
                     dest->message_client(":" + client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
                 }
             }

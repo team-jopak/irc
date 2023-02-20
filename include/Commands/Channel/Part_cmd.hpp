@@ -35,7 +35,6 @@ public:
         channel_strs = ft::split_list(*(args.begin()), ',');
     }
 
-    // op, joined, invited, voice에서 제거
     virtual void execute(Server* server, Client* client)
     {
         list_str_iter   iter = channel_strs.begin();
@@ -43,27 +42,16 @@ public:
         Channel*        ch;
 
         if (channel_strs.size() == 0)
-        {
-            // ERR_NEEDMOREPARAMS
-        }
-
+            throw Err_needmoreparams("PART");
         for (; iter != end; iter++)
         {
             ch = server->get_channel(*iter);
             if (ch == NULL)
-            {
-                // ERR_NOSUCHCHANNEL
-            }
-
+                throw Err_nosuchchannel(*iter);
             if (!ch->joined->exist(client))
-            {
-                // ERR_NOTONCHANNEL
-            }
-
-            ch->op->del(client);
-            ch->joined->del(client);
-            ch->invited->del(client);
-            ch->voice->del(client);
+                throw Err_notonchannel(ch->get_name());
+            server->reply->send_channel_exec(ch, client, "PART :" + ch->get_name());
+            ch->leave(client);
             client->delete_channel(ch);
             server->reply->send_channel_exec_except(ch, client, "PART :" + *iter);
         }
@@ -72,9 +60,8 @@ public:
 
     virtual void init_cmd()
     {
-        std::cout << "Init command" << std::endl;
+        channel_strs.clear();
     }
-
 };
 
 #endif
