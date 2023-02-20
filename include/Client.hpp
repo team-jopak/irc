@@ -23,7 +23,6 @@ private:
     std::string     _hostname;
     std::string     _servername;
     std::string     _realname;
-    bool            _oper;
     list_channel    _channels;
     map_flag        _mode;
 
@@ -54,8 +53,6 @@ public:
     void			set_servername(std::string servername);
     void			set_realname(std::string realname);
     
-    void			set_oper();
-    bool			is_oper();
     bool			is_auth();
     void			set_auth(std::string cmd);
 

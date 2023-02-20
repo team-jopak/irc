@@ -100,22 +100,8 @@ public:
                 // nick 이름인지
                 if (ft::strmatch(_who_name, (*it_clients)->get_nickname()))
                 {
-                    // 서버에 출력(나중에 지워야 함)
-                    std::cout << "Find client" << std::endl;
-                    std::cout << (*it_clients)->get_nickname() << std::endl;
-                    
-                    // oper 가 있는 클라이언트 들만 전송
-                    if (_o.compare("o") && (*it_clients)->is_oper())
-                    {
-                        send_message(client, it_clients);
-                        break ;
-                    }
-                    // 모든 클라이언트에게 전송
-                    else if (_o.compare("o") == -1)
-                    {
-                        send_message(client, it_clients);
-                        break ;
-                    }
+                    send_message(client, it_clients);
+                    break ;
                 }
             }
         }
@@ -135,11 +121,6 @@ public:
 
     void send_message(Client* client, std::list<Client *>::iterator it_clients)
     {
-        // 채널
-        // :penguin.omega.example.org 352 hyu_ #lo1 hyunjinjo 127.0.0.1 penguin.omega.example.org hyu_ H@ :0 HYUNJIN JO
-        // 이름
-        // :penguin.omega.example.org 352 hyu_ #lo1 hyunjinjo 127.0.0.1 penguin.omega.example.org hyu_ H@ :0 HYUNJIN JO
-
         // 채널인지 이름인지 확인
         Channel *channel = client->get_last_channel();
         std::string channelname = "*";
@@ -167,10 +148,6 @@ public:
                                 (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
                                 " H" + co_v_option +  " :0 " + (*it_clients)->get_realname();
 
-        // std::string message = ":irc.local 352 " + std::string("*") + " " + channel->get_name() + " " + \
-        //                         (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
-        //                         (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
-        //                         " H @ : 0 " + (*it_clients)->get_realname();
         client->message_client(message.c_str());
     }
 

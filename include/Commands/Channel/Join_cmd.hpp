@@ -117,6 +117,10 @@ public:
     {
     }
 
+    ~Join_cmd()
+    {
+    }
+
     virtual void parse_args(list_str args)
     {
         list_str_iter   iter = args.begin();

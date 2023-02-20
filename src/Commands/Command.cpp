@@ -5,6 +5,9 @@ Command::Command(std::string name)
     this->name = name;
 }
 
+Command::~Command()
+{
+}
 /*
 
 client 등록

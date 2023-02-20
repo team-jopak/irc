@@ -9,7 +9,19 @@ Server::Server(std::string host, std::string port, std::string password)
 Server::~Server()
 {
 	delete _message;
-	std::cout << "종료" << std::endl;
+	delete reply;
+	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); it++)
+	{
+		delete *it;
+	}
+	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		delete *it;
+	}
+	for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); it++)
+	{
+		close(it->fd);
+	}
 }
 
 void Server::init()
@@ -17,7 +29,6 @@ void Server::init()
 	int on = 1;
 	addrinfo hints;
 	addrinfo *res;
-	// addrinfo *tmp_res;
 	int socket_fd;
 
 	memset(&hints, 0, sizeof(hints));
@@ -63,6 +74,7 @@ void Server::init()
 		close(socket_fd);
 		throw std::runtime_error("error: could not listen");
 	}
+	freeaddrinfo(res);
 	_socket_fd = socket_fd;
 	_cmd = NULL;
 }
