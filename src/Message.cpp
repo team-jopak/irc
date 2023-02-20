@@ -11,6 +11,7 @@ Message::Message()
 
     // Channel
     commands["JOIN"] = new Join_cmd();
+    commands["KICK"] = new Kick_cmd();
     commands["LIST"] = new List_cmd();
     commands["MODE"] = new Mode_cmd();
     commands["NAMES"] = new Names_cmd();

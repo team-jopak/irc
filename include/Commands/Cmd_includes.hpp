@@ -3,6 +3,7 @@
 
 // Channel
 #include "Channel/Join_cmd.hpp"
+#include "Channel/Kick_cmd.hpp"
 #include "Channel/List_cmd.hpp"
 #include "Channel/Mode_cmd.hpp"
 #include "Channel/Names_cmd.hpp"

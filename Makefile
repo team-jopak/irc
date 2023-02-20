@@ -20,7 +20,7 @@ CFLAGS		= -Wextra -Wall -std=c++98 -g
 			${CC} $(CFLAGS) -c $< -o $(<:.cpp=.o)
 
 $(NAME):	$(OBJS)
-			${CC} $(OBJS) -o $(NAME)
+			${CC} $(CFLAGS) $(OBJS) -o $(NAME)
 
 all:		$(NAME)
 
