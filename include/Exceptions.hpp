@@ -305,7 +305,11 @@ public:
     Connection_error() { message = "ERROR :Closing link: (root@127.0.0.1) [Access denied by configuration]"; }
 };
 
-
+class Capls_error
+{
+public:
+    Capls_error() {}
+};
 
 
 #endif

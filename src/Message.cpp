@@ -78,6 +78,8 @@ Command* Message::parse_msg(std::string msg)
 
     // 명령어 확인
     *cmd_iter = ft::str_toupper(*cmd_iter);
+    if ((*cmd_iter).compare("CAP") == 0)
+        throw Capls_error();
     if ((result = commands.find(*cmd_iter)) == commands.end())
         throw Err_unknowncommand(*cmd_iter);
 

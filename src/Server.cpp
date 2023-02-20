@@ -167,6 +167,9 @@ int Server::recv_message(int cur_fd)
 				serverResponse(e.message, cur_fd);
 				delete_client(client->get_socket_fd());
 			}
+			catch (const Capls_error& e)
+			{
+			}
 			break;
 		}
 		b++;
