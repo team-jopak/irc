@@ -173,7 +173,10 @@ void    Channel::join(Client* client, std::string pass)
 
 void Channel::leave(Client* client)
 {
+    op->del(client);
     joined->del(client);
+    invited->del(client);
+    voice->del(client);
 }
 
 void Channel::message_channel(std::string message)
