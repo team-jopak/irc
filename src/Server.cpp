@@ -160,13 +160,13 @@ int Server::recv_message(int cur_fd)
 			}
 			catch (const Irc_exception& e)
 			{
+				flow.to_client(client, e.message);
 				serverResponse(":" + get_name() + " " + e.number + " " + client->get_nickname() + " " + e.message, cur_fd);
 				if (_cmd)
 					_cmd->init_cmd();
 			}
 			catch (const Connection_error& e)
 			{
-				std::cout << e.message << std::endl;
 				serverResponse(e.message, cur_fd);
 				delete_client(client->get_socket_fd());
 			}
@@ -234,12 +234,14 @@ std::list<Client *> Server::get_clients()
 
 void Server::message_all(std::string message)
 {
+	Tcpflow     flow;
+
     if (message.find("\r\n"))
 		message += "\r\n";
-
 	for (std::list<Client *>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
         std::cout << (*it)->get_socket_fd() << std::endl;
+		flow.to_client(*it, message);
 		if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
 			throw std::runtime_error("Couldn't SEND message_all");
 	}

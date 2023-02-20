@@ -59,11 +59,17 @@ public:
     {
         if (server->get_client_by_nickname(_nickname) != NULL)
             throw Err_nicknameinuse(_nickname);
-        client->set_nickname(_nickname);
         if (!client->is_auth())
+        {
+            client->set_nickname(_nickname);
             client->set_auth(this->name);
-        else
             server->message_all(":" + client->get_message_prefix() + " NICK :" + _nickname);
+        }
+        else
+        {
+            server->message_all(":" + client->get_message_prefix() + " NICK :" + _nickname);
+            client->set_nickname(_nickname);
+        }
         init_cmd();
     }
 
