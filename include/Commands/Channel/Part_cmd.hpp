@@ -40,6 +40,7 @@ public:
         list_str_iter   iter = channel_strs.begin();
         list_str_iter   end = channel_strs.end();
         Channel*        ch;
+        std::string     msg;
 
         if (channel_strs.size() == 0)
             throw Err_needmoreparams("PART");
@@ -50,10 +51,12 @@ public:
                 throw Err_nosuchchannel(*iter);
             if (!ch->joined->exist(client))
                 throw Err_notonchannel(ch->get_name());
-            server->reply->send_channel_exec(ch, client, "PART :" + ch->get_name());
+            msg = "PART " + ch->get_name() + " :" + client->get_nickname();
+            server->reply->send_channel_exec(ch, client, msg);
             ch->leave(client);
             client->delete_channel(ch);
-            server->reply->send_channel_exec_except(ch, client, "PART :" + *iter);
+            if (ch->joined->size() == 0)
+                server->delete_channel(ch);
         }
         init_cmd();
     }

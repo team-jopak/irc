@@ -69,6 +69,7 @@ public:
     list_ch			get_channel_list();
     list_ch			get_channel_list(Client* client);
     Channel*		get_channel(std::string name);
+    void			delete_channel(Channel* ch);
 
     void			message_all(std::string message);
 

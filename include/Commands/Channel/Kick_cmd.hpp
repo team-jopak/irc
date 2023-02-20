@@ -37,7 +37,7 @@ public:
     {
         Channel*        ch;
         Client*         user;
-
+        std::string     msg;
 
         ch = server->get_channel(channel_strs);
         user = server->get_client_by_nickname(user_strs);
@@ -53,19 +53,17 @@ public:
         {
             throw Err_notonchannel(channel_strs);  // need check
         }
-
-        ch->message_channel(":" + client->get_message_prefix() + " KICK " + channel_strs + " " + user_strs + " " + message);
-        ch->op->del(user);
-        ch->joined->del(user);
-        ch->invited->del(user);
-        ch->voice->del(user);
+        msg = "KICK " + channel_strs + " " + user_strs + " " + message;
+        server->reply->send_channel_exec(ch, client, msg);
+        ch->leave(client);
         user->delete_channel(ch);
+        if (ch->joined->size() == 0)
+            server->delete_channel(ch);
         init_cmd();
     }
 
     virtual void init_cmd()
     {
-        std::cout << "Init command" << std::endl;
     }
 
 };

@@ -271,6 +271,12 @@ void Server::delete_client(int socket_fd)
 	}
 }
 
+void Server::delete_channel(Channel* ch)
+{
+	_channels.remove(ch);
+	delete ch;
+}
+
 Client* Server::get_client_by_socket_fd(int socket_fd)
 {
 	std::list<Client *>::iterator it = _clients.begin();

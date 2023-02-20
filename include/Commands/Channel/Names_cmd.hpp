@@ -102,7 +102,7 @@ public:
 
     virtual void init_cmd()
     {
-        std::cout << "Init command" << std::endl;
+        ch_list.clear();
     }
 };
 
