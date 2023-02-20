@@ -38,14 +38,14 @@ public:
         Channel*        ch;
 
         if (channel_strs.size() == 0)
-            throw Err_461("PART");
+            throw Err_needmoreparams("PART");
         for (; iter != end; iter++)
         {
             ch = server->get_channel(*iter);
             if (ch == NULL)
-                throw Err_403(*iter);
+                throw Err_nosuchchannel(*iter);
             if (!ch->joined->exist(client))
-                throw Err_442(ch->get_name());
+                throw Err_notonchannel(ch->get_name());
             server->reply->send_channel_exec(ch, client, "PART :" + ch->get_name());
             ch->leave(client);
             client->delete_channel(ch);

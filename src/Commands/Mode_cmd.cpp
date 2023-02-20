@@ -287,7 +287,7 @@ void Mode_cmd::_set_ch_l(bool is_on)
     this->tar_ch->set_flag('l', is_on);
     this->tar_ch->set_limit(limit);
     _push_flag_str("l", is_on);
-    this->result_args.push_back(limit_str);
+    this->result_args.push_back(ft::ltos(limit));
 }
 
 void Mode_cmd::_set_ch_o(bool is_on)
