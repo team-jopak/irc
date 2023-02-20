@@ -22,7 +22,7 @@ public:
 
         if (args.size() < 2)
         {
-            throw Err_461("KICK");
+            throw Err_needmoreparams("KICK");
         }
         channel_strs = *it++;
         user_strs = *it++;
@@ -43,15 +43,15 @@ public:
         user = server->get_client_by_nickname(user_strs);
         if (ch == NULL)
         {
-            throw Err_403(channel_strs);
+            throw Err_nosuchchannel(channel_strs);
         }
         if (!ch->op->exist(client))
         {
-            throw Err_482(channel_strs);
+            throw Err_chanoprivsneeded(channel_strs);
         }
         if (!ch->joined->exist(user))
         {
-            throw Err_442(channel_strs);  // need check
+            throw Err_notonchannel(channel_strs);  // need check
         }
 
         ch->op->del(user);
@@ -59,7 +59,7 @@ public:
         ch->invited->del(user);
         ch->voice->del(user);
         user->delete_channel(ch);
-        ch->message_channel(":" + client->get_message_prefix() + " KICK " + channel_strs + user_strs + " :" + message);
+        ch->message_channel(":" + client->get_message_prefix() + " KICK " + channel_strs + " " + user_strs + " :" + message);
         init_cmd();
     }
 
