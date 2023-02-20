@@ -302,8 +302,8 @@ void Mode_cmd::_set_ch_o(bool is_on)
     tar = this->tar_ch->joined->get(arg);
     if (tar == NULL)
         throw Err_401(arg, true);
-    if ((is_on && this->tar_ch->op->add(client)) 
-        || (!is_on && this->tar_ch->op->del(client)))
+    if ((is_on && this->tar_ch->op->add(tar)) 
+        || (!is_on && this->tar_ch->op->del(tar)))
     {
         _push_flag_str("o", is_on);
         this->result_args.push_back(arg);
@@ -322,8 +322,8 @@ void Mode_cmd::_set_ch_v(bool is_on)
     tar = this->tar_ch->joined->get(arg);
     if (tar == NULL)
         throw Err_401(arg, true);
-    if ((is_on && this->tar_ch->voice->add(client)) 
-        || (!is_on && this->tar_ch->voice->del(client)))
+    if ((is_on && this->tar_ch->voice->add(tar)) 
+        || (!is_on && this->tar_ch->voice->del(tar)))
     {
         _push_flag_str("v", is_on);
         this->result_args.push_back(arg);
