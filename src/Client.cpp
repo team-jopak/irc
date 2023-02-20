@@ -159,6 +159,7 @@ void Client::add_channel(Channel *channel)
 void Client::delete_channel(Channel *channel)
 {
 	std::list<Channel *>::iterator it;
+
 	for (it = _channels.begin(); it != _channels.end(); it++)
 	{
 		if ((*it) == channel)
