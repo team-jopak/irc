@@ -116,7 +116,7 @@ public:
                     for (Server::list_client::iterator it_cl = cl_list.begin(); it_cl != cl_list.end(); it_cl++)
                     {
                         if (ft::strmatch((*it), (*it_cl)->get_nickname()))
-                            (*it_cl)->message_client(":" + client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
+                            (*it_cl)->message_client(":" + client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message);
                     }
                 }
                 else
@@ -124,7 +124,7 @@ public:
                     Client *dest = server->get_client_by_nickname(*it);
                     if (!dest)
                         throw Err_nosuchnick(*it, true);
-                    dest->message_client(":" + client->get_message_prefix() + " PRIVMSG " + " " + (*it) + _message);
+                    dest->message_client(":" + client->get_message_prefix() + " PRIVMSG " + (*it) + " " + _message);
                 }
             }
         }
