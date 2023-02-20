@@ -1,6 +1,6 @@
 .SUFFIXES:	.cpp .o
 
-SRCS_N		= main Client Channel Ch_client Message Server Reply util_funcs 
+SRCS_N		= main Client Channel Ch_client Message Server Reply util_funcs Tcpflow
 
 SRCS_C		= Mode_cmd Command
 

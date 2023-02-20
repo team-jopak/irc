@@ -49,8 +49,6 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute QUIT" << std::endl;
-
         std::string prefix = client->get_message_prefix();
         server->delete_client(client->get_socket_fd());
         server->message_all(":" + prefix + " QUIT :" + _message);
@@ -61,7 +59,6 @@ public:
     virtual void init_cmd()
     {
         _message = "";
-        std::cout << "Init command" << std::endl;
     }
 
 };

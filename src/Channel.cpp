@@ -182,11 +182,13 @@ void Channel::leave(Client* client)
 void Channel::message_channel(std::string message)
 {
     list_client clients = get_clients();
+    Tcpflow     flow;
 
     if (message.find("\r\n"))
         message += "\r\n";
     for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
     {
+        flow.to_client(*it, message);
         if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
             throw std::runtime_error("Couldn't send message_channel");
     }
