@@ -11,6 +11,9 @@ Client::Client(int client_fd)
 	getsockname(_client_fd, (struct sockaddr *)&clientaddr, &client_len);
 	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
+	this->_nick = false;
+	this->_user = false;
+	this->_pass = false;
 };
 
 Client::Client(const Client &origin)
@@ -192,6 +195,9 @@ void Client::delete_channel(Channel *channel)
 
 void Client::message_client(std::string message)
 {
+	Tcpflow	flow;
+
+	flow.to_client(this, message);
 	if (message.find("\r\n"))
 		message += "\r\n";
 	if (send(this->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)

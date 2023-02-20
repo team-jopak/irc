@@ -128,6 +128,7 @@ int Server::recv_message(int cur_fd)
 	char 		buf = '\n';
 	int 		b = 0;
 	int 		nbytes;
+	Tcpflow     flow;
 
 	while (42)
 	{
@@ -141,6 +142,7 @@ int Server::recv_message(int cur_fd)
 		{
 			try
 			{
+				flow.to_server(client, tmp_buf);
 				_cmd = _message->parse_msg(tmp_buf);
 				_cmd->execute_command(this, client);
 			}
@@ -152,6 +154,7 @@ int Server::recv_message(int cur_fd)
 			}
 			catch (const Connection_error& e)
 			{
+				std::cout << e.message << std::endl;
 				serverResponse(e.message, cur_fd);
 				delete_client(client->get_socket_fd());
 			}
