@@ -35,8 +35,6 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        std::cout << "args : ";
-        
         // 매개변수 개수 확인
         if (args.size() != 2)
         {
@@ -50,8 +48,6 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute OPER" << std::endl;
-
         (void)client;
         Client *c = server->get_client_by_nickname(_nickname);
         if (!c)
@@ -73,7 +69,6 @@ public:
     {
         _nickname = "";
         _password = "";
-        std::cout << "Init command" << std::endl;
     }
 
 };

@@ -46,8 +46,6 @@ public:
 
     virtual void parse_args(list_str args)
     {
-        std::cout << "args : ";
-
         (void)args;
     }
 
@@ -55,13 +53,11 @@ public:
     {
         (void)server;
         (void)client;
-        std::cout << "Execute KILL" << std::endl;
         init_cmd();
     }
 
     virtual void init_cmd()
     {
-        std::cout << "Init command" << std::endl;
     }
 
 };
