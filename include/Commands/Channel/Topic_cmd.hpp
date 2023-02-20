@@ -86,7 +86,7 @@ public:
         std::string         msg;
 
         if (ch == NULL)
-            throw Err_403(this->ch_name);
+            throw Err_nosuchchannel(this->ch_name);
         if (topic.size() == 0)
         {
             server->reply->topic_332(client, ch);
@@ -99,7 +99,7 @@ public:
                 if (ch->op->exist(client))
                     ch->set_topic(this->topic);
                 else
-                    Err_442(this->ch_name);
+                    Err_notonchannel(this->ch_name);
             }
             else
                 ch->set_topic(this->topic);

@@ -40,7 +40,7 @@ public:
         // 매개변수 개수 확인
         if (args.size() != 2)
         {
-            throw Err_461("OPER");
+            throw Err_needmoreparams("OPER");
         }
 
         list_str_iter it_args = args.begin();
@@ -55,13 +55,13 @@ public:
         (void)client;
         Client *c = server->get_client_by_nickname(_nickname);
         if (!c)
-            throw Err_431();
+            throw Err_nonicknamegiven();
         if (c->is_oper())
-            throw Err_462();
+            throw Err_alreadyregistred();
         if (_password == OPER)
             c->set_oper();
         else
-            throw Err_464();
+            throw Err_passwdmismatch();
         
         std::string message = ":You are now an IRC operator";
         client->message_client(message.c_str());

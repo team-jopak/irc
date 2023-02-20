@@ -46,11 +46,11 @@ public:
         list_str_iter it_args = args.begin();
 
         if (args.size() != 1)
-            throw Err_461("NICK");
+            throw Err_needmoreparams("NICK");
         if ((*it_args).size() > 9)
-            throw Err_432(*it_args);
+            throw Err_erroneusnickname(*it_args);
         if (check_char(*it_args) == false)
-            throw Err_432(*it_args);
+            throw Err_erroneusnickname(*it_args);
         _nickname = *it_args;
     }
 
@@ -58,7 +58,7 @@ public:
     virtual void execute(Server* server, Client* client)
     {
         if (server->get_client_by_nickname(_nickname) != NULL)
-            throw Err_433(_nickname);
+            throw Err_nicknameinuse(_nickname);
         client->set_nickname(_nickname);
         if (!client->is_auth())
             client->set_auth(this->name);

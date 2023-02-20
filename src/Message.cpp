@@ -59,7 +59,7 @@ Command* Message::parse_msg(std::string msg)
     // 명령어 확인
     *cmd_iter = ft::str_toupper(*cmd_iter);
     if ((result = commands.find(*cmd_iter)) == commands.end())
-        throw Err_421(*cmd_iter);
+        throw Err_unknowncommand(*cmd_iter);
 
     // 명령어 객체에 인자 전달
     splited.pop_front();

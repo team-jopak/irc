@@ -37,7 +37,7 @@ public:
         list_str_iter end = args.end();
     
         if (args.size() == 0)
-            throw Err_461("PASS");
+            throw Err_needmoreparams("PASS");
         for (; iter != end; iter++)
         {
             _password += *iter;
@@ -49,7 +49,7 @@ public:
     virtual void execute(Server* server, Client* client)
     {
         if (client->is_auth() == true)
-            throw Err_462();
+            throw Err_alreadyregistred();
         if (_password == server->get_password())
             client->set_auth(this->name);
         init_cmd();

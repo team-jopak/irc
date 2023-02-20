@@ -51,7 +51,7 @@ public:
 
         if (args.size() > 2 || args.size() == 0)
         {
-            throw Err_461("WHO");
+            throw Err_needmoreparams("WHO");
         }
 
         _who_name = *it_args;
