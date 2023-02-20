@@ -54,7 +54,7 @@ public:
             throw Err_notonchannel(channel_strs);  // need check
         }
 
-        ch->message_channel(":" + client->get_message_prefix() + " KICK " + channel_strs + " " + user_strs + " :" + message);
+        ch->message_channel(":" + client->get_message_prefix() + " KICK " + channel_strs + " " + user_strs + " " + message);
         ch->op->del(user);
         ch->joined->del(user);
         ch->invited->del(user);
