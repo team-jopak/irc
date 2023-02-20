@@ -158,15 +158,15 @@ public:
         // @, + 옵션 추가
         std::string co_v_option = "";
         // 해당 채널에서 오퍼레이터인지 확인
-        // if (channel->is_operator((*it_clients)->get_nickname()) == true)
-        // {
+        if (channel && channel->op->exist(*it_clients) == true)
+        {
             co_v_option = "@";
-        // }
+        }
         // 해당 채널에서 보이스인지 확인
-        // else if ((*it_clients)->is_client_mode('v') == true)
-        // {
+        else if (channel && channel->voice->exist(*it_clients) == true)
+        {
             co_v_option = "+";
-        // }
+        }
 
         // 352 RPL_WHOREPLY, <channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>
         std::string message = ":irc.local 352 " + client->get_nickname() + " " + channelname + " " + \
