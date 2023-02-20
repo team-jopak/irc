@@ -45,10 +45,8 @@ public:
         _server = (*it);
     }
 
-    // 
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute PING" << std::endl;
         if (_server == server->get_host() || _server == server->get_name())
             client->message_client(":" + server->get_name() + " PONG " + server->get_name() + " :" + _server);
         else
@@ -59,7 +57,6 @@ public:
     virtual void init_cmd()
     {
         _server = "";
-        std::cout << "Init command" << std::endl;
     }
 
 };

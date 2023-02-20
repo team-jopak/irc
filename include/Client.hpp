@@ -9,6 +9,7 @@
 #include <iostream>
 #include <list>
 #include "Channel.hpp"
+#include "Tcpflow.hpp"
 
 class Channel;
 

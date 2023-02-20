@@ -67,7 +67,6 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute PRIVMSG" << std::endl;
         if (_wildcard)
             throw Err_noprivileges();
         
@@ -126,7 +125,6 @@ public:
         _message = "";
         _wildcard = false;
         _receiver.clear();
-        std::cout << "Init command" << std::endl;
     }
 
 };

@@ -350,14 +350,14 @@ void Mode_cmd::_set_ch_b(bool is_on)
 {
     std::string mask;
 
-    if (!this->tar_ch->op->exist(client))
-        throw Err_chanoprivsneeded(client->get_nickname());
     mask = _get_arg();
     if (mask.size() == 0)
     {
         _send_banlist();
         return ;
     }
+    if (!this->tar_ch->op->exist(client))
+        throw Err_chanoprivsneeded(client->get_nickname());
     mask = _get_mask(mask);
     if (is_on)
     {

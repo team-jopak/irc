@@ -52,10 +52,9 @@ public:
     {
     }
 
+    // pass, nick, user, oper 까지 명령어 입력이 되야 한다.
     virtual void parse_args(list_str args)
     {
-        // pass, nick, user, oper 까지 명령어 입력이 되야 한다.
-
         list_str_iter it_args = args.begin();
 
         if (args.size() > 2 || args.size() == 0)
@@ -73,8 +72,6 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        std::cout << "Execute WHO" << std::endl;
-
         // 채널 찾기
         if (_who_name[0] == '#')
         {
@@ -116,7 +113,6 @@ public:
     {
         _who_name = "";
         _o = "";
-        std::cout << "Init command" << std::endl;
     }
 
     void send_message(Client* client, std::list<Client *>::iterator it_clients)
