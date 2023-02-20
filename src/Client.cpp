@@ -11,6 +11,9 @@ Client::Client(int client_fd)
 	getsockname(_client_fd, (struct sockaddr *)&clientaddr, &client_len);
 	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
+	this->_nick = false;
+	this->_user = false;
+	this->_pass = false;
 };
 
 Client::Client(const Client &origin)
@@ -22,9 +25,6 @@ Client::Client(const Client &origin)
 	this->_channels = origin._channels;
 	this->_mode = origin._mode;
 	this->_client_fd = origin._client_fd;
-	this->_nick = false;
-	this->_user = false;
-	this->_pass = false;
 }
 
 Client::~Client()
