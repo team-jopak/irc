@@ -25,9 +25,6 @@ Client::Client(const Client &origin)
 	this->_channels = origin._channels;
 	this->_mode = origin._mode;
 	this->_client_fd = origin._client_fd;
-	this->_nick = false;
-	this->_user = false;
-	this->_pass = false;
 }
 
 Client::~Client()
