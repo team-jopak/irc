@@ -148,13 +148,6 @@ public:
             channelname = channel->get_name();
         }
 
-        // IRC operator 인지 확인
-        std::string oper_option = "";
-        if ((*it_clients)->is_oper() == true)
-        {
-            oper_option = "*";
-        }
-
         // @, + 옵션 추가
         std::string co_v_option = "";
         // 해당 채널에서 오퍼레이터인지 확인
@@ -172,7 +165,7 @@ public:
         std::string message = ":irc.local 352 " + client->get_nickname() + " " + channelname + " " + \
                                 (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
                                 (*it_clients)->get_servername() + " " + (*it_clients)->get_nickname() + \
-                                " H" + oper_option + co_v_option +  " :0 " + (*it_clients)->get_realname();
+                                " H" + co_v_option +  " :0 " + (*it_clients)->get_realname();
 
         // std::string message = ":irc.local 352 " + std::string("*") + " " + channel->get_name() + " " + \
         //                         (*it_clients)->get_username() + " " + (*it_clients)->get_hostname() + " " + \
