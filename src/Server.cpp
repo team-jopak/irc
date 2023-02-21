@@ -303,6 +303,17 @@ Client* Server::get_client_by_nickname(std::string nickname)
 	return (NULL);
 }
 
+Client *Server::get_client_by_username(std::string username)
+{
+	std::list<Client *>::iterator it = _clients.begin();
+	while (it != _clients.end())
+	{
+		if ((*it)->get_username() == username)
+			return (*it);
+		it++;
+	}
+	return (NULL);
+}
 
 /** 채널 관련 함수 **/
 Channel* Server::add_channel(std::string name, Client* client)

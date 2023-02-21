@@ -4,6 +4,7 @@ Message::Message()
 {
     // Connection
     commands["NICK"] = new Nick_cmd();
+    commands["OPER"] = new Oper_cmd();
     commands["PASS"] = new Pass_cmd();
     commands["QUIT"] = new Quit_cmd();
     commands["USER"] = new User_cmd();
@@ -33,6 +34,7 @@ Message::~Message()
 {
     // Connection
     delete commands["NICK"];
+    delete commands["OPER"];
     delete commands["PASS"];
     delete commands["QUIT"];
     delete commands["USER"];
