@@ -181,45 +181,23 @@ void Channel::leave(Client* client)
 
 void Channel::message_channel(std::string message)
 {
-    list_client clients = get_clients();
-    Tcpflow     flow;
+    list_client             clients = get_clients();
+    list_client::iterator   it = clients.begin();
+    list_client::iterator   end = clients.end();
 
-    if (message.find("\r\n"))
-        message += "\r\n";
-    for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
-    {
-        flow.to_client(*it, message);
-        if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
-            throw std::runtime_error("Couldn't send message_channel");
-    }
+    for (; it != end; ++it)
+        (*it)->message_client(message);
 }
 
 void Channel::message_channel_except_sender(std::string message, Client *sender)
 {
-    list_client clients = get_clients();
+    list_client             clients = get_clients();
+    list_client::iterator   it = clients.begin();
+    list_client::iterator   end = clients.end();
 
-    if (message.find("\r\n"))
-        message += "\r\n";
-    for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
+    for (; it != end; ++it)
     {
-        if ((*it) == sender)
-            continue;
-        if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
-            throw std::runtime_error("Couldn't send message_channel");
-    }
-}
-
-void Channel::message_channel_with_prefix(std::string message)
-{
-    list_client clients = get_clients();
-
-    if (message.find("\r\n"))
-        message += "\r\n";
-    for (list_client::iterator it = clients.begin(); it != clients.end(); ++it)
-    {
-        std::string full_msg = (*it)->get_message_prefix();
-        full_msg += message;
-        if (send((*it)->get_socket_fd(), message.c_str(), strlen(message.c_str()), 0) == -1)
-            throw std::runtime_error("Couldn't send message_channel");
+        if (sender != *it)
+            (*it)->message_client(message);
     }
 }

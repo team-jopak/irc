@@ -61,7 +61,6 @@ public:
 
 	void			message_channel(std::string message);
 	void 			message_channel_except_sender(std::string message, Client *sender);
-	void 			message_channel_with_prefix(std::string message);
 };
 
 #include "Ch_client.hpp"
