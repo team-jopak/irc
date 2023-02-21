@@ -16,6 +16,7 @@ Message::Message()
     commands["NAMES"] = new Names_cmd();
     commands["PART"] = new Part_cmd();
     commands["TOPIC"] = new Topic_cmd();
+    commands["INVITE"] = new Invite_cmd();
 
     // Miscellaneous_messages
     commands["ERROR"] = new Error_cmd();
@@ -44,6 +45,7 @@ Message::~Message()
     delete commands["NAMES"];
     delete commands["PART"];
     delete commands["TOPIC"];
+    delete commands["INVITE"];
 
     // Miscellaneous_messages
     delete commands["ERROR"];
