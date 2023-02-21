@@ -11,6 +11,7 @@ Client::Client(int client_fd)
 	getsockname(_client_fd, (struct sockaddr *)&clientaddr, &client_len);
 	this->_hostname = inet_ntoa(clientaddr.sin_addr);
 	this->_nickname = "";
+	this->_buffer.clear();
 	this->_nick = false;
 	this->_user = false;
 	this->_pass = false;
@@ -121,6 +122,26 @@ std::string Client::get_realname()
 void Client::set_realname(std::string realname)
 {
 	_realname = realname;
+}
+
+void Client::add_buffer(char packet)
+{
+	_buffer += packet;
+}
+
+void Client::add_buffer(std::string packet)
+{
+	_buffer += packet;
+}
+
+void Client::clear_buffer(void)
+{
+	_buffer.clear();
+}
+
+std::string Client::get_buffer()
+{
+	return (this->_buffer);
 }
 
 std::string Client::get_message_prefix()
