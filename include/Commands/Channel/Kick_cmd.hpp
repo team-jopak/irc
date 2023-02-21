@@ -33,7 +33,7 @@ public:
         {
             for (; it != args.end(); it++)
                 message += (*it) + " ";
-            message.pop_back();
+            message.erase(message.rfind(' '));
         }
         else
             message.clear();

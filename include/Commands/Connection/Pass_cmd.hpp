@@ -43,7 +43,7 @@ public:
             _password += *iter;
             _password += " ";
         }
-        _password.pop_back();
+        _password.erase(_password.rfind(' '));
     }
 
     virtual void execute(Server* server, Client* client)
