@@ -37,6 +37,7 @@ public:
 
 protected:
     virtual void    execute(Server* server, Client* client) = 0;
+    bool            is_regi_cmd(std::string cmd);
 
 };
 

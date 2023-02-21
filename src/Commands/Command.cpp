@@ -21,7 +21,12 @@ client 등록
 */
 void Command::execute_command(Server* server, Client* client)
 {
-    if (!client->is_auth() && !(this->name == "NICK" || this->name == "USER" || this->name == "PASS"))
+    if (!client->is_auth() && !is_regi_cmd(this->name))
         throw Err_notregistered(this->name);
     this->execute(server, client);
+}
+
+bool Command::is_regi_cmd(std::string cmd)
+{
+    return (cmd == "NICK" || cmd == "USER" || cmd == "PASS" || cmd == "QUIT");
 }
