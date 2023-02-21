@@ -65,6 +65,7 @@ void Reply::set_client_name(Ch_client* clients, Channel* ch)
 
     for (; iter != end; iter++)
     {
+        nick = "";
         if (ch->voice->exist(iter->second))
             nick = "+";
         if (ch->op->exist(iter->second))
