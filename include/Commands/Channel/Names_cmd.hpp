@@ -90,7 +90,7 @@ public:
         list_str_iter   end = this->ch_list.end();
         Channel*        ch;
 
-        while (iter != end)
+        for (; iter != end; iter++)
         {
             ch = server->get_channel(*iter);
             if (ch != NULL && ch->joined->exist(client))
