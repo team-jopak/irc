@@ -24,6 +24,7 @@ private:
     std::string     _hostname;
     std::string     _servername;
     std::string     _realname;
+    std::string     _buffer;
     list_channel    _channels;
     map_flag        _mode;
 
@@ -47,6 +48,7 @@ public:
     std::string		get_hostname();
     std::string		get_servername();
     std::string		get_realname();
+    std::string     get_buffer();
     std::string		get_message_prefix();
 
     void			set_nickname(std::string nickname);
@@ -54,6 +56,10 @@ public:
     void			set_hostname(std::string hostname);
     void			set_servername(std::string servername);
     void			set_realname(std::string realname);
+
+    void            add_buffer(char packet);
+    void            add_buffer(std::string packet);
+    void            clear_buffer(void);
     
     bool			is_auth();
     void			set_auth(std::string cmd);
