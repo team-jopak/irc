@@ -53,13 +53,22 @@ int Client::get_channel_size()
 	return (_channels.size());
 }
 
+Channel *Client::get_channel(std::string channelname)
+{
+	for (list_channel::iterator it = _channels.begin(); it != _channels.end(); it++)
+	{
+		if ((*it)->get_name() == channelname)
+			return (*it);
+	}
+	return (NULL);
+}
+
 Channel *Client::get_last_channel()
 {
 	if (get_channel_size() == 0)
 		return (NULL);
 	return (_channels.back());
 }
-
 
 void Client::set_nickname(std::string nickname)
 {

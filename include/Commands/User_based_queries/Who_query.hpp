@@ -75,16 +75,15 @@ public:
         // 채널 찾기
         if (_who_name[0] == '#')
         {
-            Channel* channel = server->get_channel(_who_name);
+            Channel* channel = client->get_channel(_who_name);
             if (channel != NULL)
             {
                 std::list<Client *>  clients = channel->get_clients();
                 std::list<Client *>::iterator it_clients = clients.begin();
                 for (; it_clients != clients.end(); ++it_clients)
                 {
-                    send_message(client, it_clients);
+                    send_message(client, it_clients, channel);
                 }
-
             }
         }
         // 이름 찾기
@@ -115,14 +114,22 @@ public:
         _o = "";
     }
 
-    void send_message(Client* client, std::list<Client *>::iterator it_clients)
+    void send_message(Client* client, std::list<Client *>::iterator it_clients, Channel* channel = NULL)
     {
         // 채널인지 이름인지 확인
-        Channel *channel = client->get_last_channel();
         std::string channelname = "*";
+        if (channel == NULL)
+        {
+            channel = (*it_clients)->get_last_channel();
+            if (channel != NULL)
+            {
+                channelname = channel->get_name();
+            }
+        }
         if (channel != NULL)
         {
             channelname = channel->get_name();
+
         }
 
         // @, + 옵션 추가
