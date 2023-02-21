@@ -134,6 +134,16 @@ void Reply::welcome_001(Client* client)
     send_client(client);
 }
 
+void Reply::away_301(Client* client, Channel* ch, Client* tar)
+{
+    _ss << ":";
+    set_client_prefix(client);
+    set_msg("INVITE");
+    set_client_name(tar);
+    set_msg(":" + ch->get_name());
+    send_client(tar);
+}
+
 void Reply::liststart_321(Client* client)
 {
     set_server_prefix();
@@ -213,6 +223,16 @@ void Reply::clock_333(Client* client, Channel* ch)
     set_channel_name(ch);
     set_client_prefix(client);
     _ss << ":" << clock();
+    send_client(client);
+}
+
+void Reply::inviting_341(Client* client, Channel* ch, std::string tar_cli)
+{
+    set_server_prefix();
+    set_msg("341");
+    set_client_name(client);
+    set_msg(tar_cli);
+    set_msg(":" + ch->get_name());
     send_client(client);
 }
 

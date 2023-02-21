@@ -132,6 +132,13 @@ public:
     Err_notonchannel(std::string channel) {number = "442", message = channel + " :You're not on that channel"; }
 };
 
+// ERR_USERONCHANNEL
+class Err_useronchannel: public Irc_exception
+{
+public:
+    Err_useronchannel(std::string nick, std::string channel) {number = "443", message = nick + " " + channel + " :is already on channel"; }
+};
+
 // ERR_USERSDISABLED
 class Err_usersdisabled: public Irc_exception
 {

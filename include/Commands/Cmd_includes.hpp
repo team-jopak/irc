@@ -9,6 +9,7 @@
 #include "Channel/Names_cmd.hpp"
 #include "Channel/Part_cmd.hpp"
 #include "Channel/Topic_cmd.hpp"
+#include "Channel/Invite_cmd.hpp"
 
 // Connection
 #include "Connection/Nick_cmd.hpp"

@@ -142,7 +142,7 @@ void Client::set_auth(std::string cmd)
 	if (!this->_pass && is_auth())
 		throw Connection_error();
 	else if (this->_pass && is_auth())
-		message_client(":irc.local 001 " + get_nickname() + " : :Welcome to the Localnet IRC Network " + get_nickname());
+		message_client(":irc.local 001 " + get_nickname() + " :Welcome to the Localnet IRC Network " + get_nickname());
 }
 
 void Client::add_channel(Channel *channel)
