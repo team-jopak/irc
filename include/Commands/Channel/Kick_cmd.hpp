@@ -62,7 +62,7 @@ public:
         }
         msg = "KICK " + channel_strs + " " + user_strs + " " + message;
         server->reply->send_channel_exec(ch, client, msg);
-        ch->leave(client);
+        ch->leave(user);
         user->delete_channel(ch);
         if (ch->joined->size() == 0)
             server->delete_channel(ch);
