@@ -136,7 +136,6 @@ void Server::server_run()
 int Server::recv_message(int cur_fd)
 {
 	Client* 	client = get_client_by_socket_fd(cur_fd);
-//	std::string tmp_buf;
 	char 		buf = '\n';
 	int 		b = 0;
 	int 		nbytes;
@@ -147,9 +146,7 @@ int Server::recv_message(int cur_fd)
 		nbytes = recv(cur_fd, &buf, 1, 0);
 		if (nbytes < 0)
 			continue;
-//		tmp_buf += buf;
 		client->add_buffer(buf);
-		std::cout << b << "\n";
 		if (b > 500)
 			client->add_buffer("/QUIT you can't use this server\r\n");
 		if (client->get_buffer().find("\n") != std::string::npos)
@@ -159,6 +156,8 @@ int Server::recv_message(int cur_fd)
 				flow.to_server(client, client->get_buffer());
 				_cmd = _message->parse_msg(client->get_buffer());
 				_cmd->execute_command(this, client);
+				if (_cmd->name == "QUIT")
+					client = NULL;
 			}
 			catch (const Irc_exception& e)
 			{
@@ -171,11 +170,13 @@ int Server::recv_message(int cur_fd)
 			{
 				serverResponse(e.message, cur_fd);
 				delete_client(client->get_socket_fd());
+				client = NULL;
 			}
 			catch (const Capls_error& e)
 			{
 			}
-			client->clear_buffer();
+			if (client)
+				client->clear_buffer();
 			break;
 		}
 		else
