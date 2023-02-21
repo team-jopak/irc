@@ -49,7 +49,7 @@ public:
         {
             throw Err_chanoprivsneeded(channel_strs);
         }
-        if (!ch->joined->exist(user))
+        if (!user || !ch->joined->exist(user))
         {
             throw Err_notonchannel(channel_strs);  // need check
         }
