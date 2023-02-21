@@ -66,7 +66,7 @@ public:
         _receiver = ft::split_list((*it++), ',');
         for (; it != args.end(); it++)
             _message += (*it) + " ";
-        _message.pop_back();
+        _message.erase(_message.rfind(' '));
         // wildcard 존재여부 확인 (wildcard는 operator 권한이 있어야 사용가능)
         for (list_str_iter it_rec = _receiver.begin(); it_rec != _receiver.end(); it_rec++)
         {

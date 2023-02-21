@@ -79,7 +79,7 @@ void Reply::send_client(Client* client)
 {
     std::string msg = _ss.str();
     
-    msg.pop_back();
+    msg.erase(msg.rfind(' '));
     client->message_client(msg);
     init_ss();
 }
@@ -96,7 +96,7 @@ void Reply::send_channel(Channel* ch)
 {
     std::string msg = _ss.str();
 
-    msg.pop_back();
+    msg.erase(msg.rfind(' '));
     ch->message_channel(msg);
     init_ss();
 }
@@ -105,7 +105,7 @@ void Reply::send_channel_except(Channel* ch, Client* client)
 {
     std::string msg = _ss.str();
     
-    msg.pop_back();
+    msg.erase(msg.rfind(' '));
     ch->message_channel_except_sender(msg, client);
     init_ss();
 }
