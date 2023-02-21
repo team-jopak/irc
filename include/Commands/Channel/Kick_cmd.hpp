@@ -14,6 +14,9 @@ private:
 public:
     Kick_cmd() : Command("KICK")
     {
+        channel_strs.clear();
+        user_strs.clear();
+        message.clear();
     }
 
     virtual void parse_args(list_str args)
@@ -26,10 +29,14 @@ public:
         }
         channel_strs = *it++;
         user_strs = *it++;
-        if (args.size() == 3)
-            message = *it;
+        if (args.size() >= 3)
+        {
+            for (; it != args.end(); it++)
+                message += (*it) + " ";
+            message.pop_back();
+        }
         else
-            message = "";
+            message.clear();
     }
 
     // op, joined, invited, voice에서 제거
@@ -49,13 +56,13 @@ public:
         {
             throw Err_chanoprivsneeded(channel_strs);
         }
-        if (!ch->joined->exist(user))
+        if (!user || !ch->joined->exist(user))
         {
             throw Err_notonchannel(channel_strs);  // need check
         }
         msg = "KICK " + channel_strs + " " + user_strs + " " + message;
         server->reply->send_channel_exec(ch, client, msg);
-        ch->leave(client);
+        ch->leave(user);
         user->delete_channel(ch);
         if (ch->joined->size() == 0)
             server->delete_channel(ch);
@@ -64,6 +71,9 @@ public:
 
     virtual void init_cmd()
     {
+        channel_strs.clear();
+        user_strs.clear();
+        message.clear();
     }
 
 };

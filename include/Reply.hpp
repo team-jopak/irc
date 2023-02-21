@@ -43,12 +43,14 @@ public:
     void        send_channel_exec_except(Channel* ch, Client* client, std::string cmd);
 
     void        welcome_001(Client* client);
+    void        away_301(Client* client, Channel* ch, Client* tar);
     void        liststart_321(Client* client);
     void        list_322(Client* client, std::string ch_name);
     void        channelmodeis_324(Client* client, Channel* ch);
     void        listend_323(Client* client);
     void        topic_332(Client* client, Channel* ch);
     void        clock_333(Client* client, Channel* ch);
+    void        inviting_341(Client* client, Channel* ch, std::string tar_cli);
     void        namreply_353(Client* client, Channel* ch);
     void        endofnames_366(Client* client, Channel* ch);
     void        banlist_367(Client* client, Channel* ch, std::string banid);
