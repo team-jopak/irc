@@ -62,7 +62,6 @@ public:
     list_client		get_clients();
     Client*			get_client_by_socket_fd(int socket_fd);
     Client*			get_client_by_nickname(std::string nickname);
-    Client*			get_client_by_username(std::string username);
     void			delete_client(int socket_fd);
 
     // 채널 관련 함수

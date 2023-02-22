@@ -13,7 +13,6 @@
 
 // Connection
 #include "Connection/Nick_cmd.hpp"
-#include "Connection/Oper_cmd.hpp"
 #include "Connection/Pass_cmd.hpp"
 #include "Connection/Quit_cmd.hpp"
 #include "Connection/User_cmd.hpp"
