@@ -69,9 +69,6 @@ public:
 
     virtual void execute(Server* server, Client* client)
     {
-        if (_wildcard)
-            throw Err_noprivileges();
-        
         for (list_str_iter it = _receiver.begin(); it != _receiver.end(); it++)
         {
             if (*(*it).begin() == '#')
