@@ -53,10 +53,7 @@ public:
                 throw Err_notonchannel(ch->get_name());
             msg = "PART " + ch->get_name() + " :" + client->get_nickname();
             server->reply->send_channel_exec(ch, client, msg);
-            ch->leave(client);
-            client->delete_channel(ch);
-            if (ch->joined->size() == 0)
-                server->delete_channel(ch);
+            server->leave_channel(client, ch);
         }
         init_cmd();
     }

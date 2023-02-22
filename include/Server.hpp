@@ -64,6 +64,7 @@ public:
     Client*			get_client_by_nickname(std::string nickname);
     Client*			get_client_by_username(std::string username);
     void			delete_client(int socket_fd);
+    void            leave_channel(Client* client, Channel* ch);
 
     // 채널 관련 함수
 	Channel*		add_channel(std::string name, Client* client);
