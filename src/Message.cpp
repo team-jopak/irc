@@ -60,6 +60,9 @@ Message::~Message()
     delete commands["WHO"];
 }
 
+// 첫번째 문자가 접두사인지 확인
+// 명령어 확인
+// 명령어 객체에 인자 전달
 Command* Message::parse_msg(std::string msg) 
 {
     list_str        splited = ft::split_list(_remove_nl(msg), ' ');
@@ -67,29 +70,19 @@ Command* Message::parse_msg(std::string msg)
     std::string     prefix;
     cmd_map_iter    result;
 
-    std::cout << splited.size() << std::endl;
-
     if (splited.size() == 0)
         throw Unknown_error();
-
-    // 첫번째 문자가 접두사인지 확인
     if (_is_prefix(*(cmd_iter)))
     {
         prefix = *(cmd_iter);
-
-        // 접두사 처리
         cmd_iter++;
         splited.pop_front();
     }
-
-    // 명령어 확인
     *cmd_iter = ft::str_toupper(*cmd_iter);
     if ((*cmd_iter).compare("CAP") == 0)
         throw Unknown_error();
     if ((result = commands.find(*cmd_iter)) == commands.end())
         throw Err_unknowncommand(*cmd_iter);
-
-    // 명령어 객체에 인자 전달
     splited.pop_front();
     result->second->parse_args(splited);
 

@@ -172,7 +172,7 @@ int Server::recv_message(int cur_fd)
 				delete_client(client->get_socket_fd());
 				client = NULL;
 			}
-			catch (const Capls_error& e)
+			catch (const Unknown_error& e)
 			{
 			}
 			if (client)
