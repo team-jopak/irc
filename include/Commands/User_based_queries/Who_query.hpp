@@ -45,7 +45,6 @@ class Who_query : public Command
 {
 private:
     std::string _who_name;
-    std::string _o;
 
 public:
     Who_query() : Command("WHO")
@@ -57,17 +56,12 @@ public:
     {
         list_str_iter it_args = args.begin();
 
-        if (args.size() > 2 || args.size() == 0)
+        if (args.size() > 1 || args.size() == 0)
         {
             throw Err_needmoreparams("WHO");
         }
 
         _who_name = *it_args;
-        if (args.size() == 2)
-        {
-            it_args++;
-            _o = *it_args;
-        }
     }
 
     virtual void execute(Server* server, Client* client)
@@ -111,7 +105,6 @@ public:
     virtual void init_cmd()
     {
         _who_name = "";
-        _o = "";
     }
 
     void send_message(Client* client, std::list<Client *>::iterator it_clients, Channel* channel = NULL)
