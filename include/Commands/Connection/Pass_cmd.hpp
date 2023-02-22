@@ -38,12 +38,18 @@ public:
     
         if (args.size() == 0)
             throw Err_needmoreparams("PASS");
+        std::cout << args.size() << std::endl;
         for (; iter != end; iter++)
         {
             _password += *iter;
             _password += " ";
         }
-        _password.erase(_password.rfind(' '));
+        std::string::iterator it = _password.end() - 1;
+        while ((*it) == ' ')
+        {
+            _password.erase(_password.rfind(' '));
+            it = _password.end() - 1;
+        }
     }
 
     virtual void execute(Server* server, Client* client)

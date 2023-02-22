@@ -1,7 +1,6 @@
 #ifndef CLIENTS_HPP
 # define CLIENTS_HPP
 
-// #include <fcntl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h> 

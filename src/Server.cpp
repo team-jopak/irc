@@ -60,7 +60,6 @@ void Server::init()
 		throw std::runtime_error("error: could not set socket options");
 	}
 
-
 	if (bind(socket_fd, res->ai_addr, res->ai_addrlen) != 0)
 	{
 		freeaddrinfo(res);
@@ -110,7 +109,7 @@ void Server::server_run()
 			// 소켓 연결이 끊겼을 경우
 			if ((cur_poll_fd.revents & POLLHUP) == POLLHUP)
 			{
-				std::cout << "!!!!!!!!!!!!!!!!!!pollhup!!!!!!!!!!!!!!" << std::endl << std::flush;
+				std::cout << "Connection lost" << std::endl << std::flush;
 				delete_client(cur_poll_fd.fd);
 				break;
 			}
