@@ -258,7 +258,8 @@ void Server::delete_client(int socket_fd)
 
 	for (std::list<Channel *>::iterator it = _channels.begin(); it != _channels.end(); it++)
 	{
-		leave_channel(client, *it);
+		if (leave_channel(client, *it))
+			it = _channels.begin();
 	}
 	for (std::vector<pollfd>::iterator it = _poll_fd_vec.begin(); it != _poll_fd_vec.end(); ++it)
 	{
@@ -280,12 +281,16 @@ void Server::delete_client(int socket_fd)
 	}
 }
 
-void Server::leave_channel(Client* client, Channel* ch)
+bool Server::leave_channel(Client* client, Channel* ch)
 {
 	ch->leave(client);
 	client->delete_channel(ch);
 	if (ch->joined->size() == 0)
+	{
 		delete_channel(ch);
+		return (true);
+	}
+	return (false);
 }
 
 void Server::delete_channel(Channel* ch)
