@@ -124,9 +124,11 @@ bool Channel::check_limit()
 
 bool Channel::is_talkable(Client *client)
 {
+    if (banned->exist(client))
+        return (false);
     if (check_flag('n') && !joined->exist(client))
         return (false);
-    if (check_flag('m') && !voice->exist(client))
+    if (check_flag('m') && !(voice->exist(client) || op->exist(client)))
         return (false);
     return (true);
 }
