@@ -67,13 +67,17 @@ Command* Message::parse_msg(std::string msg)
     std::string     prefix;
     cmd_map_iter    result;
 
+    std::cout << splited.size() << std::endl;
+
+    if (splited.size() == 0)
+        throw Unknown_error();
+
     // 첫번째 문자가 접두사인지 확인
     if (_is_prefix(*(cmd_iter)))
     {
         prefix = *(cmd_iter);
 
         // 접두사 처리
-        std::cout << "prefix : " << prefix << std::endl;
         cmd_iter++;
         splited.pop_front();
     }
@@ -81,7 +85,7 @@ Command* Message::parse_msg(std::string msg)
     // 명령어 확인
     *cmd_iter = ft::str_toupper(*cmd_iter);
     if ((*cmd_iter).compare("CAP") == 0)
-        throw Capls_error();
+        throw Unknown_error();
     if ((result = commands.find(*cmd_iter)) == commands.end())
         throw Err_unknowncommand(*cmd_iter);
 
@@ -109,7 +113,7 @@ std::string Message::_remove_nl(std::string str)
 
     if (end_char == '\n')
         str.erase(end_iter);
-    if (end_iter != str.begin() && *(--end_iter) == '\r')
+    if (str.size() != 0 && *(--end_iter) == '\r')
         str.erase(end_iter);
     return (str);
 }
