@@ -29,6 +29,7 @@ private:
     bool		_is_command(std::string str);
     bool		_is_prefix(std::string str);
     std::string	_remove_nl(std::string str);
+    bool        _is_unknown_cmd(std::string cmd);
 };
 
 #endif

@@ -79,7 +79,7 @@ Command* Message::parse_msg(std::string msg)
         splited.pop_front();
     }
     *cmd_iter = ft::str_toupper(*cmd_iter);
-    if ((*cmd_iter).compare("CAP") == 0)
+    if (_is_unknown_cmd(*cmd_iter))
         throw Unknown_error();
     if ((result = commands.find(*cmd_iter)) == commands.end())
         throw Err_unknowncommand(*cmd_iter);
@@ -87,6 +87,11 @@ Command* Message::parse_msg(std::string msg)
     result->second->parse_args(splited);
 
     return (result->second);
+}
+
+bool Message::_is_unknown_cmd(std::string cmd)
+{
+    return (cmd.compare("CAP") == 0 || cmd.compare("WHOIS") == 0);
 }
 
 bool Message::_is_command(std::string str)
