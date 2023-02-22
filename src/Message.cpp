@@ -40,6 +40,7 @@ Message::~Message()
 
     // Channel
     delete commands["JOIN"];
+    delete commands["KICK"];
     delete commands["LIST"];
     delete commands["MODE"];
     delete commands["NAMES"];
@@ -49,7 +50,6 @@ Message::~Message()
 
     // Miscellaneous_messages
     delete commands["ERROR"];
-    delete commands["KILL"];
     delete commands["PING"];
 
     // Send_messages
